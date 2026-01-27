@@ -124,17 +124,31 @@ class BankConnectionsPage {
                         <!-- Workaround: Permetti inserimento manuale ID banca -->
                         <div class="fp-fh-guide-warning fp-fh-mb-4" style="background: #fff3cd; border-color: #ffeaa7; padding: 12px; border-radius: 4px;">
                             <strong>⚠️ Nessuna banca disponibile automaticamente</strong>
-                            <p class="fp-fh-mt-2">Puoi comunque collegare una banca inserendo manualmente il suo ID (es. per test: <code>modelo-sandbox</code>)</p>
+                            <p class="fp-fh-mt-2">Puoi comunque collegare una banca inserendo manualmente il suo ID.</p>
                         </div>
+                        
+                        <div class="fp-fh-guide-info fp-fh-mb-4" style="background: #e7f3ff; border-color: #b3d9ff; padding: 12px; border-radius: 4px;">
+                            <strong>💡 ID Banche Comuni:</strong>
+                            <ul style="margin: 8px 0 0 20px;">
+                                <li><strong>Test Sandbox:</strong> <code>modelo-sandbox</code></li>
+                                <li><strong>ING Italia:</strong> <code>ing_italy</code> o <code>ing-direct-italy</code> (verifica su Yapily Console)</li>
+                                <li><strong>PostePay/Poste Italiane:</strong> <code>poste-italiane</code> o <code>poste-italiane-direct</code> (verifica su Yapily Console)</li>
+                            </ul>
+                            <p class="fp-fh-mt-2" style="font-size: 12px;">
+                                <strong>Nota:</strong> Per banche reali (ING, PostePay) serve un <strong>account Yapily di produzione</strong>, non sandbox. 
+                                Verifica su <a href="https://console.yapily.com" target="_blank">Yapily Console</a> se queste banche sono disponibili per il tuo account.
+                            </p>
+                        </div>
+                        
                         <form method="post" action="" class="fp-fh-mt-4">
                             <?php wp_nonce_field('fp_finance_hub_yapily_connect'); ?>
                             <div class="fp-fh-form-group">
                                 <label for="institution_id" class="fp-fh-form-label">ID Banca (Institution ID)</label>
                                 <input type="text" name="institution_id" id="institution_id" class="fp-fh-input" 
-                                       placeholder="es. modelo-sandbox" required>
+                                       placeholder="es. modelo-sandbox, ing_italy, poste-italiane" required>
                                 <p class="fp-fh-form-description">
                                     Inserisci l'ID della banca che vuoi collegare. 
-                                    Per test in sandbox, usa: <code>modelo-sandbox</code>
+                                    <br>Per trovare l'ID corretto, vai su <a href="https://console.yapily.com" target="_blank">Yapily Console</a> → Applications → Connected Institutions
                                 </p>
                             </div>
                             <div class="fp-fh-card-footer">
@@ -199,8 +213,15 @@ class BankConnectionsPage {
                                             echo '<li>Dopo aver aggiunto, le banche appariranno automaticamente qui</li>';
                                             echo '</ol>';
                                             echo '<br>';
-                                            echo '<strong>⚠️ Nota:</strong> Se l\'account è in sandbox, potrebbe essere necessario aggiungere manualmente le banche su Yapily Console. ';
-                                            echo 'Tuttavia, puoi sempre usare il form qui sotto per inserire manualmente l\'ID di una banca.';
+                                            echo '<strong>⚠️ Importante per Banche Reali (ING, PostePay):</strong>';
+                                            echo '<ul style="margin: 8px 0 0 20px;">';
+                                            echo '<li>Per collegare banche <strong>reali italiane</strong> (ING, PostePay Evolution), serve un <strong>account Yapily di produzione</strong>, non sandbox</li>';
+                                            echo '<li>L\'account sandbox supporta solo banche di test (es. Modelo Sandbox)</li>';
+                                            echo '<li>Per passare a produzione, contatta Yapily Support o verifica sul loro sito i requisiti</li>';
+                                            echo '<li>Puoi comunque provare a inserire manualmente l\'ID della banca qui sotto - se non è disponibile, Yapily ti darà un errore specifico</li>';
+                                            echo '</ul>';
+                                            echo '<br>';
+                                            echo '<strong>💡 Come trovare l\'ID corretto:</strong> Vai su <a href="https://console.yapily.com" target="_blank">Yapily Console</a> → Applications → Connected Institutions e cerca ING o PostePay.';
                                             echo '</div>';
                                             
                                             // Mostra info di debug se WP_DEBUG è attivo
