@@ -161,12 +161,24 @@ class BankConnectionsPage {
                                         if (!is_wp_error($test_result)) {
                                             echo '<div class="fp-fh-guide-tip" style="background: #d4edda; border-color: #c3e6cb; padding: 12px; border-radius: 4px; margin: 10px 0;">';
                                             echo '<strong>✅ Test connessione:</strong> Le credenziali Yapily sono valide e l\'API risponde correttamente. ';
-                                            echo 'Tuttavia, non ci sono banche disponibili. Questo potrebbe significare che:';
-                                            echo '<ul style="margin: 8px 0 0 20px;">';
-                                            echo '<li>L\'account Yapily è in modalità sandbox (alcune banche potrebbero non essere disponibili)</li>';
-                                            echo '<li>Non ci sono banche italiane disponibili per il tuo account</li>';
-                                            echo '<li>Le banche disponibili non supportano Account Information Services</li>';
+                                            echo '<br><br>';
+                                            echo '<strong>🔧 Problema identificato:</strong> L\'account Yapily è in modalità <strong>sandbox</strong> ma non ha ancora banche configurate.';
+                                            echo '<br><br>';
+                                            echo '<strong>📋 Cosa fare su Yapily Console:</strong>';
+                                            echo '<ol style="margin: 8px 0 0 20px;">';
+                                            echo '<li>Vai su <a href="https://console.yapily.com" target="_blank">console.yapily.com</a> e accedi</li>';
+                                            echo '<li>Seleziona la tua <strong>Application</strong></li>';
+                                            echo '<li>Vai alla sezione <strong>"Institutions"</strong> o <strong>"Sandbox"</strong></li>';
+                                            echo '<li><strong>Aggiungi banche sandbox</strong> alla tua applicazione:</li>';
+                                            echo '<ul style="margin: 4px 0 0 20px;">';
+                                            echo '<li><strong>Modelo Sandbox</strong> (ID: <code>modelo-sandbox</code>) - <strong>Raccomandato!</strong> Preconfigurato, non richiede setup aggiuntivo</li>';
+                                            echo '<li>Oppure altre banche sandbox disponibili (filtra per "PRECONFIGURED SANDBOX")</li>';
                                             echo '</ul>';
+                                            echo '<li>Salva le modifiche</li>';
+                                            echo '<li>Ricarica questa pagina</li>';
+                                            echo '</ol>';
+                                            echo '<br>';
+                                            echo '<strong>💡 Nota:</strong> Le banche sandbox sono per test. Per banche reali italiane, devi passare a un account Yapily di produzione.';
                                             echo '</div>';
                                             
                                             // Mostra info di debug se WP_DEBUG è attivo

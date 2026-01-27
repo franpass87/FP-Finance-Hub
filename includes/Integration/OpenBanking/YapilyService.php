@@ -126,8 +126,23 @@ class YapilyService {
         
         // Prova prima senza filtro per vedere se ci sono banche
         // Yapily potrebbe richiedere parametri aggiuntivi o avere un formato diverso
+        // In sandbox, potrebbe essere necessario non filtrare per paese
         $endpoint = '/institutions?country=' . urlencode($country);
         $result = $this->api_request('GET', $endpoint);
+        
+        // Se non ci sono risultati con filtro paese, prova senza filtro (per sandbox)
+        if (!is_wp_error($result) && isset($result['data']) && empty($result['data'])) {
+            $endpoint_no_country = '/institutions';
+            $result_no_country = $this->api_request('GET', $endpoint_no_country);
+            
+            // Se senza filtro ci sono risultati, usa quelli
+            if (!is_wp_error($result_no_country) && isset($result_no_country['data']) && !empty($result_no_country['data'])) {
+                if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                    error_log('[FP Finance Hub] Yapily: Nessuna banca trovata con filtro paese, ma trovate ' . count($result_no_country['data']) . ' banche senza filtro');
+                }
+                $result = $result_no_country;
+            }
+        }
         
         // Debug: log la risposta se WP_DEBUG è attivo
         if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
