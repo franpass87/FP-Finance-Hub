@@ -97,6 +97,25 @@ class YapilyService {
     }
     
     /**
+     * Test connessione API Yapily
+     * Restituisce true se le credenziali sono valide
+     */
+    public function test_connection() {
+        if (!$this->is_configured()) {
+            return new \WP_Error('not_configured', 'Credenziali Yapily non configurate.');
+        }
+        
+        // Prova a ottenere le istituzioni per testare la connessione
+        $result = $this->api_request('GET', '/institutions?country=IT&limit=1');
+        
+        if (is_wp_error($result)) {
+            return $result;
+        }
+        
+        return true;
+    }
+    
+    /**
      * Ottieni lista banche disponibili (Italia)
      */
     public function get_institutions($country = 'IT') {
@@ -105,7 +124,16 @@ class YapilyService {
             return new \WP_Error('not_configured', 'Credenziali Yapily non configurate. Inserisci Application ID e Application Secret nelle Impostazioni.');
         }
         
-        $result = $this->api_request('GET', '/institutions?country=' . $country);
+        // Prova prima senza filtro per vedere se ci sono banche
+        // Yapily potrebbe richiedere parametri aggiuntivi o avere un formato diverso
+        $endpoint = '/institutions?country=' . urlencode($country);
+        $result = $this->api_request('GET', $endpoint);
+        
+        // Debug: log la risposta se WP_DEBUG è attivo
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[FP Finance Hub] Yapily get_institutions endpoint: ' . $endpoint);
+            error_log('[FP Finance Hub] Yapily get_institutions response: ' . print_r($result, true));
+        }
         
         if (is_wp_error($result)) {
             // Migliora il messaggio di errore con più dettagli
@@ -126,21 +154,57 @@ class YapilyService {
             return $result;
         }
         
-        // Filtra solo banche che supportano Account Information
+        // Gestisci diversi formati di risposta Yapily
+        $institutions_data = null;
+        
+        // Formato 1: { data: [...] }
         if (isset($result['data']) && is_array($result['data'])) {
-            $filtered = array_filter($result['data'], function($institution) {
+            $institutions_data = $result['data'];
+        }
+        // Formato 2: array diretto
+        elseif (is_array($result) && isset($result[0]) && is_array($result[0])) {
+            $institutions_data = $result;
+        }
+        // Formato 3: { institutions: [...] }
+        elseif (isset($result['institutions']) && is_array($result['institutions'])) {
+            $institutions_data = $result['institutions'];
+        }
+        
+        if ($institutions_data && is_array($institutions_data) && !empty($institutions_data)) {
+            $total_count = count($institutions_data);
+            
+            // Filtra solo banche che supportano Account Information
+            $filtered = array_filter($institutions_data, function($institution) {
+                // Verifica se ha features
                 $features = $institution['features'] ?? [];
-                return in_array('ACCOUNTS', $features) || in_array('ACCOUNT_TRANSACTIONS', $features);
+                if (is_array($features)) {
+                    return in_array('ACCOUNTS', $features) || in_array('ACCOUNT_TRANSACTIONS', $features);
+                }
+                // Se non ha features, includila comunque (potrebbe essere che Yapily non le specifichi sempre)
+                return true;
             });
+            $filtered_count = count($filtered);
+            
+            // Se dopo il filtro non ci sono banche, restituisci tutte le banche (il problema potrebbe essere nel filtro)
+            if ($filtered_count === 0 && $total_count > 0) {
+                // Log per debug (solo se WP_DEBUG è attivo)
+                if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                    error_log('[FP Finance Hub] Yapily: ' . $total_count . ' banche trovate, ma nessuna passa il filtro ACCOUNTS/ACCOUNT_TRANSACTIONS');
+                    error_log('[FP Finance Hub] Yapily: Prima banca esempio: ' . print_r($institutions_data[0], true));
+                }
+                // Restituisci tutte le banche invece di filtrarle
+                return array_values($institutions_data);
+            }
+            
             return array_values($filtered);
         }
         
         // Se non ci sono dati, potrebbe essere un problema con la risposta
-        if (!isset($result['data'])) {
-            return new \WP_Error('invalid_response', 'Risposta API Yapily non valida. Verifica che l\'account Yapily sia attivo su console.yapily.com');
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+            error_log('[FP Finance Hub] Yapily API Response (no data): ' . print_r($result, true));
         }
         
-        return $result;
+        return new \WP_Error('no_institutions', 'Nessuna banca disponibile dalla risposta API Yapily. Verifica che l\'account Yapily sia attivo su console.yapily.com e che abbia accesso alle banche italiane. Risposta ricevuta: ' . json_encode($result));
     }
     
     /**

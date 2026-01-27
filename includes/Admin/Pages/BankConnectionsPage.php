@@ -154,12 +154,45 @@ class BankConnectionsPage {
                                     <?php if (is_wp_error($institutions)) : ?>
                                         <strong>Dettagli errore:</strong> <?php echo esc_html($institutions->get_error_message()); ?>
                                         <br><br>
+                                        
+                                        <?php
+                                        // Test connessione per vedere se le credenziali funzionano
+                                        $test_result = $yapily->test_connection();
+                                        if (!is_wp_error($test_result)) {
+                                            echo '<div class="fp-fh-guide-tip" style="background: #d4edda; border-color: #c3e6cb; padding: 12px; border-radius: 4px; margin: 10px 0;">';
+                                            echo '<strong>✅ Test connessione:</strong> Le credenziali Yapily sono valide e l\'API risponde correttamente. ';
+                                            echo 'Tuttavia, non ci sono banche disponibili. Questo potrebbe significare che:';
+                                            echo '<ul style="margin: 8px 0 0 20px;">';
+                                            echo '<li>L\'account Yapily è in modalità sandbox (alcune banche potrebbero non essere disponibili)</li>';
+                                            echo '<li>Non ci sono banche italiane disponibili per il tuo account</li>';
+                                            echo '<li>Le banche disponibili non supportano Account Information Services</li>';
+                                            echo '</ul>';
+                                            echo '</div>';
+                                            
+                                            // Mostra info di debug se WP_DEBUG è attivo
+                                            if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('manage_options')) {
+                                                echo '<div class="fp-fh-guide-info" style="background: #e7f3ff; border-color: #b3d9ff; padding: 12px; border-radius: 4px; margin: 10px 0; font-family: monospace; font-size: 12px;">';
+                                                echo '<strong>🔍 Debug Info (solo per admin):</strong><br>';
+                                                echo 'Application ID: ' . esc_html(substr(get_option('fp_finance_hub_yapily_app_id', ''), 0, 20)) . '...<br>';
+                                                echo 'Controlla il file debug.log per dettagli sulla risposta API Yapily.';
+                                                echo '</div>';
+                                            }
+                                        } else {
+                                            echo '<div class="fp-fh-guide-warning" style="background: #fff3cd; border-color: #ffeaa7; padding: 12px; border-radius: 4px; margin: 10px 0;">';
+                                            echo '<strong>⚠️ Test connessione fallito:</strong> ' . esc_html($test_result->get_error_message());
+                                            echo '<br><br>';
+                                            echo 'Questo indica che le credenziali potrebbero essere errate o che c\'è un problema di connessione con l\'API Yapily.';
+                                            echo '</div>';
+                                        }
+                                        ?>
+                                        
                                         <strong>Possibili cause:</strong>
                                         <ul style="margin: 10px 0; padding-left: 20px;">
                                             <li>Credenziali Yapily non valide o scadute</li>
                                             <li>Application ID o Application Secret errati</li>
+                                            <li>Account Yapily in modalità sandbox (alcune banche potrebbero non essere disponibili)</li>
                                             <li>Problema di connessione con l'API Yapily</li>
-                                            <li>Account Yapily non attivo o in modalità sandbox</li>
+                                            <li>Account Yapily non attivo o senza permessi per le banche italiane</li>
                                         </ul>
                                         <br>
                                         <strong>Come risolvere:</strong>
@@ -167,10 +200,26 @@ class BankConnectionsPage {
                                             <li>Verifica le credenziali Yapily in <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-settings'); ?>">Impostazioni</a></li>
                                             <li>Assicurati che Application ID e Application Secret siano corretti</li>
                                             <li>Controlla che l'account Yapily sia attivo su <a href="https://console.yapily.com" target="_blank">console.yapily.com</a></li>
+                                            <li>Verifica che l'account abbia accesso alle banche italiane (potrebbe essere limitato in modalità sandbox)</li>
                                             <li>Se necessario, rigenera le credenziali su Yapily Console</li>
                                         </ol>
                                     <?php else : ?>
-                                        Nessuna banca disponibile. Verifica le credenziali Yapily nelle <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-settings'); ?>">Impostazioni</a>.
+                                        <p><strong>Nessuna banca disponibile.</strong></p>
+                                        <p>L'API Yapily ha risposto correttamente, ma non ci sono banche disponibili per il tuo account.</p>
+                                        <br>
+                                        <strong>Possibili cause:</strong>
+                                        <ul style="margin: 10px 0; padding-left: 20px;">
+                                            <li>Account Yapily in modalità sandbox (alcune banche potrebbero non essere disponibili)</li>
+                                            <li>Nessuna banca italiana disponibile per il tuo account</li>
+                                            <li>Le banche disponibili non supportano Account Information Services</li>
+                                        </ul>
+                                        <br>
+                                        <strong>Come risolvere:</strong>
+                                        <ul style="margin: 10px 0; padding-left: 20px;">
+                                            <li>Verifica su <a href="https://console.yapily.com" target="_blank">console.yapily.com</a> quali banche sono disponibili per il tuo account</li>
+                                            <li>Se sei in modalità sandbox, alcune banche potrebbero non essere disponibili</li>
+                                            <li>Contatta Yapily support se pensi che dovrebbero esserci banche disponibili</li>
+                                        </ul>
                                     <?php endif; ?>
                                 </div>
                             </div>
