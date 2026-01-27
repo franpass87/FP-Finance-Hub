@@ -71,21 +71,21 @@
         },
         
         /**
-         * Mostra guida Nordigen
+         * Mostra guida GoCardless Bank Account Data
          */
         showNordigenGuide: function() {
             const content = `
                 <div class="fp-fh-guide-modal-content">
-                    <h3>Come Ottenere le Credenziali Nordigen</h3>
+                    <h3>Come Ottenere le Credenziali GoCardless</h3>
                     
                     <div class="fp-fh-guide-substep fp-fh-mb-4">
-                        <h4>Step 1: Registrati su Nordigen</h4>
+                        <h4>Step 1: Registrati su GoCardless Bank Account Data</h4>
                         <ol class="fp-fh-list fp-fh-list-ordered">
-                            <li>Vai su <a href="https://nordigen.com" target="_blank" rel="noopener">nordigen.com</a></li>
+                            <li>Vai su <a href="https://bankaccountdata.gocardless.com" target="_blank" rel="noopener">bankaccountdata.gocardless.com</a></li>
                             <li>Clicca su "Sign Up" o "Registrati"</li>
                             <li>Compila il form con la tua email</li>
                             <li>Verifica la tua email</li>
-                            <li>Accedi al dashboard Nordigen</li>
+                            <li>Accedi al dashboard GoCardless</li>
                         </ol>
                     </div>
                     
@@ -94,7 +94,7 @@
                         <ol class="fp-fh-list fp-fh-list-ordered">
                             <li>Dopo l'accesso, vai nella sezione "API" o "Credenziali"</li>
                             <li>Clicca su "Crea nuove credenziali" o "Generate Credentials"</li>
-                            <li>Nordigen genererà automaticamente <strong>Secret ID</strong> e <strong>Secret Key</strong></li>
+                            <li>GoCardless genererà automaticamente <strong>Secret ID</strong> e <strong>Secret Key</strong></li>
                             <li><strong>IMPORTANTE:</strong> Copia subito le credenziali - la Secret Key viene mostrata solo una volta!</li>
                             <li>Salva le credenziali in un posto sicuro</li>
                         </ol>
@@ -105,12 +105,12 @@
                     </div>
                     
                     <div class="fp-fh-guide-tip fp-fh-mt-4">
-                        <strong>💡 Suggerimento:</strong> Nordigen è completamente gratuito e sicuro. I tuoi dati bancari non vengono mai condivisi con terze parti.
+                        <strong>💡 Suggerimento:</strong> GoCardless Bank Account Data è completamente gratuito e sicuro. I tuoi dati bancari non vengono mai condivisi con terze parti.
                     </div>
                 </div>
             `;
             
-            FPHelpModal.show('Guida Configurazione Nordigen', content);
+            FPHelpModal.show('Guida Configurazione GoCardless', content);
         },
         
         /**

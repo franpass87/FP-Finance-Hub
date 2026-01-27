@@ -49,7 +49,7 @@
 - 📄 `docs/OPEN-BANKING-INTEGRATION.md` - Confronto tutte le opzioni
 
 ### **Cosa Serve:**
-1. Account gratuito su https://nordigen.com
+1. Account gratuito su https://bankaccountdata.gocardless.com
 2. `secret_id` e `secret_key` (gratis)
 3. Implementazione OAuth flow (codice incluso nella doc)
 4. Cron job per sync automatica (ogni 6 ore = 4 volte/giorno)

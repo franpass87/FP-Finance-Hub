@@ -106,7 +106,7 @@ class SettingsPage {
                 </div>
                 
                 <div class="fp-fh-card-header fp-fh-mt-6">
-                    <h2 class="fp-fh-card-title">Integrazione Nordigen (Open Banking)</h2>
+                    <h2 class="fp-fh-card-title">Integrazione GoCardless Bank Account Data (Open Banking)</h2>
                     <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>" class="fp-fh-help-link" target="_blank">
                         📖 Guida Completa →
                     </a>
@@ -114,7 +114,7 @@ class SettingsPage {
                 <div class="fp-fh-card-body">
                     <?php if (!$nordigen_configured) : ?>
                         <div class="fp-fh-guide-tip fp-fh-mb-4">
-                            <strong>💡 Nordigen è completamente gratuito!</strong> 
+                            <strong>💡 GoCardless Bank Account Data è completamente gratuito!</strong> 
                             Se non hai ancora un account, <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>">segui la guida</a> per registrarti e ottenere le credenziali.
                         </div>
                     <?php endif; ?>
@@ -123,13 +123,13 @@ class SettingsPage {
                         <label for="nordigen_secret_id" class="fp-fh-form-label">
                             Secret ID
                             <span class="fp-fh-tooltip">
-                                <span class="fp-fh-help-icon" title="Il Secret ID viene generato automaticamente quando crei le credenziali su nordigen.com. Lo trovi nel dashboard Nordigen nella sezione API.">?</span>
-                                <span class="fp-fh-tooltip-content">Il Secret ID è una credenziale generata automaticamente da Nordigen quando crei le credenziali API. Lo trovi nel dashboard Nordigen dopo la registrazione gratuita.</span>
+                                <span class="fp-fh-help-icon" title="Il Secret ID viene generato automaticamente quando crei le credenziali su bankaccountdata.gocardless.com. Lo trovi nel dashboard GoCardless nella sezione API.">?</span>
+                                <span class="fp-fh-tooltip-content">Il Secret ID è una credenziale generata automaticamente da GoCardless quando crei le credenziali API. Lo trovi nel dashboard GoCardless Bank Account Data dopo la registrazione gratuita.</span>
                             </span>
                         </label>
                         <input type="text" name="nordigen_secret_id" id="nordigen_secret_id" 
                                value="<?php echo esc_attr($nordigen_secret_id); ?>" class="fp-fh-input">
-                        <p class="fp-fh-form-description">Inserisci il tuo Secret ID Nordigen (gratuito)</p>
+                        <p class="fp-fh-form-description">Inserisci il tuo Secret ID GoCardless (gratuito)</p>
                         <?php if (!$nordigen_configured) : ?>
                             <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>" class="fp-fh-help-link">Come ottenerlo? →</a>
                         <?php endif; ?>
@@ -144,10 +144,10 @@ class SettingsPage {
                         </label>
                         <input type="password" name="nordigen_secret_key" id="nordigen_secret_key" 
                                value="<?php echo esc_attr($nordigen_secret_key); ?>" class="fp-fh-input">
-                        <p class="fp-fh-form-description">Inserisci la tua Secret Key Nordigen</p>
+                        <p class="fp-fh-form-description">Inserisci la tua Secret Key GoCardless</p>
                         <?php if (!$nordigen_configured) : ?>
                             <div class="fp-fh-guide-warning fp-fh-mt-2">
-                                <strong>⚠️ Attenzione:</strong> La Secret Key viene mostrata solo una volta. Se non l'hai salvata, devi generarne una nuova su nordigen.com
+                                <strong>⚠️ Attenzione:</strong> La Secret Key viene mostrata solo una volta. Se non l'hai salvata, devi generarne una nuova su bankaccountdata.gocardless.com
                             </div>
                         <?php endif; ?>
                     </div>

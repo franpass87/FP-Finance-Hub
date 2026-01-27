@@ -1,8 +1,8 @@
 <?php
 /**
- * Nordigen Service
+ * GoCardless Bank Account Data Service
  * 
- * Client API Nordigen (GoCardless) per Open Banking
+ * Client API GoCardless Bank Account Data (ex Nordigen) per Open Banking
  */
 
 namespace FP\FinanceHub\Integration\OpenBanking;
@@ -77,7 +77,7 @@ class NordigenService {
     public function get_institutions($country = 'IT') {
         $token = $this->get_access_token();
         if (!$token) {
-            return new \WP_Error('auth_failed', 'Impossibile ottenere access token Nordigen');
+            return new \WP_Error('auth_failed', 'Impossibile ottenere access token GoCardless');
         }
         
         $response = wp_remote_get(
@@ -101,7 +101,7 @@ class NordigenService {
             return $body;
         }
         
-        return new \WP_Error('api_error', 'Errore API Nordigen: ' . ($body['message'] ?? 'Errore sconosciuto'));
+        return new \WP_Error('api_error', 'Errore API GoCardless: ' . ($body['message'] ?? 'Errore sconosciuto'));
     }
     
     /**
@@ -146,7 +146,7 @@ class NordigenService {
             ];
         }
         
-        return new \WP_Error('api_error', 'Errore creazione requisition Nordigen: ' . ($body['message'] ?? 'Errore sconosciuto'));
+        return new \WP_Error('api_error', 'Errore creazione requisition GoCardless: ' . ($body['message'] ?? 'Errore sconosciuto'));
     }
     
     /**
@@ -155,7 +155,7 @@ class NordigenService {
     public function get_accounts($requisition_id) {
         $token = $this->get_access_token();
         if (!$token) {
-            return new \WP_Error('auth_failed', 'Impossibile ottenere access token Nordigen');
+            return new \WP_Error('auth_failed', 'Impossibile ottenere access token GoCardless');
         }
         
         $response = wp_remote_get(
@@ -179,7 +179,7 @@ class NordigenService {
             return $body['accounts'];
         }
         
-        return new \WP_Error('api_error', 'Errore API Nordigen: ' . ($body['message'] ?? 'Errore sconosciuto'));
+        return new \WP_Error('api_error', 'Errore API GoCardless: ' . ($body['message'] ?? 'Errore sconosciuto'));
     }
     
     /**
@@ -188,7 +188,7 @@ class NordigenService {
     public function get_account_details($account_id) {
         $token = $this->get_access_token();
         if (!$token) {
-            return new \WP_Error('auth_failed', 'Impossibile ottenere access token Nordigen');
+            return new \WP_Error('auth_failed', 'Impossibile ottenere access token GoCardless');
         }
         
         $response = wp_remote_get(
@@ -212,7 +212,7 @@ class NordigenService {
             return $body['account'];
         }
         
-        return new \WP_Error('api_error', 'Errore API Nordigen: ' . ($body['message'] ?? 'Errore sconosciuto'));
+        return new \WP_Error('api_error', 'Errore API GoCardless: ' . ($body['message'] ?? 'Errore sconosciuto'));
     }
     
     /**
@@ -221,7 +221,7 @@ class NordigenService {
     public function get_balance($account_id) {
         $token = $this->get_access_token();
         if (!$token) {
-            return new \WP_Error('auth_failed', 'Impossibile ottenere access token Nordigen');
+            return new \WP_Error('auth_failed', 'Impossibile ottenere access token GoCardless');
         }
         
         $response = wp_remote_get(
@@ -246,7 +246,7 @@ class NordigenService {
             return $body['balances'][0];
         }
         
-        return new \WP_Error('api_error', 'Errore API Nordigen: ' . ($body['message'] ?? 'Errore sconosciuto'));
+        return new \WP_Error('api_error', 'Errore API GoCardless: ' . ($body['message'] ?? 'Errore sconosciuto'));
     }
     
     /**
@@ -255,7 +255,7 @@ class NordigenService {
     public function get_transactions($account_id, $date_from = null, $date_to = null) {
         $token = $this->get_access_token();
         if (!$token) {
-            return new \WP_Error('auth_failed', 'Impossibile ottenere access token Nordigen');
+            return new \WP_Error('auth_failed', 'Impossibile ottenere access token GoCardless');
         }
         
         $params = [];
@@ -286,13 +286,13 @@ class NordigenService {
         $body = json_decode(wp_remote_retrieve_body($response), true);
         
         if ($code === 200 && isset($body['transactions'])) {
-            // Nordigen separa transazioni in "booked" e "pending"
+            // GoCardless separa transazioni in "booked" e "pending"
             $booked = $body['transactions']['booked'] ?? [];
             $pending = $body['transactions']['pending'] ?? [];
             
             return array_merge($booked, $pending);
         }
         
-        return new \WP_Error('api_error', 'Errore API Nordigen: ' . ($body['message'] ?? 'Errore sconosciuto'));
+        return new \WP_Error('api_error', 'Errore API GoCardless: ' . ($body['message'] ?? 'Errore sconosciuto'));
     }
 }

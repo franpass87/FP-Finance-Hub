@@ -38,7 +38,7 @@ class SetupService {
     }
     
     /**
-     * Verifica se Nordigen è configurato
+     * Verifica se GoCardless Bank Account Data è configurato
      */
     public function is_nordigen_configured() {
         $secret_id = get_option('fp_finance_hub_nordigen_secret_id', '');
@@ -92,7 +92,7 @@ class SetupService {
     public function get_setup_progress() {
         $steps = [
             'nordigen_configured' => [
-                'name' => 'Configurazione Nordigen',
+                'name' => 'Configurazione GoCardless',
                 'completed' => $this->is_nordigen_configured(),
                 'url' => admin_url('admin.php?page=fp-finance-hub-settings'),
             ],

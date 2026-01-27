@@ -1,12 +1,12 @@
-# 🆓 Implementazione Nordigen (GRATUITO) - FP Finance Hub
+# 🆓 Implementazione GoCardless Bank Account Data (GRATUITO) - FP Finance Hub
 
 ## 📋 **OVERVIEW**
 
-**Nordigen** (ora parte di GoCardless) offre accesso **completamente gratuito** alle API PSD2 per Account Information Services (AIS). Perfetto per lettura saldi e transazioni senza costi.
+**GoCardless Bank Account Data** (ex Nordigen) offre accesso **completamente gratuito** alle API PSD2 per Account Information Services (AIS). Perfetto per lettura saldi e transazioni senza costi.
 
 ---
 
-## 🎯 **PERCHÉ NORDIGEN GRATUITO**
+## 🎯 **PERCHÉ GOCARDLESS BANK ACCOUNT DATA GRATUITO**
 
 ✅ **100% Gratuito** per AIS (lettura dati conti)
 ✅ **Senza limiti** su numero di conti
@@ -21,9 +21,9 @@
 
 ## 🚀 **SETUP INIZIALE**
 
-### **Step 1: Account Nordigen**
+### **Step 1: Account GoCardless Bank Account Data**
 
-1. Registrati su https://nordigen.com (gratuito)
+1. Registrati su https://bankaccountdata.gocardless.com (gratuito)
 2. Crea nuova **Institution**
 3. Ottieni:
    - `secret_id`

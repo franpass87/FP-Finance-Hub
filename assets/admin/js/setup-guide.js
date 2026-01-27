@@ -83,7 +83,7 @@
             const $stepCard = $('.fp-fh-wizard-step-card');
             if ($stepCard.find('.fp-fh-guide-success').length === 0) {
                 const message = step === 'nordigen' 
-                    ? '✅ Credenziali Nordigen configurate correttamente! Ricarica la pagina per continuare.'
+                    ? '✅ Credenziali GoCardless configurate correttamente! Ricarica la pagina per continuare.'
                     : '✅ Credenziali Aruba configurate correttamente! Ricarica la pagina per continuare.';
                 
                 const $success = $('<div class="fp-fh-guide-success"><p>' + message + '</p></div>');

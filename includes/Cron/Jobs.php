@@ -48,7 +48,7 @@ class Jobs {
             wp_schedule_event(time(), 'daily', 'fp_finance_hub_sync_aruba_daily');
         }
         
-        // Sync Nordigen ogni 6 ore (max 4/giorno)
+        // Sync GoCardless ogni 6 ore (max 4/giorno)
         if (!wp_next_scheduled('fp_finance_hub_sync_nordigen_accounts')) {
             wp_schedule_event(time(), 'fp_finance_hub_6hours', 'fp_finance_hub_sync_nordigen_accounts');
         }
@@ -107,7 +107,7 @@ class Jobs {
     public function add_cron_schedules($schedules) {
         $schedules['fp_finance_hub_6hours'] = [
             'interval' => 6 * HOUR_IN_SECONDS,
-            'display' => 'Ogni 6 ore (max 4/giorno Nordigen)',
+            'display' => 'Ogni 6 ore (max 4/giorno GoCardless)',
         ];
         
         return $schedules;
@@ -125,7 +125,7 @@ class Jobs {
     }
     
     /**
-     * Sync Nordigen conti
+     * Sync GoCardless conti
      */
     public static function sync_nordigen_accounts() {
         $nordigen_sync = new NordigenSyncService();

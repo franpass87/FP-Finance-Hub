@@ -79,7 +79,7 @@ class SetupGuidePage {
                     <li class="fp-fh-wizard-step <?php echo $current_step === 'nordigen' ? 'active' : ''; ?> <?php echo $progress['steps']['nordigen_configured']['completed'] ? 'completed' : ''; ?>" data-step="nordigen">
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>" class="fp-fh-wizard-step-link">
                             <span class="fp-fh-wizard-step-number">2</span>
-                            <span class="fp-fh-wizard-step-label">Nordigen</span>
+                            <span class="fp-fh-wizard-step-label">GoCardless</span>
                         </a>
                     </li>
                     <li class="fp-fh-wizard-step <?php echo $current_step === 'bank-connection' ? 'active' : ''; ?> <?php echo $progress['steps']['bank_connected']['completed'] ? 'completed' : ''; ?>" data-step="bank-connection">
@@ -157,7 +157,7 @@ class SetupGuidePage {
                         <div class="fp-fh-feature-card">
                             <div class="fp-fh-feature-icon">🏦</div>
                             <h3 class="fp-fh-feature-title">Conti Bancari</h3>
-                            <p class="fp-fh-feature-description">Collega i tuoi conti tramite Open Banking (Nordigen) per sincronizzazione automatica e gratuita.</p>
+                            <p class="fp-fh-feature-description">Collega i tuoi conti tramite Open Banking (GoCardless) per sincronizzazione automatica e gratuita.</p>
                         </div>
                         
                         <div class="fp-fh-feature-card">
@@ -170,7 +170,7 @@ class SetupGuidePage {
                     <div class="fp-fh-guide-info fp-fh-mt-6">
                         <h3 class="fp-fh-text-lg fp-fh-font-semibold fp-fh-mb-4">Cosa ti serve:</h3>
                         <ul class="fp-fh-list fp-fh-list-check">
-                            <li>Account Nordigen gratuito (per Open Banking)</li>
+                            <li>Account GoCardless Bank Account Data gratuito (per Open Banking)</li>
                             <li>Credenziali Aruba Fatturazione Elettronica (API Key e Username)</li>
                             <li>Circa 10-15 minuti del tuo tempo</li>
                         </ul>
@@ -188,7 +188,7 @@ class SetupGuidePage {
     }
     
     /**
-     * Render step Configurazione Nordigen
+     * Render step Configurazione GoCardless Bank Account Data
      */
     private static function render_nordigen_step($progress) {
         $is_configured = $progress['steps']['nordigen_configured']['completed'];
@@ -196,31 +196,31 @@ class SetupGuidePage {
         ?>
         <div class="fp-fh-card fp-fh-wizard-step-card">
             <div class="fp-fh-card-header">
-                <h2 class="fp-fh-card-title">🔧 Configurazione Nordigen (Open Banking)</h2>
+                <h2 class="fp-fh-card-title">🔧 Configurazione GoCardless Bank Account Data (Open Banking)</h2>
                 <?php if ($is_configured) : ?>
                     <span class="fp-fh-badge fp-fh-badge-success">✅ Completato</span>
                 <?php endif; ?>
             </div>
             <div class="fp-fh-card-body">
                 <div class="fp-fh-guide-step">
-                    <p class="fp-fh-text-base fp-fh-mb-6">Nordigen ti permette di collegare i tuoi conti bancari in modo sicuro e gratuito tramite Open Banking.</p>
+                    <p class="fp-fh-text-base fp-fh-mb-6">GoCardless Bank Account Data (ex Nordigen) ti permette di collegare i tuoi conti bancari in modo sicuro e gratuito tramite Open Banking.</p>
                     
                     <!-- Step 1: Registrazione -->
                     <div class="fp-fh-guide-substep fp-fh-mb-6">
                         <div class="fp-fh-guide-substep-header">
                             <span class="fp-fh-guide-substep-number">1</span>
-                            <h3 class="fp-fh-guide-substep-title">Registrati su Nordigen</h3>
+                            <h3 class="fp-fh-guide-substep-title">Registrati su GoCardless Bank Account Data</h3>
                         </div>
                         <div class="fp-fh-guide-substep-content">
                             <ol class="fp-fh-list fp-fh-list-ordered">
-                                <li>Vai su <a href="https://nordigen.com" target="_blank" rel="noopener">nordigen.com</a> (gratuito per sempre)</li>
+                                <li>Vai su <a href="https://bankaccountdata.gocardless.com" target="_blank" rel="noopener">bankaccountdata.gocardless.com</a> (gratuito per sempre)</li>
                                 <li>Clicca su "Sign Up" o "Registrati"</li>
                                 <li>Compila il form di registrazione con la tua email</li>
                                 <li>Verifica la tua email</li>
-                                <li>Accedi al dashboard Nordigen</li>
+                                <li>Accedi al dashboard GoCardless</li>
                             </ol>
                             <div class="fp-fh-guide-tip fp-fh-mt-4">
-                                <strong>💡 Suggerimento:</strong> Nordigen è completamente gratuito e sicuro. I tuoi dati bancari non vengono mai condivisi con terze parti.
+                                <strong>💡 Suggerimento:</strong> GoCardless Bank Account Data è completamente gratuito e sicuro. I tuoi dati bancari non vengono mai condivisi con terze parti.
                             </div>
                         </div>
                     </div>
@@ -235,7 +235,7 @@ class SetupGuidePage {
                             <ol class="fp-fh-list fp-fh-list-ordered">
                                 <li>Dopo aver effettuato l'accesso, vai nella sezione "API" o "Credenziali"</li>
                                 <li>Clicca su "Crea nuove credenziali" o "Generate Credentials"</li>
-                                <li>Nordigen genererà automaticamente <strong>Secret ID</strong> e <strong>Secret Key</strong></li>
+                                <li>GoCardless genererà automaticamente <strong>Secret ID</strong> e <strong>Secret Key</strong></li>
                                 <li><strong>Importante:</strong> Copia subito le credenziali - la Secret Key viene mostrata solo una volta!</li>
                                 <li>Salva le credenziali in un posto sicuro (password manager consigliato)</li>
                             </ol>
@@ -255,7 +255,7 @@ class SetupGuidePage {
                             <?php if (!$is_configured) : ?>
                                 <ol class="fp-fh-list fp-fh-list-ordered">
                                     <li>Vai alla pagina <strong>Impostazioni</strong> del plugin</li>
-                                    <li>Nella sezione "Integrazione Nordigen (Open Banking)"</li>
+                                    <li>Nella sezione "Integrazione GoCardless Bank Account Data (Open Banking)"</li>
                                     <li>Incolla il <strong>Secret ID</strong> nel campo "Secret ID"</li>
                                     <li>Incolla il <strong>Secret Key</strong> nel campo "Secret Key"</li>
                                     <li>Clicca su "Salva Impostazioni"</li>
@@ -272,7 +272,7 @@ class SetupGuidePage {
                                 </div>
                             <?php else : ?>
                                 <div class="fp-fh-guide-success">
-                                    <p>✅ Credenziali Nordigen configurate correttamente!</p>
+                                    <p>✅ Credenziali GoCardless configurate correttamente!</p>
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -307,9 +307,9 @@ class SetupGuidePage {
             <div class="fp-fh-card fp-fh-wizard-step-card">
                 <div class="fp-fh-card-body">
                     <div class="fp-fh-guide-error">
-                        <p>⚠️ Prima devi configurare le credenziali Nordigen. Vai allo step precedente.</p>
+                        <p>⚠️ Prima devi configurare le credenziali GoCardless. Vai allo step precedente.</p>
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>" class="fp-fh-btn fp-fh-btn-primary fp-fh-mt-4">
-                            Configura Nordigen →
+                            Configura GoCardless →
                         </a>
                     </div>
                 </div>

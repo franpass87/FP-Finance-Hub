@@ -2,7 +2,7 @@
 /**
  * Bank Connections Page
  * 
- * UI collegamento Open Banking (Nordigen OAuth)
+ * UI collegamento Open Banking (GoCardless Bank Account Data OAuth)
  */
 
 namespace FP\FinanceHub\Admin\Pages;
@@ -50,10 +50,10 @@ class BankConnectionsPage {
             <?php if (!$nordigen_configured) : ?>
                 <div class="fp-fh-help-banner fp-fh-help-banner-error">
                     <div class="fp-fh-help-banner-header">
-                        <strong>⚠️ Credenziali Nordigen Mancanti</strong>
+                        <strong>⚠️ Credenziali GoCardless Mancanti</strong>
                     </div>
                     <div class="fp-fh-help-banner-message">
-                        Prima di collegare un conto bancario, devi configurare le credenziali Nordigen nelle Impostazioni. 
+                        Prima di collegare un conto bancario, devi configurare le credenziali GoCardless Bank Account Data nelle Impostazioni. 
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>">Segui la guida passo-passo</a> per ottenerle gratuitamente.
                     </div>
                     <div class="fp-fh-help-banner-actions">
@@ -70,7 +70,7 @@ class BankConnectionsPage {
             <div class="fp-fh-notice fp-fh-notice-info fp-fh-mb-6">
                 <div class="fp-fh-notice-icon">ℹ️</div>
                 <div class="fp-fh-notice-content">
-                    <div class="fp-fh-notice-title">🆓 Nordigen Gratuito</div>
+                    <div class="fp-fh-notice-title">🆓 GoCardless Bank Account Data Gratuito</div>
                     <div class="fp-fh-notice-message">Sincronizzazione automatica fino a 4 volte al giorno, completamente gratuita per sempre!</div>
                 </div>
             </div>
@@ -227,12 +227,12 @@ class BankConnectionsPage {
                 'provider' => 'nordigen',
                 'connection_id' => EncryptionService::encrypt($requisition_id),
                 'account_id' => $account_id,
-                'bank_name' => $details['institutionId'] ?? 'Nordigen',
+                'bank_name' => $details['institutionId'] ?? 'GoCardless',
                 'account_type' => $details['cashAccountType'] ?? null,
                 'account_name' => $details['name'] ?? null,
                 'iban' => $details['iban'] ?? null,
                 'currency' => $balance['balanceAmount']['currency'] ?? 'EUR',
-                'access_token' => '', // Nordigen non usa access_token per account
+                'access_token' => '', // GoCardless non usa access_token per account
                 'refresh_token' => EncryptionService::encrypt($requisition_id),
                 'token_expires_at' => date('Y-m-d H:i:s', strtotime('+90 days')),
                 'next_sync_at' => current_time('mysql'),

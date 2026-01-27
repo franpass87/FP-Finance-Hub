@@ -107,7 +107,7 @@ class BankAccountsPage {
             
             <div class="fp-open-banking-section fp-fh-card">
                 <div class="fp-fh-card-body">
-                    <h2 class="fp-fh-card-title">🔗 Collegamento Automatico (Nordigen)</h2>
+                    <h2 class="fp-fh-card-title">🔗 Collegamento Automatico (GoCardless)</h2>
                     <p>Collega i tuoi conti bancari automaticamente tramite Open Banking (gratuito).</p>
                     <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-connections'); ?>" class="fp-fh-btn fp-fh-btn-primary">
                         Collega Conto Bancario

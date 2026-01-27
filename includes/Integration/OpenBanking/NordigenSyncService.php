@@ -1,8 +1,8 @@
 <?php
 /**
- * Nordigen Sync Service
+ * GoCardless Bank Account Data Sync Service
  * 
- * Sincronizzazione automatica conti Nordigen (max 4/giorno)
+ * Sincronizzazione automatica conti GoCardless (max 4/giorno)
  */
 
 namespace FP\FinanceHub\Integration\OpenBanking;
@@ -47,7 +47,7 @@ class NordigenSyncService {
         
         // Max 4 sync/giorno (gratuito)
         if ($syncs_today >= 4) {
-            error_log("[FP Finance Hub] Limite 4 sync/giorno raggiunto (Nordigen gratuito)");
+            error_log("[FP Finance Hub] Limite 4 sync/giorno raggiunto (GoCardless gratuito)");
             return;
         }
         
@@ -85,7 +85,7 @@ class NordigenSyncService {
         
         $table = $wpdb->prefix . 'fp_finance_hub_bank_connections';
         
-        // Nordigen usa requisition_id come connection_id
+        // GoCardless usa requisition_id come connection_id
         $requisition_id = EncryptionService::decrypt($account->connection_id);
         
         if (is_wp_error($requisition_id)) {
@@ -151,7 +151,7 @@ class NordigenSyncService {
     }
     
     /**
-     * Trova o crea BankAccount per connessione Nordigen
+     * Trova o crea BankAccount per connessione GoCardless
      */
     private function get_or_create_bank_account($connection) {
         global $wpdb;
@@ -203,7 +203,7 @@ class NordigenSyncService {
                 continue;
             }
             
-            // Converti formato Nordigen a formato nostro
+            // Converti formato GoCardless a formato nostro
             $transaction_data = [
                 'transaction_date' => isset($tx['bookingDate']) ? date('Y-m-d', strtotime($tx['bookingDate'])) : 
                                      (isset($tx['valueDate']) ? date('Y-m-d', strtotime($tx['valueDate'])) : current_time('Y-m-d')),

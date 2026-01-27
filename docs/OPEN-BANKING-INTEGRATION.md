@@ -67,7 +67,7 @@
 - ✅ Priorità: costo zero vs automatismo
 
 **Setup:**
-1. Account gratuito su https://nordigen.com (ora parte di GoCardless)
+1. Account gratuito su https://bankaccountdata.gocardless.com (ex Nordigen, ora GoCardless Bank Account Data)
 2. Crea nuova app
 3. Ottieni `secret_id` e `secret_key`
 4. Implementa OAuth flow (simile a TrueLayer)
