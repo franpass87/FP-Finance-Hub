@@ -27,10 +27,10 @@ class SettingsPage {
         $setup_service = SetupService::get_instance();
         $aruba_api_key = get_option('fp_finance_hub_aruba_api_key', '');
         $aruba_username = get_option('fp_finance_hub_aruba_username', '');
-        $nordigen_secret_id = get_option('fp_finance_hub_nordigen_secret_id', '');
-        $nordigen_secret_key = get_option('fp_finance_hub_nordigen_secret_key', '');
+        $yapily_app_id = get_option('fp_finance_hub_yapily_app_id', '');
+        $yapily_app_secret = get_option('fp_finance_hub_yapily_app_secret', '');
         
-        $nordigen_configured = $setup_service->is_nordigen_configured();
+        $yapily_configured = $setup_service->is_yapily_configured();
         $aruba_configured = $setup_service->is_aruba_configured();
         
         ?>
@@ -43,7 +43,7 @@ class SettingsPage {
             </div>
             
             <!-- Help Banner -->
-            <?php if (!$nordigen_configured || !$aruba_configured) : ?>
+            <?php if (!$yapily_configured || !$aruba_configured) : ?>
                 <div class="fp-fh-help-banner fp-fh-help-banner-warning">
                     <div class="fp-fh-help-banner-header">
                         <strong>💡 Serve Aiuto?</strong>
@@ -106,48 +106,48 @@ class SettingsPage {
                 </div>
                 
                 <div class="fp-fh-card-header fp-fh-mt-6">
-                    <h2 class="fp-fh-card-title">Integrazione GoCardless Bank Account Data (Open Banking)</h2>
-                    <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>" class="fp-fh-help-link" target="_blank">
+                    <h2 class="fp-fh-card-title">Integrazione Yapily (Open Banking)</h2>
+                    <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>" class="fp-fh-help-link" target="_blank">
                         📖 Guida Completa →
                     </a>
                 </div>
                 <div class="fp-fh-card-body">
-                    <?php if (!$nordigen_configured) : ?>
+                    <?php if (!$yapily_configured) : ?>
                         <div class="fp-fh-guide-tip fp-fh-mb-4">
-                            <strong>💡 GoCardless Bank Account Data è completamente gratuito!</strong> 
-                            Se non hai ancora un account, <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>">segui la guida</a> per registrarti e ottenere le credenziali.
+                            <strong>💡 Yapily offre account gratuito per sviluppatori!</strong> 
+                            Se non hai ancora un account, <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>">segui la guida</a> per registrarti e ottenere le credenziali.
                         </div>
                     <?php endif; ?>
                     
                     <div class="fp-fh-form-group">
-                        <label for="nordigen_secret_id" class="fp-fh-form-label">
-                            Secret ID
+                        <label for="yapily_app_id" class="fp-fh-form-label">
+                            Application ID
                             <span class="fp-fh-tooltip">
-                                <span class="fp-fh-help-icon" title="Il Secret ID viene generato automaticamente quando crei le credenziali su bankaccountdata.gocardless.com. Lo trovi nel dashboard GoCardless nella sezione API.">?</span>
-                                <span class="fp-fh-tooltip-content">Il Secret ID è una credenziale generata automaticamente da GoCardless quando crei le credenziali API. Lo trovi nel dashboard GoCardless Bank Account Data dopo la registrazione gratuita.</span>
+                                <span class="fp-fh-help-icon" title="L'Application ID viene generato quando crei un'applicazione su console.yapily.com. Lo trovi nel dashboard Yapily nella sezione Applications.">?</span>
+                                <span class="fp-fh-tooltip-content">L'Application ID (Application UUID) viene generato quando crei una nuova applicazione nel Yapily Console. Lo trovi dopo aver creato l'applicazione su console.yapily.com.</span>
                             </span>
                         </label>
-                        <input type="text" name="nordigen_secret_id" id="nordigen_secret_id" 
-                               value="<?php echo esc_attr($nordigen_secret_id); ?>" class="fp-fh-input">
-                        <p class="fp-fh-form-description">Inserisci il tuo Secret ID GoCardless (gratuito)</p>
-                        <?php if (!$nordigen_configured) : ?>
-                            <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=nordigen'); ?>" class="fp-fh-help-link">Come ottenerlo? →</a>
+                        <input type="text" name="yapily_app_id" id="yapily_app_id" 
+                               value="<?php echo esc_attr($yapily_app_id); ?>" class="fp-fh-input">
+                        <p class="fp-fh-form-description">Inserisci il tuo Application ID Yapily</p>
+                        <?php if (!$yapily_configured) : ?>
+                            <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>" class="fp-fh-help-link">Come ottenerlo? →</a>
                         <?php endif; ?>
                     </div>
                     <div class="fp-fh-form-group">
-                        <label for="nordigen_secret_key" class="fp-fh-form-label">
-                            Secret Key
+                        <label for="yapily_app_secret" class="fp-fh-form-label">
+                            Application Secret
                             <span class="fp-fh-tooltip">
-                                <span class="fp-fh-help-icon" title="⚠️ IMPORTANTE: La Secret Key viene mostrata solo una volta quando la generi. Copiala subito e salvala in un posto sicuro!">?</span>
-                                <span class="fp-fh-tooltip-content">La Secret Key viene generata insieme al Secret ID, ma viene mostrata solo una volta. Se la perdi, dovrai generarne una nuova. Salvala in un password manager.</span>
+                                <span class="fp-fh-help-icon" title="⚠️ IMPORTANTE: L'Application Secret viene mostrato solo una volta quando lo generi. Copialo subito e salvalo in un posto sicuro!">?</span>
+                                <span class="fp-fh-tooltip-content">L'Application Secret viene generato insieme all'Application ID, ma viene mostrato solo una volta. Se lo perdi, dovrai generarne uno nuovo. Salvalo in un password manager.</span>
                             </span>
                         </label>
-                        <input type="password" name="nordigen_secret_key" id="nordigen_secret_key" 
-                               value="<?php echo esc_attr($nordigen_secret_key); ?>" class="fp-fh-input">
-                        <p class="fp-fh-form-description">Inserisci la tua Secret Key GoCardless</p>
-                        <?php if (!$nordigen_configured) : ?>
+                        <input type="password" name="yapily_app_secret" id="yapily_app_secret" 
+                               value="<?php echo esc_attr($yapily_app_secret); ?>" class="fp-fh-input">
+                        <p class="fp-fh-form-description">Inserisci la tua Application Secret Yapily</p>
+                        <?php if (!$yapily_configured) : ?>
                             <div class="fp-fh-guide-warning fp-fh-mt-2">
-                                <strong>⚠️ Attenzione:</strong> La Secret Key viene mostrata solo una volta. Se non l'hai salvata, devi generarne una nuova su bankaccountdata.gocardless.com
+                                <strong>⚠️ Attenzione:</strong> L'Application Secret viene mostrato solo una volta. Se non l'hai salvato, devi generarne uno nuovo su console.yapily.com
                             </div>
                         <?php endif; ?>
                     </div>
@@ -410,11 +410,11 @@ class SettingsPage {
         if (isset($_POST['aruba_username'])) {
             update_option('fp_finance_hub_aruba_username', sanitize_text_field($_POST['aruba_username']));
         }
-        if (isset($_POST['nordigen_secret_id'])) {
-            update_option('fp_finance_hub_nordigen_secret_id', sanitize_text_field($_POST['nordigen_secret_id']));
+        if (isset($_POST['yapily_app_id'])) {
+            update_option('fp_finance_hub_yapily_app_id', sanitize_text_field($_POST['yapily_app_id']));
         }
-        if (isset($_POST['nordigen_secret_key'])) {
-            update_option('fp_finance_hub_nordigen_secret_key', sanitize_text_field($_POST['nordigen_secret_key']));
+        if (isset($_POST['yapily_app_secret'])) {
+            update_option('fp_finance_hub_yapily_app_secret', sanitize_text_field($_POST['yapily_app_secret']));
         }
         
         // Impostazioni Intelligence

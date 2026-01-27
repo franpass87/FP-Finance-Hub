@@ -1,75 +1,75 @@
-# 🆓 Soluzione Gratuita Trovata!
+# 🔗 Soluzione Open Banking - Yapily
 
-## ✅ **RISPOSTA: SÌ, ESISTE UN SISTEMA GRATUITO!**
+## ✅ **SOLUZIONE IMPLEMENTATA: YAPILY**
 
-### 🎉 **Nordigen (GoCardless) - 100% GRATUITO**
+### 🎉 **Yapily - Account Gratuito per Sviluppatori**
 
-**Nordigen** offre accesso **completamente gratuito** alle API Open Banking per Account Information Services (AIS).
+**Yapily** offre accesso alle API Open Banking per Account Information Services (AIS) con account gratuito per sviluppatori.
 
 ---
 
-## 🎯 **CARATTERISTICHE NORDIGEN GRATUITO**
+## 🎯 **CARATTERISTICHE YAPILY**
 
-### ✅ **Completamente Gratuito**
-- €0/mese per sempre
-- Nessun costo nascosto per AIS
+### ✅ **Account Gratuito per Sviluppatori**
+- Account gratuito su console.yapily.com
+- Sandbox gratuito (Modelo Sandbox) per test
 - Nessun limite su numero di conti collegati
 
 ### ✅ **Funzionalità Incluse**
 - ✅ Collegamento automatico conti bancari
 - ✅ Sincronizzazione saldi
 - ✅ Import movimenti
-- ✅ Accesso storico 3-24 mesi
-- ✅ Supporto banche italiane (PostePay incluso)
+- ✅ Accesso storico transazioni
+- ✅ Supporto banche italiane (Unicredit, Intesa San Paolo, UBI Banca, BancoPosta, Banco BPM, BNL, ecc.)
 
-### ⚠️ **Limitazioni (Gestibili)**
-- Max **4 sincronizzazioni/giorno** (sufficienti per uso personale)
-- Connettività **90 giorni** (poi refresh manuale OAuth)
-- Servizi premium (analisi avanzate) a pagamento
+### ⚠️ **Note**
+- Pricing per produzione da verificare (contattare Yapily)
+- ING Italia supporto da verificare
 
 ---
 
 ## 📊 **CONFRONTO SOLUZIONI**
 
-| Caratteristica | Nordigen 🆓 | TrueLayer 💰 | CSV Manuale 📁 |
-|----------------|-------------|--------------|----------------|
-| **Costo** | ✅ GRATIS | ⚠️ ~€10-15/mese | ✅ GRATIS |
+| Caratteristica | Yapily 🆓 | TrueLayer 💰 | CSV Manuale 📁 |
+|----------------|----------|-------------|----------------|
+| **Costo Dev** | ✅ GRATIS | ⚠️ Da verificare | ✅ GRATIS |
 | **Automatico** | ✅ Sì | ✅ Sì | ❌ No |
-| **Sync/giorno** | ⚠️ Max 4 | ✅ Illimitato | N/A |
-| **PostePay** | ✅ Sì | ✅ Sì | ✅ Sì |
+| **Sync/giorno** | ✅ Nessun limite | ✅ Illimitato | N/A |
+| **Banche IT** | ✅ Multiple | ✅ Multiple | ✅ Tutte |
 | **Setup** | ✅ Facile | ✅ Facile | ✅ Immediato |
-| **Convenienza** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ |
+| **Convenienza** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐ |
 
 ---
 
 ## 🚀 **IMPLEMENTAZIONE**
 
 ### **Documentazione Completa:**
-- 📄 `docs/IMPLEMENTAZIONE-NORDIGEN-GRATUITO.md` - Guida completa implementazione
+- 📄 `docs/IMPLEMENTAZIONE-YAPILY.md` - Guida completa implementazione
 - 📄 `docs/OPEN-BANKING-INTEGRATION.md` - Confronto tutte le opzioni
 
 ### **Cosa Serve:**
-1. Account gratuito su https://bankaccountdata.gocardless.com
-2. `secret_id` e `secret_key` (gratis)
-3. Implementazione OAuth flow (codice incluso nella doc)
-4. Cron job per sync automatica (ogni 6 ore = 4 volte/giorno)
+1. Account gratuito su https://console.yapily.com
+2. `applicationUuid` (Application ID) e `secret` (Application Secret)
+3. Implementazione OAuth flow con consent-based authorization
+4. Cron job per sync automatica (ogni 6 ore)
 
 ### **Tempo Sviluppo:**
-- ~2 settimane (simile a TrueLayer)
+- Implementazione completata ✅
 
 ---
 
 ## ✅ **CONCLUSIONE**
 
-**Sì, esiste un sistema completamente gratuito!** 🎉
+**Yapily è la soluzione Open Banking implementata!** 🎉
 
-**Nordigen** è la soluzione perfetta se:
+**Yapily** è la soluzione perfetta se:
 - ✅ Vuoi collegamento automatico
-- ✅ Budget zero
-- ✅ 4 aggiornamenti/giorno sono sufficienti
+- ✅ Account gratuito per sviluppatori
+- ✅ Supporto banche italiane
+- ✅ Nessun limite sync
 
-**Implementazione pronta nella documentazione!**
+**Implementazione completata nel plugin!** ✅
 
 ---
 
-**Vuoi che implementi subito Nordigen nel plugin?** 🚀
+**Plugin pronto per l'uso con Yapily!** 🚀

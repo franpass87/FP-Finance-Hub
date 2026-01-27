@@ -41,7 +41,7 @@
             }
             
             // Per step che richiedono configurazione, verifica ogni 5 secondi
-            if (['nordigen', 'aruba'].includes(currentStep)) {
+            if (['yapily', 'aruba'].includes(currentStep)) {
                 setInterval(function() {
                     SetupGuide.verifyStepCompletion(currentStep);
                 }, 5000);
@@ -63,9 +63,9 @@
                     if (response.success && response.data) {
                         const progress = response.data;
                         
-                        if (step === 'nordigen' && progress.steps.nordigen_configured.completed) {
+                        if (step === 'yapily' && progress.steps.yapily_configured && progress.steps.yapily_configured.completed) {
                             // Mostra messaggio di successo e suggerimento per continuare
-                            SetupGuide.showStepCompleted('nordigen');
+                            SetupGuide.showStepCompleted('yapily');
                         }
                         
                         if (step === 'aruba' && progress.steps.aruba_configured.completed) {
@@ -82,8 +82,8 @@
         showStepCompleted: function(step) {
             const $stepCard = $('.fp-fh-wizard-step-card');
             if ($stepCard.find('.fp-fh-guide-success').length === 0) {
-                const message = step === 'nordigen' 
-                    ? '✅ Credenziali GoCardless configurate correttamente! Ricarica la pagina per continuare.'
+                const message = step === 'yapily' 
+                    ? '✅ Credenziali Yapily configurate correttamente! Ricarica la pagina per continuare.'
                     : '✅ Credenziali Aruba configurate correttamente! Ricarica la pagina per continuare.';
                 
                 const $success = $('<div class="fp-fh-guide-success"><p>' + message + '</p></div>');

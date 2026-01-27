@@ -1,13 +1,13 @@
 <?php
 /**
- * GoCardless Bank Account Data Sync Service
+ * Yapily Sync Service
  * 
- * Sincronizzazione automatica conti GoCardless (max 4/giorno)
+ * Sincronizzazione automatica conti Yapily
  */
 
 namespace FP\FinanceHub\Integration\OpenBanking;
 
-use FP\FinanceHub\Integration\OpenBanking\NordigenService;
+use FP\FinanceHub\Integration\OpenBanking\YapilyService;
 use FP\FinanceHub\Integration\OpenBanking\EncryptionService;
 use FP\FinanceHub\Services\BankService;
 use FP\FinanceHub\Database\Models\BankAccount as BankAccountModel;
@@ -18,45 +18,31 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class NordigenSyncService {
+class YapilySyncService {
     
-    private $nordigen;
+    private $yapily;
     
     /**
      * Constructor
      */
     public function __construct() {
-        $this->nordigen = new NordigenService();
+        $this->yapily = new YapilyService();
     }
     
     /**
-     * Sincronizza tutti i conti attivi (max 4/giorno)
+     * Sincronizza tutti i conti attivi
      */
     public function sync_all_accounts() {
         global $wpdb;
         
         $table = $wpdb->prefix . 'fp_finance_hub_bank_connections';
         
-        // Verifica quante sync già fatte oggi
-        $syncs_today = (int) $wpdb->get_var(
-            "SELECT COUNT(*) FROM {$table}
-            WHERE is_active = 1
-            AND sync_enabled = 1
-            AND DATE(last_sync_at) = CURDATE()"
-        );
-        
-        // Max 4 sync/giorno (gratuito)
-        if ($syncs_today >= 4) {
-            error_log("[FP Finance Hub] Limite 4 sync/giorno raggiunto (GoCardless gratuito)");
-            return;
-        }
-        
         // Trova conti da sincronizzare
         $accounts = $wpdb->get_results(
             "SELECT * FROM {$table}
             WHERE is_active = 1
             AND sync_enabled = 1
-            AND provider = 'nordigen'
+            AND provider = 'yapily'
             AND next_sync_at <= NOW()
             ORDER BY next_sync_at ASC"
         );
@@ -85,11 +71,18 @@ class NordigenSyncService {
         
         $table = $wpdb->prefix . 'fp_finance_hub_bank_connections';
         
-        // GoCardless usa requisition_id come connection_id
-        $requisition_id = EncryptionService::decrypt($account->connection_id);
+        // Yapily usa consent_id come connection_id
+        $consent_id = EncryptionService::decrypt($account->connection_id);
         
-        if (is_wp_error($requisition_id)) {
-            error_log("[FP Finance Hub] Errore decriptazione requisition_id per account {$account->id}");
+        if (is_wp_error($consent_id)) {
+            error_log("[FP Finance Hub] Errore decriptazione consent_id per account {$account->id}");
+            return false;
+        }
+        
+        // Verifica che il consent sia ancora valido
+        $consent = $this->yapily->get_consent($consent_id);
+        if (is_wp_error($consent) || !isset($consent['status']) || $consent['status'] !== 'AUTHORIZED') {
+            error_log("[FP Finance Hub] Consent non valido o scaduto per account {$account->id}");
             return false;
         }
         
@@ -102,9 +95,9 @@ class NordigenSyncService {
             }
             
             // 1. Ottieni saldo
-            $balance = $this->nordigen->get_balance($account->account_id);
-            if (!is_wp_error($balance) && isset($balance['balanceAmount'])) {
-                $amount = floatval($balance['balanceAmount']['amount']) / 100; // Centesimi → Euro
+            $balance = $this->yapily->get_balance($account->account_id, $consent_id);
+            if (!is_wp_error($balance) && isset($balance['amount'])) {
+                $amount = floatval($balance['amount']);
                 
                 // Aggiorna saldo nel conto bancario
                 BankAccountModel::update_balance($bank_account->id, $amount);
@@ -115,8 +108,9 @@ class NordigenSyncService {
                 ? date('Y-m-d', strtotime($account->last_sync_at . ' -1 day'))
                 : date('Y-m-d', strtotime('-90 days'));
             
-            $transactions = $this->nordigen->get_transactions(
+            $transactions = $this->yapily->get_transactions(
                 $account->account_id,
+                $consent_id,
                 $from_date
             );
             
@@ -125,7 +119,7 @@ class NordigenSyncService {
                 $transactions_imported = $this->import_transactions($bank_account, $transactions);
             }
             
-            // Aggiorna timestamp sync (minimo 6 ore = 4 volte/giorno max)
+            // Aggiorna timestamp sync (ogni 6 ore)
             $next_sync = date('Y-m-d H:i:s', strtotime("+6 hours"));
             $wpdb->update(
                 $table,
@@ -151,7 +145,7 @@ class NordigenSyncService {
     }
     
     /**
-     * Trova o crea BankAccount per connessione GoCardless
+     * Trova o crea BankAccount per connessione Yapily
      */
     private function get_or_create_bank_account($connection) {
         global $wpdb;
@@ -203,15 +197,15 @@ class NordigenSyncService {
                 continue;
             }
             
-            // Converti formato GoCardless a formato nostro
+            // Converti formato Yapily a formato nostro
             $transaction_data = [
-                'transaction_date' => isset($tx['bookingDate']) ? date('Y-m-d', strtotime($tx['bookingDate'])) : 
-                                     (isset($tx['valueDate']) ? date('Y-m-d', strtotime($tx['valueDate'])) : current_time('Y-m-d')),
-                'value_date' => isset($tx['valueDate']) ? date('Y-m-d', strtotime($tx['valueDate'])) : null,
-                'amount' => isset($tx['transactionAmount']['amount']) ? floatval($tx['transactionAmount']['amount']) / 100 : 0, // Centesimi → Euro
-                'description' => $tx['remittanceInformationUnstructured'] ?? 
-                                (isset($tx['remittanceInformationUnstructuredArray'][0]) ? $tx['remittanceInformationUnstructuredArray'][0] : 'N/A'),
-                'reference' => $tx['transactionId'] ?? $tx['internalTransactionId'] ?? null,
+                'transaction_date' => isset($tx['date']) ? date('Y-m-d', strtotime($tx['date'])) : 
+                                     (isset($tx['bookingDateTime']) ? date('Y-m-d', strtotime($tx['bookingDateTime'])) : current_time('Y-m-d')),
+                'value_date' => isset($tx['valueDateTime']) ? date('Y-m-d', strtotime($tx['valueDateTime'])) : null,
+                'amount' => isset($tx['amount']) ? floatval($tx['amount']) : 0,
+                'description' => $tx['description'] ?? 
+                                (isset($tx['remittanceInformationUnstructured']) ? $tx['remittanceInformationUnstructured'] : 'N/A'),
+                'reference' => $tx['id'] ?? $tx['transactionId'] ?? null,
             ];
             
             // Importa movimento (con categorizzazione automatica)
@@ -232,13 +226,10 @@ class NordigenSyncService {
         
         $table = $wpdb->prefix . 'fp_finance_hub_bank_transactions';
         
-        $external_id = $tx['transactionId'] ?? $tx['internalTransactionId'] ?? null;
+        $external_id = $tx['id'] ?? $tx['transactionId'] ?? null;
         if (!$external_id) {
             return false;
         }
-        
-        $date = isset($tx['bookingDate']) ? date('Y-m-d', strtotime($tx['bookingDate'])) : null;
-        $amount = isset($tx['transactionAmount']['amount']) ? floatval($tx['transactionAmount']['amount']) / 100 : 0;
         
         $exists = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table}

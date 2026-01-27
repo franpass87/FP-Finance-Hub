@@ -501,7 +501,7 @@ class Schema {
         $sql = "CREATE TABLE $table_name (
             id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             user_id BIGINT(20) UNSIGNED NOT NULL,
-            provider VARCHAR(50) DEFAULT 'nordigen',
+            provider VARCHAR(50) DEFAULT 'yapily',
             connection_id VARCHAR(255) NOT NULL,
             account_id VARCHAR(255) NOT NULL,
             bank_name VARCHAR(255) NULL,

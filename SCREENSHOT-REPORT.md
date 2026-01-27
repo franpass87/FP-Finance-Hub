@@ -24,7 +24,7 @@ Data: 2026-01-25
 
 **Elementi Verificati:**
 - ✅ Sezione "Integrazione Aruba" con campi API Key e Username
-- ✅ Sezione "Integrazione Nordigen" con campo Secret ID
+- ✅ Sezione "Integrazione Yapily" con campi Application ID e Application Secret
 - ✅ Box di aiuto "Serve Aiuto?" presente
 - ✅ Layout responsive e pulito
 

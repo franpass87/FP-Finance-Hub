@@ -71,46 +71,55 @@
         },
         
         /**
-         * Mostra guida GoCardless Bank Account Data
+         * Mostra guida Yapily
          */
-        showNordigenGuide: function() {
+        showYapilyGuide: function() {
             const content = `
                 <div class="fp-fh-guide-modal-content">
-                    <h3>Come Ottenere le Credenziali GoCardless</h3>
+                    <h3>Come Ottenere le Credenziali Yapily</h3>
                     
                     <div class="fp-fh-guide-substep fp-fh-mb-4">
-                        <h4>Step 1: Registrati su GoCardless Bank Account Data</h4>
+                        <h4>Step 1: Registrati su Yapily Console</h4>
                         <ol class="fp-fh-list fp-fh-list-ordered">
-                            <li>Vai su <a href="https://bankaccountdata.gocardless.com" target="_blank" rel="noopener">bankaccountdata.gocardless.com</a></li>
+                            <li>Vai su <a href="https://console.yapily.com" target="_blank" rel="noopener">console.yapily.com</a></li>
                             <li>Clicca su "Sign Up" o "Registrati"</li>
                             <li>Compila il form con la tua email</li>
                             <li>Verifica la tua email</li>
-                            <li>Accedi al dashboard GoCardless</li>
+                            <li>Accedi al Yapily Console</li>
                         </ol>
                     </div>
                     
                     <div class="fp-fh-guide-substep fp-fh-mb-4">
-                        <h4>Step 2: Genera le Credenziali API</h4>
+                        <h4>Step 2: Crea Applicazione e Ottieni Credenziali</h4>
                         <ol class="fp-fh-list fp-fh-list-ordered">
-                            <li>Dopo l'accesso, vai nella sezione "API" o "Credenziali"</li>
-                            <li>Clicca su "Crea nuove credenziali" o "Generate Credentials"</li>
-                            <li>GoCardless genererà automaticamente <strong>Secret ID</strong> e <strong>Secret Key</strong></li>
-                            <li><strong>IMPORTANTE:</strong> Copia subito le credenziali - la Secret Key viene mostrata solo una volta!</li>
+                            <li>Dopo l'accesso, vai alla sezione "Applications"</li>
+                            <li>Clicca su "Create Application"</li>
+                            <li>Scegli un nome per la tua applicazione e clicca "Create application"</li>
+                            <li>Clicca su "Download Application ID & Application Secret" per scaricare il file JSON</li>
+                            <li><strong>IMPORTANTE:</strong> Copia subito le credenziali - l'Application Secret viene mostrato solo una volta!</li>
                             <li>Salva le credenziali in un posto sicuro</li>
                         </ol>
                     </div>
                     
                     <div class="fp-fh-guide-warning fp-fh-mt-4">
-                        <strong>⚠️ Attenzione:</strong> La Secret Key viene mostrata una sola volta. Se la perdi, dovrai generarne una nuova.
+                        <strong>⚠️ Attenzione:</strong> L'Application Secret viene mostrato una sola volta. Se lo perdi, dovrai generarne uno nuovo.
                     </div>
                     
                     <div class="fp-fh-guide-tip fp-fh-mt-4">
-                        <strong>💡 Suggerimento:</strong> GoCardless Bank Account Data è completamente gratuito e sicuro. I tuoi dati bancari non vengono mai condivisi con terze parti.
+                        <strong>💡 Suggerimento:</strong> Yapily offre account gratuito per sviluppatori. I tuoi dati bancari non vengono mai condivisi con terze parti.
                     </div>
                 </div>
             `;
             
-            FPHelpModal.show('Guida Configurazione GoCardless', content);
+            FPHelpModal.show('Guida Configurazione Yapily', content);
+        },
+        
+        /**
+         * Mostra guida GoCardless Bank Account Data (deprecato - mantenuto per compatibilità)
+         * @deprecated Usa showYapilyGuide() invece
+         */
+        showNordigenGuide: function() {
+            this.showYapilyGuide();
         },
         
         /**
@@ -167,8 +176,8 @@
                 e.preventDefault();
                 const guide = $(this).data('guide');
                 
-                if (guide === 'nordigen') {
-                    FPHelpModal.showNordigenGuide();
+                if (guide === 'yapily' || guide === 'nordigen') {
+                    FPHelpModal.showYapilyGuide();
                 } else if (guide === 'aruba') {
                     FPHelpModal.showArubaGuide();
                 }

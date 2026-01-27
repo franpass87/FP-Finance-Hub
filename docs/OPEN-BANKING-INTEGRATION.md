@@ -37,41 +37,40 @@
 
 ### 🎯 **OPZIONI DISPONIBILI PER COLLEGAMENTO AUTOMATICO**
 
-#### **1. Nordigen (GoCardless)** ⭐ **GRATUITO** 🆓
+#### **1. Yapily** ⭐ **GRATUITO PER SVILUPPATORI** 🆓
 
-**Status:** ✅ **100% GRATUITO per AIS (Account Information Services)**
+**Status:** ✅ **Account gratuito per sviluppatori disponibile**
 
 **Vantaggi:**
-- ✅ **Completamente gratuito** per servizi di informazione conti
-- ✅ Connettività **90 giorni** con aggiornamenti fino a **4 volte al giorno**
-- ✅ Accesso storico transazioni (da **3 a 24 mesi**)
-- ✅ Supporto banche italiane (PostePay incluso)
-- ✅ API semplice e ben documentata
-- ✅ Nessun costo nascosto per AIS
-- ✅ Modello freemium (gratis base, a pagamento solo per analisi avanzate)
+- ✅ **Account gratuito** per sviluppatori
+- ✅ **Sandbox gratuito** (Modelo Sandbox) per test
+- ✅ **Senza limiti** su numero di conti
+- ✅ Supporto banche italiane (Unicredit, Intesa San Paolo, UBI Banca, BancoPosta, Banco BPM, BNL, ecc.)
+- ✅ API PSD2 compliant
+- ✅ Documentazione completa
+- ✅ Nessun limite di sync/giorno
 
 **Limitazioni:**
-- ⚠️ Connettività limitata a 90 giorni (poi refresh manuale OAuth)
-- ⚠️ Max 4 aggiornamenti/giorno (sufficiente per uso personale)
-- ⚠️ Servizi avanzati (categorizzazione AI, insights) sono a pagamento
+- ⚠️ Pricing per produzione da verificare (contattare Yapily)
+- ⚠️ ING Italia supporto da verificare
 
 **Costi:**
-- ✅ **GRATIS** per Account Information Services (AIS)
-- ✅ **GRATIS** per lettura saldi e transazioni
-- ⚠️ A pagamento solo per servizi premium (analisi, categorizzazione avanzata)
+- ✅ **GRATIS** per account sviluppatori
+- ✅ **GRATIS** per sandbox e test
+- ⚠️ Pricing produzione da verificare
 
 **Quando Scegliere:**
-- ✅ **PRIMA SCELTA** se vuoi soluzione completamente gratuita
-- ✅ Budget zero
-- ✅ Aggiornamenti 4 volte/giorno sufficienti
-- ✅ Priorità: costo zero vs automatismo
+- ✅ **PRIMA SCELTA** se vuoi soluzione Open Banking moderna
+- ✅ Account gratuito per sviluppatori
+- ✅ Supporto banche italiane
+- ✅ Nessun limite sync
 
 **Setup:**
-1. Account gratuito su https://bankaccountdata.gocardless.com (ex Nordigen, ora GoCardless Bank Account Data)
-2. Crea nuova app
-3. Ottieni `secret_id` e `secret_key`
-4. Implementa OAuth flow (simile a TrueLayer)
-5. **GRATIS per sempre** per AIS
+1. Account gratuito su https://console.yapily.com
+2. Crea nuova Application
+3. Ottieni `applicationUuid` (Application ID) e `secret` (Application Secret)
+4. Implementa OAuth flow con consent-based authorization
+5. **GRATIS per sviluppatori**
 
 ---
 

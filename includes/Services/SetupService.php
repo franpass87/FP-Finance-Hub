@@ -29,22 +29,30 @@ class SetupService {
      * Verifica se setup è completato
      */
     public function is_setup_complete() {
-        $nordigen_configured = $this->is_nordigen_configured();
+        $yapily_configured = $this->is_yapily_configured();
         $aruba_configured = $this->is_aruba_configured();
         $has_bank_connections = $this->has_bank_connections();
         $has_aruba_sync = $this->has_aruba_sync();
         
-        return $nordigen_configured && $aruba_configured && ($has_bank_connections || $has_aruba_sync);
+        return $yapily_configured && $aruba_configured && ($has_bank_connections || $has_aruba_sync);
     }
     
     /**
-     * Verifica se GoCardless Bank Account Data è configurato
+     * Verifica se Yapily è configurato
+     */
+    public function is_yapily_configured() {
+        $app_id = get_option('fp_finance_hub_yapily_app_id', '');
+        $app_secret = get_option('fp_finance_hub_yapily_app_secret', '');
+        
+        return !empty($app_id) && !empty($app_secret);
+    }
+    
+    /**
+     * Verifica se GoCardless Bank Account Data è configurato (deprecato - mantenuto per compatibilità)
+     * @deprecated Usa is_yapily_configured() invece
      */
     public function is_nordigen_configured() {
-        $secret_id = get_option('fp_finance_hub_nordigen_secret_id', '');
-        $secret_key = get_option('fp_finance_hub_nordigen_secret_key', '');
-        
-        return !empty($secret_id) && !empty($secret_key);
+        return $this->is_yapily_configured();
     }
     
     /**
@@ -91,9 +99,9 @@ class SetupService {
      */
     public function get_setup_progress() {
         $steps = [
-            'nordigen_configured' => [
-                'name' => 'Configurazione GoCardless',
-                'completed' => $this->is_nordigen_configured(),
+            'yapily_configured' => [
+                'name' => 'Configurazione Yapily',
+                'completed' => $this->is_yapily_configured(),
                 'url' => admin_url('admin.php?page=fp-finance-hub-settings'),
             ],
             'bank_connected' => [

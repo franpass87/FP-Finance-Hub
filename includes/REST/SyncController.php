@@ -8,7 +8,7 @@
 namespace FP\FinanceHub\REST;
 
 use FP\FinanceHub\Integration\Aruba\ArubaSync;
-use FP\FinanceHub\Integration\OpenBanking\NordigenSyncService;
+use FP\FinanceHub\Integration\OpenBanking\YapilySyncService;
 use FP\FinanceHub\Integration\PublisherSync;
 use FP\FinanceHub\Integration\TaskAgendaSync;
 use FP\FinanceHub\Integration\DMSSync;
@@ -48,9 +48,9 @@ class SyncController extends Controller {
             'permission_callback' => [$this, 'check_permission'],
         ]);
         
-        register_rest_route(self::NAMESPACE, '/sync/nordigen', [
+        register_rest_route(self::NAMESPACE, '/sync/yapily', [
             'methods' => \WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'sync_nordigen'],
+            'callback' => [$this, 'sync_yapily'],
             'permission_callback' => [$this, 'check_permission'],
         ]);
         
@@ -88,11 +88,11 @@ class SyncController extends Controller {
     }
     
     /**
-     * POST /sync/nordigen
+     * POST /sync/yapily
      */
-    public function sync_nordigen($request) {
-        $nordigen_sync = new NordigenSyncService();
-        $nordigen_sync->sync_all_accounts();
+    public function sync_yapily($request) {
+        $yapily_sync = new YapilySyncService();
+        $yapily_sync->sync_all_accounts();
         
         return new \WP_REST_Response(['message' => 'Sync avviata'], 200);
     }

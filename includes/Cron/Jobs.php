@@ -8,7 +8,7 @@
 namespace FP\FinanceHub\Cron;
 
 use FP\FinanceHub\Integration\Aruba\ArubaSync;
-use FP\FinanceHub\Integration\OpenBanking\NordigenSyncService;
+use FP\FinanceHub\Integration\OpenBanking\YapilySyncService;
 use FP\FinanceHub\Services\ReconciliationService;
 use FP\FinanceHub\Services\AlertService;
 use FP\FinanceHub\Services\ProjectionService;
@@ -48,9 +48,9 @@ class Jobs {
             wp_schedule_event(time(), 'daily', 'fp_finance_hub_sync_aruba_daily');
         }
         
-        // Sync GoCardless ogni 6 ore (max 4/giorno)
-        if (!wp_next_scheduled('fp_finance_hub_sync_nordigen_accounts')) {
-            wp_schedule_event(time(), 'fp_finance_hub_6hours', 'fp_finance_hub_sync_nordigen_accounts');
+        // Sync Yapily ogni 6 ore
+        if (!wp_next_scheduled('fp_finance_hub_sync_yapily_accounts')) {
+            wp_schedule_event(time(), 'fp_finance_hub_6hours', 'fp_finance_hub_sync_yapily_accounts');
         }
         
         // Riconciliazione ogni 6 ore
@@ -85,7 +85,7 @@ class Jobs {
     public static function unschedule() {
         $hooks = [
             'fp_finance_hub_sync_aruba_daily',
-            'fp_finance_hub_sync_nordigen_accounts',
+            'fp_finance_hub_sync_yapily_accounts',
             'fp_finance_hub_reconcile_transactions',
             'fp_finance_hub_check_alerts',
             'fp_finance_hub_calculate_projections',
@@ -107,7 +107,7 @@ class Jobs {
     public function add_cron_schedules($schedules) {
         $schedules['fp_finance_hub_6hours'] = [
             'interval' => 6 * HOUR_IN_SECONDS,
-            'display' => 'Ogni 6 ore (max 4/giorno GoCardless)',
+            'display' => 'Ogni 6 ore',
         ];
         
         return $schedules;
@@ -125,11 +125,11 @@ class Jobs {
     }
     
     /**
-     * Sync GoCardless conti
+     * Sync Yapily conti
      */
-    public static function sync_nordigen_accounts() {
-        $nordigen_sync = new NordigenSyncService();
-        $nordigen_sync->sync_all_accounts();
+    public static function sync_yapily_accounts() {
+        $yapily_sync = new YapilySyncService();
+        $yapily_sync->sync_all_accounts();
     }
     
     /**
@@ -183,7 +183,7 @@ class Jobs {
 
 // Registra hook cron
 add_action('fp_finance_hub_sync_aruba_daily', [Jobs::class, 'sync_aruba_daily']);
-add_action('fp_finance_hub_sync_nordigen_accounts', [Jobs::class, 'sync_nordigen_accounts']);
+add_action('fp_finance_hub_sync_yapily_accounts', [Jobs::class, 'sync_yapily_accounts']);
 add_action('fp_finance_hub_reconcile_transactions', [Jobs::class, 'reconcile_transactions']);
 add_action('fp_finance_hub_check_alerts', [Jobs::class, 'check_alerts']);
 add_action('fp_finance_hub_calculate_projections', [Jobs::class, 'calculate_projections']);

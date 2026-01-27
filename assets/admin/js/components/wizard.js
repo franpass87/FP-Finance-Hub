@@ -54,7 +54,7 @@
                         // Aggiorna step completati
                         // Mapping tra chiavi progress e data-step
                         const stepMapping = {
-                            'nordigen_configured': 'nordigen',
+                            'yapily_configured': 'yapily',
                             'bank_connected': 'bank-connection',
                             'aruba_configured': 'aruba',
                             'aruba_synced': 'aruba-sync'
