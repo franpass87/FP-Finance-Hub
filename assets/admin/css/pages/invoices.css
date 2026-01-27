@@ -1,0 +1,86 @@
+/**
+ * FP Finance Hub - Invoices Page
+ * 
+ * Invoices list styling e status badges
+ */
+
+.fp-invoices-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--fp-fh-spacing-4);
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+.fp-invoice-summary-card {
+    padding: var(--fp-fh-spacing-4);
+    background-color: var(--fp-fh-color-bg);
+    border: 1px solid var(--fp-fh-color-border);
+    border-radius: var(--fp-fh-radius-lg);
+    box-shadow: var(--fp-fh-shadow-sm);
+}
+
+.fp-invoice-summary-label {
+    font-size: var(--fp-fh-font-size-sm);
+    font-weight: var(--fp-fh-font-weight-medium);
+    color: var(--fp-fh-color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--fp-fh-spacing-2);
+}
+
+.fp-invoice-summary-value {
+    font-size: var(--fp-fh-font-size-2xl);
+    font-weight: var(--fp-fh-font-weight-bold);
+    color: var(--fp-fh-color-text);
+    line-height: var(--fp-fh-line-height-tight);
+}
+
+/* Invoice Status Badges in Table */
+.fp-invoice-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-1);
+}
+
+/* Financial Data Formatting */
+.fp-financial-amount {
+    font-weight: var(--fp-fh-font-weight-semibold);
+    font-family: var(--fp-fh-font-family-mono);
+    letter-spacing: 0.02em;
+}
+
+.fp-financial-amount-positive {
+    color: var(--fp-fh-color-success);
+}
+
+.fp-financial-amount-negative {
+    color: var(--fp-fh-color-error);
+}
+
+.fp-financial-amount-neutral {
+    color: var(--fp-fh-color-text);
+}
+
+/* Invoice Filters */
+.fp-invoices-filters {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-4);
+    margin-bottom: var(--fp-fh-spacing-6);
+    padding: var(--fp-fh-spacing-4);
+    background-color: var(--fp-fh-color-bg-secondary);
+    border-radius: var(--fp-fh-radius-lg);
+    flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .fp-invoices-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .fp-invoices-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

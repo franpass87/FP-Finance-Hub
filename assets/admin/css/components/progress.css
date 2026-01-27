@@ -1,0 +1,154 @@
+/**
+ * FP Finance Hub - Progress
+ * 
+ * Progress bars, loading indicators, skeleton loaders
+ */
+
+/* Progress Bar */
+.fp-fh-progress {
+    width: 100%;
+    height: 0.75rem;
+    background-color: var(--fp-fh-color-bg-secondary);
+    border-radius: var(--fp-fh-radius-full);
+    overflow: hidden;
+    position: relative;
+}
+
+.fp-fh-progress-bar {
+    height: 100%;
+    background-color: var(--fp-fh-color-primary);
+    border-radius: var(--fp-fh-radius-full);
+    transition: width var(--fp-fh-transition-slow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fp-fh-progress-bar-success {
+    background-color: var(--fp-fh-color-success);
+}
+
+.fp-fh-progress-bar-warning {
+    background-color: var(--fp-fh-color-warning);
+}
+
+.fp-fh-progress-bar-error {
+    background-color: var(--fp-fh-color-error);
+}
+
+.fp-fh-progress-label {
+    font-size: var(--fp-fh-font-size-xs);
+    color: var(--fp-fh-color-text-inverse);
+    font-weight: var(--fp-fh-font-weight-medium);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading Spinner */
+.fp-fh-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--fp-fh-color-bg-secondary);
+    border-top-color: var(--fp-fh-color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.fp-fh-spinner-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 2px;
+}
+
+.fp-fh-spinner-lg {
+    width: 3rem;
+    height: 3rem;
+    border-width: 4px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Loading Overlay */
+.fp-fh-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--fp-fh-z-fixed);
+    border-radius: var(--fp-fh-radius-lg);
+}
+
+.fp-fh-loading-overlay .fp-fh-spinner {
+    position: relative;
+}
+
+/* Skeleton Loader */
+.fp-fh-skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--fp-fh-color-bg-secondary) 0%,
+        var(--fp-fh-color-gray-100) 50%,
+        var(--fp-fh-color-bg-secondary) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: var(--fp-fh-radius-base);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.fp-fh-skeleton-text {
+    height: 1rem;
+    margin-bottom: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-skeleton-text:last-child {
+    margin-bottom: 0;
+}
+
+.fp-fh-skeleton-title {
+    height: 1.5rem;
+    width: 60%;
+    margin-bottom: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-skeleton-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+}
+
+.fp-fh-skeleton-card {
+    height: 200px;
+    border-radius: var(--fp-fh-radius-lg);
+}
+
+/* Pulse Animation */
+.fp-fh-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}

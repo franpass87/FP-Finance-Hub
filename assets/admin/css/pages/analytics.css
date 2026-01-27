@@ -1,0 +1,281 @@
+/**
+ * FP Finance Hub - Analytics Page
+ * 
+ * Stili per pagina Analisi Finanziarie (Proiezioni, Monitoraggio, Statistiche)
+ */
+
+/* Filters Section */
+.fp-analytics-filters {
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+.fp-analytics-filters .fp-fh-form-group {
+    margin-bottom: 0;
+}
+
+/* Projections Summary */
+.fp-projections-summary {
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+@media (max-width: 991px) {
+    .fp-projections-summary {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+/* Monitoring KPIs */
+.fp-monitoring-kpis {
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+@media (max-width: 1200px) {
+    .fp-monitoring-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .fp-monitoring-kpis {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+/* Stats Summary */
+.fp-stats-summary {
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+@media (max-width: 1200px) {
+    .fp-stats-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .fp-stats-summary {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+/* Alerts List */
+.fp-alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fp-fh-spacing-3);
+}
+
+/* Table Empty State */
+.fp-fh-table-empty {
+    text-align: center;
+    padding: var(--fp-fh-spacing-8) var(--fp-fh-spacing-4);
+    color: var(--fp-fh-color-text-muted);
+    font-style: italic;
+}
+
+/* Financial Amount Colors */
+.fp-financial-amount-positive {
+    color: var(--fp-fh-color-success);
+}
+
+.fp-financial-amount-negative {
+    color: var(--fp-fh-color-error);
+}
+
+/* Chart Container in Analytics */
+.fp-fh-card .fp-fh-chart-container {
+    position: relative;
+}
+
+/* Responsive Analytics Grid */
+@media (max-width: 767px) {
+    .fp-fh-grid.fp-fh-grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+/* Intelligence Summary */
+.fp-intelligence-summary {
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+/* Intelligence Gauge */
+.fp-intelligence-gauge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--fp-fh-spacing-4);
+}
+
+.fp-gauge-svg {
+    max-width: 120px;
+    height: auto;
+}
+
+.fp-gauge-progress {
+    transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+}
+
+.fp-gauge-text {
+    font-family: var(--fp-fh-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+}
+
+.fp-gauge-label {
+    font-family: var(--fp-fh-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Predictions Slider */
+.fp-predictions-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-3);
+    flex-wrap: wrap;
+}
+
+.fp-predictions-slider {
+    flex: 1;
+    min-width: 200px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--fp-fh-color-border-light, #e5e7eb);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.fp-predictions-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--fp-fh-color-primary, #2271b1);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.fp-predictions-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(34, 113, 177, 0.2);
+}
+
+.fp-predictions-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--fp-fh-color-primary, #2271b1);
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.fp-predictions-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(34, 113, 177, 0.2);
+}
+
+#fp-predictions-days-value {
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-primary, #2271b1);
+    min-width: 30px;
+    display: inline-block;
+}
+
+/* Recommendation Actions */
+.fp-recommendation-actions {
+    display: flex;
+    gap: var(--fp-fh-spacing-2);
+    margin-top: var(--fp-fh-spacing-2);
+    flex-wrap: wrap;
+}
+
+.fp-recommendation-actions .fp-fh-btn {
+    font-size: var(--fp-fh-font-size-xs);
+    padding: var(--fp-fh-spacing-1) var(--fp-fh-spacing-2);
+}
+
+@media (max-width: 1400px) {
+    .fp-intelligence-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 991px) {
+    .fp-intelligence-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .fp-intelligence-summary {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+/* Anomalies List */
+.fp-anomalies-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fp-fh-spacing-3);
+}
+
+/* Recommendations List */
+.fp-recommendations-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fp-fh-spacing-3);
+}
+
+.fp-recommendation-item {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fp-recommendation-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Insights List */
+.fp-insights-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fp-fh-spacing-2);
+}
+
+.fp-insight-item {
+    transition: background-color 0.2s ease;
+}
+
+.fp-insight-item:hover {
+    background: var(--fp-fh-color-bg-hover) !important;
+}
+
+/* Patterns List */
+.fp-patterns-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fp-fh-spacing-2);
+}
+
+.fp-pattern-item {
+    transition: background-color 0.2s ease;
+}
+
+.fp-pattern-item:hover {
+    background: var(--fp-fh-color-bg-hover) !important;
+}
+
+.fp-patterns-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fp-fh-spacing-2);
+}
+
+.fp-pattern-item {
+    transition: background-color 0.2s ease;
+}
+
+.fp-pattern-item:hover {
+    background: var(--fp-fh-color-bg-hover) !important;
+}

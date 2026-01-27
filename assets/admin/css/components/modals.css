@@ -1,0 +1,119 @@
+/**
+ * FP Finance Hub - Modals
+ * 
+ * Modal dialogs moderni
+ */
+
+.fp-fh-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: var(--fp-fh-z-modal-backdrop);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--fp-fh-spacing-4);
+    opacity: 0;
+    transition: opacity var(--fp-fh-transition-base);
+}
+
+.fp-fh-modal-backdrop.active {
+    opacity: 1;
+}
+
+.fp-fh-modal {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    background-color: var(--fp-fh-color-bg);
+    border-radius: var(--fp-fh-radius-lg);
+    box-shadow: var(--fp-fh-shadow-xl);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform var(--fp-fh-transition-base);
+    display: flex;
+    flex-direction: column;
+    z-index: var(--fp-fh-z-modal);
+}
+
+.fp-fh-modal-backdrop.active .fp-fh-modal {
+    transform: scale(1);
+}
+
+.fp-fh-modal-lg {
+    max-width: 800px;
+}
+
+.fp-fh-modal-xl {
+    max-width: 1200px;
+}
+
+.fp-fh-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--fp-fh-spacing-6);
+    border-bottom: 1px solid var(--fp-fh-color-border);
+}
+
+.fp-fh-modal-title {
+    font-size: var(--fp-fh-font-size-xl);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-text);
+    margin: 0;
+}
+
+.fp-fh-modal-close {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--fp-fh-color-text-light);
+    cursor: pointer;
+    border-radius: var(--fp-fh-radius-base);
+    transition: background-color var(--fp-fh-transition-base), color var(--fp-fh-transition-base);
+}
+
+.fp-fh-modal-close:hover {
+    background-color: var(--fp-fh-color-bg-hover);
+    color: var(--fp-fh-color-text);
+}
+
+.fp-fh-modal-body {
+    flex: 1;
+    padding: var(--fp-fh-spacing-6);
+    overflow-y: auto;
+}
+
+.fp-fh-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--fp-fh-spacing-2);
+    padding: var(--fp-fh-spacing-6);
+    border-top: 1px solid var(--fp-fh-color-border);
+    background-color: var(--fp-fh-color-bg-secondary);
+}
+
+/* Responsive Modal */
+@media (max-width: 767px) {
+    .fp-fh-modal {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+        margin: 0;
+    }
+    
+    .fp-fh-modal-header,
+    .fp-fh-modal-body,
+    .fp-fh-modal-footer {
+        padding: var(--fp-fh-spacing-4);
+    }
+}

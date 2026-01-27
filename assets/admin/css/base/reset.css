@@ -1,0 +1,78 @@
+/**
+ * FP Finance Hub - Reset CSS
+ * 
+ * Reset specifico per admin WordPress
+ */
+
+/* Reset base per elementi del plugin */
+.fp-fh-wrapper,
+.fp-fh-wrapper * {
+    box-sizing: border-box;
+}
+
+/* Normalizzazione liste */
+.fp-fh-wrapper ul,
+.fp-fh-wrapper ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Reset heading margins */
+.fp-fh-wrapper h1,
+.fp-fh-wrapper h2,
+.fp-fh-wrapper h3,
+.fp-fh-wrapper h4,
+.fp-fh-wrapper h5,
+.fp-fh-wrapper h6 {
+    margin: 0;
+    font-weight: var(--fp-fh-font-weight-semibold);
+    line-height: var(--fp-fh-line-height-tight);
+}
+
+/* Reset paragraph margins */
+.fp-fh-wrapper p {
+    margin: 0;
+}
+
+/* Reset button styles */
+.fp-fh-wrapper button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+/* Reset input styles */
+.fp-fh-wrapper input,
+.fp-fh-wrapper textarea,
+.fp-fh-wrapper select {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    margin: 0;
+}
+
+/* Reset link styles */
+.fp-fh-wrapper a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Reset image styles */
+.fp-fh-wrapper img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Clearfix utility */
+.fp-fh-clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}

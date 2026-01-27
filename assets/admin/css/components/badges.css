@@ -1,0 +1,152 @@
+/**
+ * FP Finance Hub - Badges
+ * 
+ * Badge component per status e labels
+ */
+
+.fp-fh-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fp-fh-spacing-1);
+    padding: var(--fp-fh-spacing-1) var(--fp-fh-spacing-2);
+    font-size: var(--fp-fh-font-size-xs);
+    font-weight: var(--fp-fh-font-weight-medium);
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: var(--fp-fh-radius-full);
+    border: none;
+}
+
+/* Badge Variants */
+.fp-fh-badge-primary {
+    background-color: var(--fp-fh-color-primary);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+.fp-fh-badge-secondary {
+    background-color: var(--fp-fh-color-secondary);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+.fp-fh-badge-success {
+    background-color: var(--fp-fh-color-success);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+.fp-fh-badge-warning {
+    background-color: var(--fp-fh-color-warning);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+.fp-fh-badge-error {
+    background-color: var(--fp-fh-color-error);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+.fp-fh-badge-new {
+    background-color: var(--fp-fh-color-error, #dc2626);
+    color: var(--fp-fh-color-text-inverse, #fff);
+    animation: fp-fh-badge-pulse 2s ease-in-out infinite;
+    font-size: 10px;
+    padding: 2px 6px;
+}
+
+@keyframes fp-fh-badge-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.fp-fh-badge-info {
+    background-color: var(--fp-fh-color-info);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+/* Badge Outline Variants */
+.fp-fh-badge-outline-primary {
+    background-color: transparent;
+    color: var(--fp-fh-color-primary);
+    border: 1px solid var(--fp-fh-color-primary);
+}
+
+.fp-fh-badge-outline-success {
+    background-color: transparent;
+    color: var(--fp-fh-color-success);
+    border: 1px solid var(--fp-fh-color-success);
+}
+
+.fp-fh-badge-outline-warning {
+    background-color: transparent;
+    color: var(--fp-fh-color-warning);
+    border: 1px solid var(--fp-fh-color-warning);
+}
+
+.fp-fh-badge-outline-error {
+    background-color: transparent;
+    color: var(--fp-fh-color-error);
+    border: 1px solid var(--fp-fh-color-error);
+}
+
+/* Badge Soft Variants */
+.fp-fh-badge-soft-success {
+    background-color: var(--fp-fh-color-success-bg);
+    color: var(--fp-fh-color-success-dark);
+}
+
+.fp-fh-badge-soft-warning {
+    background-color: var(--fp-fh-color-warning-bg);
+    color: var(--fp-fh-color-warning-dark);
+}
+
+.fp-fh-badge-soft-error {
+    background-color: var(--fp-fh-color-error-bg);
+    color: var(--fp-fh-color-error-dark);
+}
+
+.fp-fh-badge-soft-info {
+    background-color: var(--fp-fh-color-info-bg);
+    color: var(--fp-fh-color-info-dark);
+}
+
+/* Badge Sizes */
+.fp-fh-badge-sm {
+    padding: 0.125rem var(--fp-fh-spacing-1);
+    font-size: 0.625rem;
+}
+
+.fp-fh-badge-lg {
+    padding: var(--fp-fh-spacing-1) var(--fp-fh-spacing-3);
+    font-size: var(--fp-fh-font-size-sm);
+}
+
+/* Badge Pills (always rounded) */
+.fp-fh-badge-pill {
+    border-radius: var(--fp-fh-radius-full);
+}
+
+/* Status Badges */
+.fp-fh-badge-status-paid {
+    background-color: var(--fp-fh-color-success-bg);
+    color: var(--fp-fh-color-success-dark);
+}
+
+.fp-fh-badge-status-unpaid {
+    background-color: var(--fp-fh-color-warning-bg);
+    color: var(--fp-fh-color-warning-dark);
+}
+
+.fp-fh-badge-status-overdue {
+    background-color: var(--fp-fh-color-error-bg);
+    color: var(--fp-fh-color-error-dark);
+}
+
+.fp-fh-badge-status-draft {
+    background-color: var(--fp-fh-color-gray-100);
+    color: var(--fp-fh-color-gray-700);
+}

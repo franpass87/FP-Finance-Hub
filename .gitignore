@@ -1,0 +1,30 @@
+# WordPress
+.DS_Store
+Thumbs.db
+
+# Composer
+/vendor/
+composer.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+debug.log
+
+# Node (se presente)
+node_modules/
+package-lock.json
+
+# Build
+*.zip
+*.tar.gz
+
+# Environment
+.env
+.env.local

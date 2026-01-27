@@ -1,0 +1,111 @@
+/**
+ * FP Finance Hub - Tabs
+ * 
+ * Tab navigation moderna
+ */
+
+.fp-fh-tabs {
+    border-bottom: 2px solid var(--fp-fh-color-border);
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-tabs-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fp-fh-spacing-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.fp-fh-tab {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--fp-fh-spacing-3) var(--fp-fh-spacing-4);
+    font-size: var(--fp-fh-font-size-base);
+    font-weight: var(--fp-fh-font-weight-medium);
+    color: var(--fp-fh-color-text-light);
+    text-decoration: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color var(--fp-fh-transition-base), border-color var(--fp-fh-transition-base);
+    position: relative;
+}
+
+.fp-fh-tab:hover {
+    color: var(--fp-fh-color-text);
+    border-bottom-color: var(--fp-fh-color-border-dark);
+}
+
+.fp-fh-tab.active {
+    color: var(--fp-fh-color-primary);
+    border-bottom-color: var(--fp-fh-color-primary);
+    font-weight: var(--fp-fh-font-weight-semibold);
+}
+
+.fp-fh-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Tab Content */
+.fp-fh-tab-content {
+    display: none;
+}
+
+.fp-fh-tab-content.active {
+    display: block;
+    animation: fadeIn var(--fp-fh-transition-base);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Pills Tabs */
+.fp-fh-tabs-pills .fp-fh-tabs-list {
+    gap: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-tabs-pills .fp-fh-tab {
+    padding: var(--fp-fh-spacing-2) var(--fp-fh-spacing-4);
+    border-radius: var(--fp-fh-radius-full);
+    border-bottom: none;
+    margin-bottom: 0;
+    background-color: var(--fp-fh-color-bg-secondary);
+}
+
+.fp-fh-tabs-pills .fp-fh-tab:hover {
+    background-color: var(--fp-fh-color-bg-hover);
+}
+
+.fp-fh-tabs-pills .fp-fh-tab.active {
+    background-color: var(--fp-fh-color-primary);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+/* Responsive Tabs */
+@media (max-width: 767px) {
+    .fp-fh-tabs-list {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+    
+    .fp-fh-tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+}

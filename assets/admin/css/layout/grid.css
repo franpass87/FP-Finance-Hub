@@ -1,0 +1,145 @@
+/**
+ * FP Finance Hub - Grid System
+ * 
+ * Sistema grid moderno (CSS Grid/Flexbox)
+ */
+
+/* Grid Container */
+.fp-fh-grid {
+    display: grid;
+    gap: var(--fp-fh-spacing-4);
+    width: 100%;
+}
+
+/* Grid Columns */
+.fp-fh-grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.fp-fh-grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fp-fh-grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.fp-fh-grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Responsive Grid */
+@media (max-width: 767px) {
+    .fp-fh-grid-cols-2,
+    .fp-fh-grid-cols-3,
+    .fp-fh-grid-cols-4 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .fp-fh-grid-cols-3,
+    .fp-fh-grid-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Flex Container */
+.fp-fh-flex {
+    display: flex;
+}
+
+.fp-fh-flex-col {
+    flex-direction: column;
+}
+
+.fp-fh-flex-row {
+    flex-direction: row;
+}
+
+.fp-fh-flex-wrap {
+    flex-wrap: wrap;
+}
+
+.fp-fh-flex-nowrap {
+    flex-wrap: nowrap;
+}
+
+/* Flex Alignment */
+.fp-fh-items-start {
+    align-items: flex-start;
+}
+
+.fp-fh-items-center {
+    align-items: center;
+}
+
+.fp-fh-items-end {
+    align-items: flex-end;
+}
+
+.fp-fh-items-stretch {
+    align-items: stretch;
+}
+
+.fp-fh-justify-start {
+    justify-content: flex-start;
+}
+
+.fp-fh-justify-center {
+    justify-content: center;
+}
+
+.fp-fh-justify-end {
+    justify-content: flex-end;
+}
+
+.fp-fh-justify-between {
+    justify-content: space-between;
+}
+
+.fp-fh-justify-around {
+    justify-content: space-around;
+}
+
+/* Flex Gap */
+.fp-fh-gap-1 {
+    gap: var(--fp-fh-spacing-1);
+}
+
+.fp-fh-gap-2 {
+    gap: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-gap-3 {
+    gap: var(--fp-fh-spacing-3);
+}
+
+.fp-fh-gap-4 {
+    gap: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-gap-6 {
+    gap: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-gap-8 {
+    gap: var(--fp-fh-spacing-8);
+}
+
+/* Grid Gap */
+.fp-fh-grid-gap-2 {
+    gap: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-grid-gap-4 {
+    gap: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-grid-gap-6 {
+    gap: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-grid-gap-8 {
+    gap: var(--fp-fh-spacing-8);
+}

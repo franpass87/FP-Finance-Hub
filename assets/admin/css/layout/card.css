@@ -1,0 +1,119 @@
+/**
+ * FP Finance Hub - Card Component
+ * 
+ * Card component moderno per widgets
+ */
+
+.fp-fh-card {
+    background-color: var(--fp-fh-color-bg);
+    border: 1px solid var(--fp-fh-color-border);
+    border-radius: var(--fp-fh-radius-lg);
+    box-shadow: var(--fp-fh-shadow-sm);
+    padding: var(--fp-fh-spacing-6);
+    transition: box-shadow var(--fp-fh-transition-base), border-color var(--fp-fh-transition-base);
+}
+
+.fp-fh-card:hover {
+    box-shadow: var(--fp-fh-shadow-md);
+    border-color: var(--fp-fh-color-border-dark);
+}
+
+/* Card Variants */
+.fp-fh-card-flat {
+    box-shadow: none;
+    border: none;
+    background-color: var(--fp-fh-color-bg-secondary);
+}
+
+.fp-fh-card-elevated {
+    box-shadow: var(--fp-fh-shadow-lg);
+}
+
+.fp-fh-card-bordered {
+    border-width: 2px;
+    border-color: var(--fp-fh-color-border-dark);
+}
+
+/* Card Header */
+.fp-fh-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--fp-fh-spacing-4);
+    padding-bottom: var(--fp-fh-spacing-4);
+    border-bottom: 1px solid var(--fp-fh-color-border-light);
+}
+
+.fp-fh-card-title {
+    font-size: var(--fp-fh-font-size-lg);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-text);
+    margin: 0;
+}
+
+.fp-fh-card-subtitle {
+    font-size: var(--fp-fh-font-size-sm);
+    color: var(--fp-fh-color-text-light);
+    margin: 0;
+}
+
+/* Card Body */
+.fp-fh-card-body {
+    flex: 1;
+}
+
+/* Card Footer */
+.fp-fh-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--fp-fh-spacing-2);
+    margin-top: var(--fp-fh-spacing-4);
+    padding-top: var(--fp-fh-spacing-4);
+    border-top: 1px solid var(--fp-fh-color-border-light);
+}
+
+/* Card Content */
+.fp-fh-card-content {
+    margin-bottom: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-card-content:last-child {
+    margin-bottom: 0;
+}
+
+/* Card Actions */
+.fp-fh-card-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-2);
+}
+
+/* Financial Card Specific */
+.fp-fh-card-financial {
+    background: linear-gradient(135deg, var(--fp-fh-color-primary) 0%, var(--fp-fh-color-primary-dark) 100%);
+    color: var(--fp-fh-color-text-inverse);
+    border: none;
+}
+
+.fp-fh-card-financial .fp-fh-card-title,
+.fp-fh-card-financial .fp-fh-card-subtitle {
+    color: var(--fp-fh-color-text-inverse);
+}
+
+.fp-fh-card-financial .fp-fh-card-header {
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Cards */
+@media (max-width: 767px) {
+    .fp-fh-card {
+        padding: var(--fp-fh-spacing-4);
+    }
+    
+    .fp-fh-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--fp-fh-spacing-2);
+    }
+}

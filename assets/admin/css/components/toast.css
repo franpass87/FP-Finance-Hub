@@ -1,0 +1,131 @@
+/**
+ * FP Finance Hub - Toast Notifications CSS
+ */
+
+.fp-fh-toast-container {
+    position: fixed;
+    top: 32px;
+    right: 20px;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.fp-fh-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 320px;
+    max-width: 480px;
+    padding: 16px 20px;
+    background: var(--fp-fh-color-bg, #fff);
+    border-radius: var(--fp-fh-radius-lg, 12px);
+    box-shadow: var(--fp-fh-shadow-lg, 0 10px 40px rgba(0, 0, 0, 0.15)), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: all;
+    border: 1px solid var(--fp-fh-color-border-light, rgba(0, 0, 0, 0.1));
+}
+
+.fp-fh-toast.fp-fh-toast-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.fp-fh-toast-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.fp-fh-toast-message {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fp-fh-color-text, #1f2937);
+}
+
+.fp-fh-toast-close {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--fp-fh-color-text-muted, #6b7280);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: var(--fp-fh-radius, 6px);
+    transition: all 0.2s;
+}
+
+.fp-fh-toast-close:hover {
+    background: var(--fp-fh-color-bg-soft, #f3f4f6);
+    color: var(--fp-fh-color-text, #1f2937);
+}
+
+/* Success */
+.fp-fh-toast-success {
+    border-left: 4px solid var(--fp-fh-color-success, #059669);
+}
+
+.fp-fh-toast-success .fp-fh-toast-icon {
+    background: var(--fp-fh-color-success-light, #d1fae5);
+    color: var(--fp-fh-color-success-dark, #065f46);
+}
+
+/* Error */
+.fp-fh-toast-error {
+    border-left: 4px solid var(--fp-fh-color-error, #dc2626);
+}
+
+.fp-fh-toast-error .fp-fh-toast-icon {
+    background: var(--fp-fh-color-error-light, #fee2e2);
+    color: var(--fp-fh-color-error-dark, #991b1b);
+}
+
+/* Warning */
+.fp-fh-toast-warning {
+    border-left: 4px solid var(--fp-fh-color-warning, #d97706);
+}
+
+.fp-fh-toast-warning .fp-fh-toast-icon {
+    background: var(--fp-fh-color-warning-light, #fed7aa);
+    color: var(--fp-fh-color-warning-dark, #92400e);
+}
+
+/* Info */
+.fp-fh-toast-info {
+    border-left: 4px solid var(--fp-fh-color-info, #2563eb);
+}
+
+.fp-fh-toast-info .fp-fh-toast-icon {
+    background: var(--fp-fh-color-info-light, #dbeafe);
+    color: var(--fp-fh-color-info-dark, #1e40af);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .fp-fh-toast-container {
+        top: 46px;
+        right: 12px;
+        left: 12px;
+    }
+    
+    .fp-fh-toast {
+        min-width: auto;
+        width: 100%;
+    }
+}

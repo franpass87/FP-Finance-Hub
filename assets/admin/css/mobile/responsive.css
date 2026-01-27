@@ -1,0 +1,327 @@
+/**
+ * FP Finance Hub - Mobile Responsive
+ * 
+ * Ottimizzazioni mobile e touch
+ */
+
+/* Mobile First - Base Styles */
+@media (max-width: 767px) {
+    
+    /* Typography */
+    :root {
+        --fp-fh-font-size-base: 14px;
+        --fp-fh-font-size-sm: 12px;
+        --fp-fh-font-size-lg: 16px;
+        --fp-fh-spacing-base: 8px;
+    }
+    
+    /* Wrapper */
+    .fp-fh-wrapper {
+        padding: var(--fp-fh-spacing-3);
+    }
+    
+    /* Header */
+    .fp-fh-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--fp-fh-spacing-3);
+    }
+    
+    .fp-fh-header-title h1 {
+        font-size: var(--fp-fh-font-size-xl);
+    }
+    
+    .fp-fh-header-actions {
+        width: 100%;
+        flex-direction: column;
+        gap: var(--fp-fh-spacing-2);
+    }
+    
+    .fp-fh-header-actions .fp-fh-btn {
+        width: 100%;
+    }
+    
+    /* Cards */
+    .fp-fh-card {
+        padding: var(--fp-fh-spacing-4);
+    }
+    
+    .fp-fh-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--fp-fh-spacing-2);
+    }
+    
+    /* Tables - Card View Mobile */
+    .fp-fh-table-wrapper {
+        overflow-x: visible;
+    }
+    
+    .fp-fh-table {
+        display: none; /* Nascondi tabella su mobile */
+    }
+    
+    .fp-fh-table-mobile-cards {
+        display: block;
+    }
+    
+    /* Card View per Mobile */
+    .fp-fh-mobile-card {
+        display: block;
+        background: var(--fp-fh-color-bg);
+        border: 1px solid var(--fp-fh-color-border);
+        border-radius: var(--fp-fh-radius);
+        padding: var(--fp-fh-spacing-4);
+        margin-bottom: var(--fp-fh-spacing-3);
+        box-shadow: var(--fp-fh-shadow-sm);
+    }
+    
+    .fp-fh-mobile-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: var(--fp-fh-spacing-3);
+        padding-bottom: var(--fp-fh-spacing-3);
+        border-bottom: 1px solid var(--fp-fh-color-border-light);
+    }
+    
+    .fp-fh-mobile-card-title {
+        font-weight: var(--fp-fh-font-weight-semibold);
+        font-size: var(--fp-fh-font-size-base);
+        margin: 0;
+    }
+    
+    .fp-fh-mobile-card-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--fp-fh-spacing-3);
+    }
+    
+    .fp-fh-mobile-card-field {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .fp-fh-mobile-card-label {
+        font-size: var(--fp-fh-font-size-sm);
+        color: var(--fp-fh-color-text-light);
+        margin-bottom: var(--fp-fh-spacing-1);
+    }
+    
+    .fp-fh-mobile-card-value {
+        font-size: var(--fp-fh-font-size-base);
+        font-weight: var(--fp-fh-font-weight-medium);
+    }
+    
+    .fp-fh-mobile-card-actions {
+        margin-top: var(--fp-fh-spacing-3);
+        padding-top: var(--fp-fh-spacing-3);
+        border-top: 1px solid var(--fp-fh-color-border-light);
+        display: flex;
+        gap: var(--fp-fh-spacing-2);
+    }
+    
+    .fp-fh-mobile-card-actions .fp-fh-btn {
+        flex: 1;
+    }
+    
+    /* Swipe Actions */
+    .fp-fh-swipeable {
+        position: relative;
+        touch-action: pan-y;
+    }
+    
+    .fp-fh-swipe-actions {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: var(--fp-fh-spacing-2);
+        padding: 0 var(--fp-fh-spacing-4);
+        background: var(--fp-fh-color-error);
+        opacity: 0;
+        transform: translateX(100%);
+        transition: transform var(--fp-fh-transition-base), opacity var(--fp-fh-transition-base);
+    }
+    
+    .fp-fh-swipe-actions.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    
+    .fp-fh-swipe-actions .fp-fh-btn {
+        white-space: nowrap;
+    }
+    
+    /* Pull to Refresh */
+    .fp-fh-pull-refresh {
+        position: relative;
+    }
+    
+    .fp-fh-pull-indicator {
+        position: absolute;
+        top: -60px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: var(--fp-fh-spacing-2) var(--fp-fh-spacing-4);
+        background: var(--fp-fh-color-primary);
+        color: var(--fp-fh-color-text-inverse);
+        border-radius: var(--fp-fh-radius-full);
+        font-size: var(--fp-fh-font-size-sm);
+        display: none;
+        z-index: 1000;
+        transition: transform var(--fp-fh-transition-base);
+    }
+    
+    .fp-fh-pull-indicator.ready {
+        background: var(--fp-fh-color-success);
+    }
+    
+    .fp-fh-refreshing {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    
+    /* Buttons - Touch Friendly */
+    .fp-fh-btn {
+        min-height: 44px; /* Apple HIG minimum */
+        padding: var(--fp-fh-spacing-3) var(--fp-fh-spacing-4);
+        font-size: var(--fp-fh-font-size-base);
+    }
+    
+    .fp-fh-btn-sm {
+        min-height: 36px;
+        padding: var(--fp-fh-spacing-2) var(--fp-fh-spacing-3);
+    }
+    
+    /* Forms */
+    .fp-fh-input,
+    .fp-fh-select,
+    .fp-fh-textarea {
+        min-height: 44px;
+        font-size: var(--fp-fh-font-size-base);
+    }
+    
+    /* Grid - Stack on Mobile */
+    .fp-fh-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .fp-fh-grid-cols-2 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .fp-fh-grid-cols-3 {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Charts - Responsive */
+    .fp-fh-chart-container {
+        position: relative;
+        height: 250px;
+        width: 100%;
+    }
+    
+    /* Modals - Full Screen Mobile */
+    .fp-fh-modal-content {
+        width: 100%;
+        max-width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+        margin: 0;
+    }
+    
+    /* Wizard - Stack Steps */
+    .fp-fh-wizard-steps {
+        flex-direction: column;
+        gap: var(--fp-fh-spacing-2);
+    }
+    
+    .fp-fh-wizard-step {
+        width: 100%;
+    }
+    
+    /* Tabs - Scrollable */
+    .fp-fh-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .fp-fh-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Spacing Adjustments */
+    .fp-fh-mb-6 {
+        margin-bottom: var(--fp-fh-spacing-4) !important;
+    }
+    
+    .fp-fh-mt-6 {
+        margin-top: var(--fp-fh-spacing-4) !important;
+    }
+    
+    .fp-fh-p-8 {
+        padding: var(--fp-fh-spacing-4) !important;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .fp-fh-grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .fp-fh-table {
+        font-size: var(--fp-fh-font-size-sm);
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Rimuovi hover effects su touch */
+    .fp-fh-table tbody tr:hover {
+        background-color: transparent;
+    }
+    
+    /* Aumenta area touch */
+    .fp-fh-btn,
+    .fp-fh-table-actions a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Disabilita text selection su elementi interattivi */
+    .fp-fh-btn,
+    .fp-fh-card-header,
+    .fp-fh-wizard-step-link {
+        -webkit-user-select: none;
+        user-select: none;
+    }
+}
+
+/* Landscape Mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+    .fp-fh-header {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .fp-fh-header-actions {
+        flex-direction: row;
+        width: auto;
+    }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .fp-fh-icon,
+    .fp-fh-badge {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}

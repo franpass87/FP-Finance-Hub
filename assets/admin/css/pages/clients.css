@@ -1,0 +1,84 @@
+/**
+ * FP Finance Hub - Clients Page
+ * 
+ * Clients table e UI moderna
+ */
+
+.fp-clients-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--fp-fh-spacing-4);
+    margin-bottom: var(--fp-fh-spacing-6);
+    padding-bottom: var(--fp-fh-spacing-4);
+    border-bottom: 2px solid var(--fp-fh-color-border);
+}
+
+.fp-clients-header .fp-fh-btn {
+    margin: 0;
+}
+
+/* Search and Filter */
+.fp-clients-filters {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-4);
+    margin-bottom: var(--fp-fh-spacing-6);
+    padding: var(--fp-fh-spacing-4);
+    background-color: var(--fp-fh-color-bg-secondary);
+    border-radius: var(--fp-fh-radius-lg);
+}
+
+.fp-clients-search {
+    flex: 1;
+    max-width: 400px;
+}
+
+.fp-clients-search .fp-fh-input {
+    width: 100%;
+}
+
+/* Empty State */
+.fp-clients-empty {
+    text-align: center;
+    padding: var(--fp-fh-spacing-16) var(--fp-fh-spacing-4);
+    background-color: var(--fp-fh-color-bg-secondary);
+    border-radius: var(--fp-fh-radius-lg);
+}
+
+.fp-clients-empty-icon {
+    font-size: var(--fp-fh-font-size-4xl);
+    margin-bottom: var(--fp-fh-spacing-4);
+    opacity: 0.5;
+}
+
+.fp-clients-empty-title {
+    font-size: var(--fp-fh-font-size-xl);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-text);
+    margin-bottom: var(--fp-fh-spacing-2);
+}
+
+.fp-clients-empty-text {
+    font-size: var(--fp-fh-font-size-base);
+    color: var(--fp-fh-color-text-light);
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .fp-clients-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .fp-clients-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .fp-clients-search {
+        max-width: none;
+    }
+}

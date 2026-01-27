@@ -1,0 +1,42 @@
+/**
+ * FP Finance Hub - Admin Styles
+ * 
+ * Main entry point per tutti gli stili admin
+ * Questo file importa tutti i moduli CSS in ordine logico
+ * 
+ * @package FP\FinanceHub
+ * @author Francesco Passeri
+ * @link https://francescopasseri.com
+ */
+
+/* Base */
+@import url('base/variables.css');
+@import url('base/reset.css');
+
+/* Layout */
+@import url('layout/wrap.css');
+@import url('layout/header.css');
+@import url('layout/grid.css');
+@import url('layout/card.css');
+
+/* Components */
+@import url('components/buttons.css');
+@import url('components/badges.css');
+@import url('components/tables.css');
+@import url('components/forms.css');
+@import url('components/cards.css');
+@import url('components/charts.css');
+@import url('components/modals.css');
+@import url('components/notices.css');
+@import url('components/tabs.css');
+@import url('components/progress.css');
+
+/* Pages */
+@import url('pages/dashboard.css');
+@import url('pages/clients.css');
+@import url('pages/invoices.css');
+@import url('pages/bank-accounts.css');
+@import url('pages/analytics.css');
+
+/* Utilities */
+@import url('utilities/utilities.css');

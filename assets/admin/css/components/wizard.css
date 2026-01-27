@@ -1,0 +1,347 @@
+/**
+ * FP Finance Hub - Wizard Component
+ * 
+ * Stili per wizard multi-step
+ */
+
+/* Wizard Navigation */
+.fp-fh-wizard-navigation {
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-wizard-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fp-fh-spacing-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 2px solid var(--fp-fh-color-border);
+}
+
+.fp-fh-wizard-step {
+    position: relative;
+    flex: 1;
+    min-width: 120px;
+}
+
+.fp-fh-wizard-step-link {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-2);
+    padding: var(--fp-fh-spacing-3) var(--fp-fh-spacing-4);
+    text-decoration: none;
+    color: var(--fp-fh-color-text-light);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all var(--fp-fh-transition-base);
+}
+
+.fp-fh-wizard-step:hover .fp-fh-wizard-step-link {
+    color: var(--fp-fh-color-text);
+    border-bottom-color: var(--fp-fh-color-border-dark);
+}
+
+.fp-fh-wizard-step.active .fp-fh-wizard-step-link {
+    color: var(--fp-fh-color-primary);
+    border-bottom-color: var(--fp-fh-color-primary);
+    font-weight: var(--fp-fh-font-weight-semibold);
+}
+
+.fp-fh-wizard-step.completed .fp-fh-wizard-step-link {
+    color: var(--fp-fh-color-success);
+}
+
+.fp-fh-wizard-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--fp-fh-color-bg-secondary);
+    color: var(--fp-fh-color-text);
+    font-size: var(--fp-fh-font-size-sm);
+    font-weight: var(--fp-fh-font-weight-semibold);
+}
+
+.fp-fh-wizard-step.active .fp-fh-wizard-step-number {
+    background-color: var(--fp-fh-color-primary);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+.fp-fh-wizard-step.completed .fp-fh-wizard-step-number {
+    background-color: var(--fp-fh-color-success);
+    color: var(--fp-fh-color-text-inverse);
+}
+
+.fp-fh-wizard-step.completed .fp-fh-wizard-step-number::after {
+    content: '✓';
+}
+
+/* Wizard Content */
+.fp-fh-wizard-content {
+    margin-top: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-wizard-step-card {
+    min-height: 400px;
+}
+
+/* Progress Bar */
+.fp-fh-setup-progress {
+    padding: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-progress-percentage {
+    font-size: var(--fp-fh-font-size-lg);
+    font-weight: var(--fp-fh-font-weight-bold);
+    color: var(--fp-fh-color-primary);
+}
+
+.fp-fh-progress-bar {
+    width: 100%;
+    height: 12px;
+    background-color: var(--fp-fh-color-bg-secondary);
+    border-radius: var(--fp-fh-radius-full);
+    overflow: hidden;
+}
+
+.fp-fh-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--fp-fh-color-primary), var(--fp-fh-color-primary-light));
+    border-radius: var(--fp-fh-radius-full);
+    transition: width var(--fp-fh-transition-base);
+}
+
+/* Guide Steps */
+.fp-fh-guide-step {
+    padding: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-guide-intro {
+    text-align: center;
+    padding: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-guide-features {
+    margin-top: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-feature-card {
+    padding: var(--fp-fh-spacing-4);
+    background: var(--fp-fh-color-bg-soft);
+    border-radius: var(--fp-fh-radius);
+    text-align: center;
+}
+
+.fp-fh-feature-icon {
+    font-size: 3rem;
+    margin-bottom: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-feature-title {
+    font-size: var(--fp-fh-font-size-lg);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    margin-bottom: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-feature-description {
+    color: var(--fp-fh-color-text-light);
+    font-size: var(--fp-fh-font-size-sm);
+}
+
+/* Guide Substeps */
+.fp-fh-guide-substep {
+    background: var(--fp-fh-color-bg-soft);
+    border-radius: var(--fp-fh-radius);
+    padding: var(--fp-fh-spacing-4);
+    border-left: 4px solid var(--fp-fh-color-primary);
+}
+
+.fp-fh-guide-substep-header {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-3);
+    margin-bottom: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-guide-substep-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--fp-fh-color-primary);
+    color: var(--fp-fh-color-text-inverse);
+    font-weight: var(--fp-fh-font-weight-bold);
+    flex-shrink: 0;
+}
+
+.fp-fh-guide-substep-title {
+    font-size: var(--fp-fh-font-size-lg);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    margin: 0;
+}
+
+.fp-fh-guide-substep-content {
+    padding-left: calc(32px + var(--fp-fh-spacing-3));
+}
+
+/* Lists */
+.fp-fh-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--fp-fh-spacing-4) 0;
+}
+
+.fp-fh-list-ordered {
+    counter-reset: step-counter;
+    list-style: none;
+}
+
+.fp-fh-list-ordered > li {
+    counter-increment: step-counter;
+    position: relative;
+    padding-left: calc(var(--fp-fh-spacing-6) + var(--fp-fh-spacing-2));
+    margin-bottom: var(--fp-fh-spacing-3);
+}
+
+.fp-fh-list-ordered > li::before {
+    content: counter(step-counter) '.';
+    position: absolute;
+    left: 0;
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-primary);
+}
+
+.fp-fh-list-check > li {
+    position: relative;
+    padding-left: calc(var(--fp-fh-spacing-6) + var(--fp-fh-spacing-2));
+    margin-bottom: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-list-check > li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--fp-fh-color-success);
+    font-weight: var(--fp-fh-font-weight-bold);
+}
+
+/* Tips and Warnings */
+.fp-fh-guide-tip {
+    padding: var(--fp-fh-spacing-3);
+    background: rgba(59, 130, 246, 0.1);
+    border-left: 4px solid var(--fp-fh-color-info);
+    border-radius: var(--fp-fh-radius);
+}
+
+.fp-fh-guide-warning {
+    padding: var(--fp-fh-spacing-3);
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid var(--fp-fh-color-warning);
+    border-radius: var(--fp-fh-radius);
+}
+
+.fp-fh-guide-error {
+    padding: var(--fp-fh-spacing-4);
+    background: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid var(--fp-fh-color-error);
+    border-radius: var(--fp-fh-radius);
+    text-align: center;
+}
+
+.fp-fh-guide-success {
+    padding: var(--fp-fh-spacing-4);
+    background: rgba(34, 197, 94, 0.1);
+    border-left: 4px solid var(--fp-fh-color-success);
+    border-radius: var(--fp-fh-radius);
+}
+
+.fp-fh-guide-info {
+    padding: var(--fp-fh-spacing-3);
+    background: var(--fp-fh-color-bg-soft);
+    border-radius: var(--fp-fh-radius);
+}
+
+.fp-fh-guide-refresh {
+    padding: var(--fp-fh-spacing-3);
+    background: var(--fp-fh-color-bg-soft);
+    border-radius: var(--fp-fh-radius);
+}
+
+/* Wizard Actions */
+.fp-fh-wizard-actions {
+    display: flex;
+    gap: var(--fp-fh-spacing-3);
+    justify-content: flex-end;
+    margin-top: var(--fp-fh-spacing-6);
+    padding-top: var(--fp-fh-spacing-4);
+    border-top: 1px solid var(--fp-fh-color-border);
+}
+
+/* Complete Step */
+.fp-fh-guide-complete {
+    text-align: center;
+    padding: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-complete-icon {
+    font-size: 5rem;
+    margin-bottom: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-complete-summary {
+    margin: var(--fp-fh-spacing-6) 0;
+}
+
+.fp-fh-summary-card {
+    padding: var(--fp-fh-spacing-4);
+    background: var(--fp-fh-color-bg-soft);
+    border-radius: var(--fp-fh-radius);
+    text-align: center;
+}
+
+.fp-fh-summary-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-summary-card h4 {
+    font-size: var(--fp-fh-font-size-base);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    margin: var(--fp-fh-spacing-2) 0;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .fp-fh-wizard-steps {
+        flex-direction: column;
+    }
+    
+    .fp-fh-wizard-step {
+        width: 100%;
+    }
+    
+    .fp-fh-guide-substep-content {
+        padding-left: 0;
+        margin-top: var(--fp-fh-spacing-3);
+    }
+    
+    .fp-fh-wizard-actions {
+        flex-direction: column;
+    }
+    
+    .fp-fh-wizard-actions .fp-fh-btn {
+        width: 100%;
+    }
+}

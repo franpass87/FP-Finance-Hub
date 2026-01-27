@@ -1,0 +1,142 @@
+/**
+ * FP Finance Hub - Bank Accounts Page
+ * 
+ * Account cards grid, balance displays, import section
+ */
+
+/* Accounts Grid */
+.fp-accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--fp-fh-spacing-6);
+    margin-bottom: var(--fp-fh-spacing-8);
+}
+
+@media (max-width: 767px) {
+    .fp-accounts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Account Card */
+.fp-account-card {
+    position: relative;
+    padding: var(--fp-fh-spacing-6);
+    background-color: var(--fp-fh-color-bg);
+    border: 1px solid var(--fp-fh-color-border);
+    border-radius: var(--fp-fh-radius-lg);
+    box-shadow: var(--fp-fh-shadow-sm);
+    transition: box-shadow var(--fp-fh-transition-base), transform var(--fp-fh-transition-base);
+    overflow: hidden;
+}
+
+.fp-account-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--fp-fh-color-primary) 0%, var(--fp-fh-color-primary-light) 100%);
+}
+
+.fp-account-card:hover {
+    box-shadow: var(--fp-fh-shadow-md);
+    transform: translateY(-2px);
+}
+
+.fp-account-card h3 {
+    font-size: var(--fp-fh-font-size-lg);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-text);
+    margin: 0 0 var(--fp-fh-spacing-4) 0;
+}
+
+.fp-account-card .fp-balance {
+    font-size: var(--fp-fh-font-size-3xl);
+    font-weight: var(--fp-fh-font-weight-bold);
+    color: var(--fp-fh-color-text);
+    line-height: var(--fp-fh-line-height-tight);
+    margin: var(--fp-fh-spacing-2) 0;
+    font-family: var(--fp-fh-font-family-mono);
+    letter-spacing: 0.02em;
+}
+
+.fp-account-card .fp-balance-date {
+    font-size: var(--fp-fh-font-size-sm);
+    color: var(--fp-fh-color-text-light);
+    margin-top: var(--fp-fh-spacing-4);
+    padding-top: var(--fp-fh-spacing-4);
+    border-top: 1px solid var(--fp-fh-color-border-light);
+}
+
+/* Total Balance Widget */
+.fp-total-balance {
+    font-size: var(--fp-fh-font-size-4xl);
+    font-weight: var(--fp-fh-font-weight-bold);
+    color: var(--fp-fh-color-primary);
+    line-height: var(--fp-fh-line-height-tight);
+    font-family: var(--fp-fh-font-family-mono);
+    letter-spacing: 0.02em;
+}
+
+/* Import Section */
+.fp-import-section {
+    padding: var(--fp-fh-spacing-6);
+    background-color: var(--fp-fh-color-bg);
+    border: 1px solid var(--fp-fh-color-border);
+    border-radius: var(--fp-fh-radius-lg);
+    box-shadow: var(--fp-fh-shadow-sm);
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+.fp-import-section h2 {
+    font-size: var(--fp-fh-font-size-xl);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-text);
+    margin: 0 0 var(--fp-fh-spacing-4) 0;
+    padding-bottom: var(--fp-fh-spacing-4);
+    border-bottom: 1px solid var(--fp-fh-color-border-light);
+}
+
+/* File Upload Area */
+.fp-file-upload-area {
+    padding: var(--fp-fh-spacing-8) var(--fp-fh-spacing-4);
+    border: 2px dashed var(--fp-fh-color-border);
+    border-radius: var(--fp-fh-radius-lg);
+    text-align: center;
+    transition: border-color var(--fp-fh-transition-base), background-color var(--fp-fh-transition-base);
+    cursor: pointer;
+}
+
+.fp-file-upload-area:hover {
+    border-color: var(--fp-fh-color-primary);
+    background-color: var(--fp-fh-color-bg-hover);
+}
+
+.fp-file-upload-area.dragover {
+    border-color: var(--fp-fh-color-primary);
+    background-color: var(--fp-fh-color-primary-bg);
+}
+
+/* Open Banking Section */
+.fp-open-banking-section {
+    padding: var(--fp-fh-spacing-6);
+    background: linear-gradient(135deg, var(--fp-fh-color-info-bg) 0%, rgba(34, 113, 177, 0.05) 100%);
+    border: 1px solid var(--fp-fh-color-info);
+    border-radius: var(--fp-fh-radius-lg);
+    box-shadow: var(--fp-fh-shadow-sm);
+}
+
+.fp-open-banking-section h2 {
+    font-size: var(--fp-fh-font-size-xl);
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-text);
+    margin: 0 0 var(--fp-fh-spacing-2) 0;
+}
+
+.fp-open-banking-section p {
+    font-size: var(--fp-fh-font-size-base);
+    color: var(--fp-fh-color-text-light);
+    margin: 0 0 var(--fp-fh-spacing-4) 0;
+}

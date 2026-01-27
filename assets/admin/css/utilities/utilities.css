@@ -1,0 +1,153 @@
+/**
+ * FP Finance Hub - Utilities
+ * 
+ * Utility classes per spacing, colors, text, display
+ */
+
+/* Display Utilities */
+.fp-fh-hidden {
+    display: none !important;
+}
+
+.fp-fh-block {
+    display: block !important;
+}
+
+.fp-fh-inline-block {
+    display: inline-block !important;
+}
+
+.fp-fh-inline {
+    display: inline !important;
+}
+
+.fp-fh-flex {
+    display: flex !important;
+}
+
+.fp-fh-inline-flex {
+    display: inline-flex !important;
+}
+
+.fp-fh-grid {
+    display: grid !important;
+}
+
+/* Visibility */
+.fp-fh-visible {
+    visibility: visible !important;
+}
+
+.fp-fh-invisible {
+    visibility: hidden !important;
+}
+
+/* Spacing Utilities */
+.fp-fh-m-0 { margin: 0 !important; }
+.fp-fh-m-1 { margin: var(--fp-fh-spacing-1) !important; }
+.fp-fh-m-2 { margin: var(--fp-fh-spacing-2) !important; }
+.fp-fh-m-3 { margin: var(--fp-fh-spacing-3) !important; }
+.fp-fh-m-4 { margin: var(--fp-fh-spacing-4) !important; }
+.fp-fh-m-6 { margin: var(--fp-fh-spacing-6) !important; }
+.fp-fh-m-8 { margin: var(--fp-fh-spacing-8) !important; }
+
+.fp-fh-mt-0 { margin-top: 0 !important; }
+.fp-fh-mt-1 { margin-top: var(--fp-fh-spacing-1) !important; }
+.fp-fh-mt-2 { margin-top: var(--fp-fh-spacing-2) !important; }
+.fp-fh-mt-3 { margin-top: var(--fp-fh-spacing-3) !important; }
+.fp-fh-mt-4 { margin-top: var(--fp-fh-spacing-4) !important; }
+.fp-fh-mt-6 { margin-top: var(--fp-fh-spacing-6) !important; }
+.fp-fh-mt-8 { margin-top: var(--fp-fh-spacing-8) !important; }
+
+.fp-fh-mb-0 { margin-bottom: 0 !important; }
+.fp-fh-mb-1 { margin-bottom: var(--fp-fh-spacing-1) !important; }
+.fp-fh-mb-2 { margin-bottom: var(--fp-fh-spacing-2) !important; }
+.fp-fh-mb-3 { margin-bottom: var(--fp-fh-spacing-3) !important; }
+.fp-fh-mb-4 { margin-bottom: var(--fp-fh-spacing-4) !important; }
+.fp-fh-mb-6 { margin-bottom: var(--fp-fh-spacing-6) !important; }
+.fp-fh-mb-8 { margin-bottom: var(--fp-fh-spacing-8) !important; }
+
+.fp-fh-p-0 { padding: 0 !important; }
+.fp-fh-p-1 { padding: var(--fp-fh-spacing-1) !important; }
+.fp-fh-p-2 { padding: var(--fp-fh-spacing-2) !important; }
+.fp-fh-p-3 { padding: var(--fp-fh-spacing-3) !important; }
+.fp-fh-p-4 { padding: var(--fp-fh-spacing-4) !important; }
+.fp-fh-p-6 { padding: var(--fp-fh-spacing-6) !important; }
+.fp-fh-p-8 { padding: var(--fp-fh-spacing-8) !important; }
+
+.fp-fh-pt-0 { padding-top: 0 !important; }
+.fp-fh-pt-1 { padding-top: var(--fp-fh-spacing-1) !important; }
+.fp-fh-pt-2 { padding-top: var(--fp-fh-spacing-2) !important; }
+.fp-fh-pt-3 { padding-top: var(--fp-fh-spacing-3) !important; }
+.fp-fh-pt-4 { padding-top: var(--fp-fh-spacing-4) !important; }
+.fp-fh-pt-6 { padding-top: var(--fp-fh-spacing-6) !important; }
+.fp-fh-pt-8 { padding-top: var(--fp-fh-spacing-8) !important; }
+
+.fp-fh-pb-0 { padding-bottom: 0 !important; }
+.fp-fh-pb-1 { padding-bottom: var(--fp-fh-spacing-1) !important; }
+.fp-fh-pb-2 { padding-bottom: var(--fp-fh-spacing-2) !important; }
+.fp-fh-pb-3 { padding-bottom: var(--fp-fh-spacing-3) !important; }
+.fp-fh-pb-4 { padding-bottom: var(--fp-fh-spacing-4) !important; }
+.fp-fh-pb-6 { padding-bottom: var(--fp-fh-spacing-6) !important; }
+.fp-fh-pb-8 { padding-bottom: var(--fp-fh-spacing-8) !important; }
+
+/* Text Utilities */
+.fp-fh-text-left { text-align: left !important; }
+.fp-fh-text-center { text-align: center !important; }
+.fp-fh-text-right { text-align: right !important; }
+
+.fp-fh-text-xs { font-size: var(--fp-fh-font-size-xs) !important; }
+.fp-fh-text-sm { font-size: var(--fp-fh-font-size-sm) !important; }
+.fp-fh-text-base { font-size: var(--fp-fh-font-size-base) !important; }
+.fp-fh-text-lg { font-size: var(--fp-fh-font-size-lg) !important; }
+.fp-fh-text-xl { font-size: var(--fp-fh-font-size-xl) !important; }
+.fp-fh-text-2xl { font-size: var(--fp-fh-font-size-2xl) !important; }
+.fp-fh-text-3xl { font-size: var(--fp-fh-font-size-3xl) !important; }
+
+.fp-fh-font-normal { font-weight: var(--fp-fh-font-weight-normal) !important; }
+.fp-fh-font-medium { font-weight: var(--fp-fh-font-weight-medium) !important; }
+.fp-fh-font-semibold { font-weight: var(--fp-fh-font-weight-semibold) !important; }
+.fp-fh-font-bold { font-weight: var(--fp-fh-font-weight-bold) !important; }
+
+.fp-fh-text-primary { color: var(--fp-fh-color-primary) !important; }
+.fp-fh-text-success { color: var(--fp-fh-color-success) !important; }
+.fp-fh-text-warning { color: var(--fp-fh-color-warning) !important; }
+.fp-fh-text-error { color: var(--fp-fh-color-error) !important; }
+.fp-fh-text-muted { color: var(--fp-fh-color-text-muted) !important; }
+.fp-fh-text-light { color: var(--fp-fh-color-text-light) !important; }
+
+/* Width Utilities */
+.fp-fh-w-full { width: 100% !important; }
+.fp-fh-w-auto { width: auto !important; }
+
+.fp-fh-max-w-full { max-width: 100% !important; }
+
+/* Position Utilities */
+.fp-fh-relative { position: relative !important; }
+.fp-fh-absolute { position: absolute !important; }
+.fp-fh-fixed { position: fixed !important; }
+.fp-fh-sticky { position: sticky !important; }
+
+/* Overflow Utilities */
+.fp-fh-overflow-auto { overflow: auto !important; }
+.fp-fh-overflow-hidden { overflow: hidden !important; }
+.fp-fh-overflow-x-auto { overflow-x: auto !important; }
+.fp-fh-overflow-y-auto { overflow-y: auto !important; }
+
+/* Border Utilities */
+.fp-fh-border { border: 1px solid var(--fp-fh-color-border) !important; }
+.fp-fh-border-top { border-top: 1px solid var(--fp-fh-color-border) !important; }
+.fp-fh-border-bottom { border-bottom: 1px solid var(--fp-fh-color-border) !important; }
+.fp-fh-border-0 { border: 0 !important; }
+
+.fp-fh-rounded { border-radius: var(--fp-fh-radius-base) !important; }
+.fp-fh-rounded-md { border-radius: var(--fp-fh-radius-md) !important; }
+.fp-fh-rounded-lg { border-radius: var(--fp-fh-radius-lg) !important; }
+.fp-fh-rounded-full { border-radius: var(--fp-fh-radius-full) !important; }
+
+/* Shadow Utilities */
+.fp-fh-shadow-sm { box-shadow: var(--fp-fh-shadow-sm) !important; }
+.fp-fh-shadow { box-shadow: var(--fp-fh-shadow-base) !important; }
+.fp-fh-shadow-md { box-shadow: var(--fp-fh-shadow-md) !important; }
+.fp-fh-shadow-lg { box-shadow: var(--fp-fh-shadow-lg) !important; }
+.fp-fh-shadow-none { box-shadow: none !important; }

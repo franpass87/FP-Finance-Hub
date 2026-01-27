@@ -1,0 +1,188 @@
+/**
+ * FP Finance Hub - Tables
+ * 
+ * Table design moderno
+ */
+
+.fp-fh-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: var(--fp-fh-spacing-6);
+}
+
+.fp-fh-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: var(--fp-fh-color-bg);
+    font-size: var(--fp-fh-font-size-base);
+    line-height: var(--fp-fh-line-height-normal);
+}
+
+/* Table Header */
+.fp-fh-table thead {
+    background-color: var(--fp-fh-color-bg-secondary);
+    border-bottom: 2px solid var(--fp-fh-color-border);
+}
+
+.fp-fh-table thead th {
+    padding: var(--fp-fh-spacing-3) var(--fp-fh-spacing-4);
+    text-align: left;
+    font-weight: var(--fp-fh-font-weight-semibold);
+    color: var(--fp-fh-color-text);
+    font-size: var(--fp-fh-font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+}
+
+/* Table Body */
+.fp-fh-table tbody tr {
+    border-bottom: 1px solid var(--fp-fh-color-border-light);
+    transition: background-color var(--fp-fh-transition-base);
+}
+
+.fp-fh-table tbody tr:hover {
+    background-color: var(--fp-fh-color-bg-hover);
+}
+
+.fp-fh-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.fp-fh-table tbody td {
+    padding: var(--fp-fh-spacing-4);
+    color: var(--fp-fh-color-text);
+    border: none;
+    vertical-align: middle;
+}
+
+/* Striped Rows */
+.fp-fh-table-striped tbody tr:nth-child(odd) {
+    background-color: var(--fp-fh-color-bg-secondary);
+}
+
+.fp-fh-table-striped tbody tr:nth-child(odd):hover {
+    background-color: var(--fp-fh-color-bg-hover);
+}
+
+/* Bordered Table */
+.fp-fh-table-bordered {
+    border: 1px solid var(--fp-fh-color-border);
+}
+
+.fp-fh-table-bordered th,
+.fp-fh-table-bordered td {
+    border: 1px solid var(--fp-fh-color-border-light);
+}
+
+/* Actions Column */
+.fp-fh-table-actions {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.fp-fh-table-actions .fp-fh-btn {
+    margin-left: var(--fp-fh-spacing-2);
+}
+
+/* Empty State */
+.fp-fh-table-empty {
+    text-align: center;
+    padding: var(--fp-fh-spacing-8) var(--fp-fh-spacing-4);
+    color: var(--fp-fh-color-text-muted);
+}
+
+.fp-fh-table-empty td {
+    padding: var(--fp-fh-spacing-8);
+}
+
+/* Desktop Table - Hide on Mobile */
+@media (max-width: 767px) {
+    .fp-fh-table-desktop {
+        display: none !important;
+    }
+    
+    .fp-fh-table-mobile-cards {
+        display: block;
+    }
+}
+
+/* Mobile Cards - Hide on Desktop */
+@media (min-width: 768px) {
+    .fp-fh-table-mobile-cards {
+        display: none !important;
+    }
+    
+    .fp-fh-table-desktop {
+        display: table;
+    }
+}
+
+/* Responsive Table (Fallback) */
+@media (max-width: 767px) {
+    .fp-fh-table-wrapper {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .fp-fh-table {
+        font-size: var(--fp-fh-font-size-sm);
+    }
+    
+    .fp-fh-table thead th,
+    .fp-fh-table tbody td {
+        padding: var(--fp-fh-spacing-2) var(--fp-fh-spacing-3);
+    }
+    
+    /* Stack table cells on mobile (legacy) */
+    .fp-fh-table-mobile-stack {
+        display: block;
+    }
+    
+    .fp-fh-table-mobile-stack thead {
+        display: none;
+    }
+    
+    .fp-fh-table-mobile-stack tbody,
+    .fp-fh-table-mobile-stack tr,
+    .fp-fh-table-mobile-stack td {
+        display: block;
+        width: 100%;
+    }
+    
+    .fp-fh-table-mobile-stack tr {
+        margin-bottom: var(--fp-fh-spacing-4);
+        border: 1px solid var(--fp-fh-color-border);
+        border-radius: var(--fp-fh-radius-md);
+        padding: var(--fp-fh-spacing-4);
+        background-color: var(--fp-fh-color-bg);
+    }
+    
+    .fp-fh-table-mobile-stack td {
+        border: none;
+        padding: var(--fp-fh-spacing-2) 0;
+        text-align: left;
+    }
+    
+    .fp-fh-table-mobile-stack td::before {
+        content: attr(data-label) ": ";
+        font-weight: var(--fp-fh-font-weight-semibold);
+        color: var(--fp-fh-color-text-light);
+        display: inline-block;
+        width: 40%;
+    }
+}
+
+/* Table Footer */
+.fp-fh-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--fp-fh-spacing-4);
+    background-color: var(--fp-fh-color-bg-secondary);
+    border-top: 1px solid var(--fp-fh-color-border);
+    font-size: var(--fp-fh-font-size-sm);
+    color: var(--fp-fh-color-text-light);
+}

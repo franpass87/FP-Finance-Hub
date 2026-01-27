@@ -1,0 +1,94 @@
+/**
+ * FP Finance Hub - Header Layout
+ * 
+ * Header delle pagine con breadcrumb e azioni
+ */
+
+.fp-fh-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--fp-fh-spacing-4);
+    margin-bottom: var(--fp-fh-spacing-6);
+    padding-bottom: var(--fp-fh-spacing-4);
+    border-bottom: 1px solid var(--fp-fh-color-border);
+}
+
+.fp-fh-header-title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-header-title h1 {
+    font-size: var(--fp-fh-font-size-3xl);
+    font-weight: var(--fp-fh-font-weight-bold);
+    color: var(--fp-fh-color-text);
+    margin: 0;
+}
+
+.fp-fh-header-title p {
+    font-size: var(--fp-fh-font-size-base);
+    color: var(--fp-fh-color-text-light);
+    margin: 0;
+}
+
+.fp-fh-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-2);
+    flex-wrap: wrap;
+}
+
+/* Breadcrumb */
+.fp-fh-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-2);
+    font-size: var(--fp-fh-font-size-sm);
+    color: var(--fp-fh-color-text-lighter);
+    margin-bottom: var(--fp-fh-spacing-4);
+}
+
+.fp-fh-breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: var(--fp-fh-spacing-2);
+}
+
+.fp-fh-breadcrumb-item:not(:last-child)::after {
+    content: "/";
+    color: var(--fp-fh-color-border-dark);
+}
+
+.fp-fh-breadcrumb-item a {
+    color: var(--fp-fh-color-text-lighter);
+    transition: color var(--fp-fh-transition-base);
+}
+
+.fp-fh-breadcrumb-item a:hover {
+    color: var(--fp-fh-color-primary);
+}
+
+.fp-fh-breadcrumb-item.active {
+    color: var(--fp-fh-color-text);
+    font-weight: var(--fp-fh-font-weight-medium);
+}
+
+/* Responsive header */
+@media (max-width: 767px) {
+    .fp-fh-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .fp-fh-header-title h1 {
+        font-size: var(--fp-fh-font-size-2xl);
+    }
+    
+    .fp-fh-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

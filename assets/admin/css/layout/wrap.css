@@ -1,0 +1,81 @@
+/**
+ * FP Finance Hub - Wrap Layout
+ * 
+ * Container principale per le pagine admin
+ */
+
+.fp-fh-wrapper {
+    font-family: var(--fp-fh-font-family);
+    font-size: var(--fp-fh-font-size-base);
+    line-height: var(--fp-fh-line-height-normal);
+    color: var(--fp-fh-color-text);
+    background-color: var(--fp-fh-color-bg);
+}
+
+/* Container principale */
+.fp-fh-wrap {
+    max-width: 100%;
+    margin: 0;
+    padding: var(--fp-fh-spacing-6) var(--fp-fh-spacing-4);
+}
+
+/* Responsive padding */
+@media (min-width: 768px) {
+    .fp-fh-wrap {
+        padding: var(--fp-fh-spacing-8) var(--fp-fh-spacing-6);
+    }
+}
+
+@media (min-width: 1200px) {
+    .fp-fh-wrap {
+        padding: var(--fp-fh-spacing-10) var(--fp-fh-spacing-8);
+    }
+}
+
+/* Sezioni */
+.fp-fh-section {
+    margin-bottom: var(--fp-fh-spacing-8);
+}
+
+.fp-fh-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Container con background */
+.fp-fh-container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--fp-fh-spacing-4);
+    padding-right: var(--fp-fh-spacing-4);
+}
+
+@media (min-width: 576px) {
+    .fp-fh-container {
+        max-width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .fp-fh-container {
+        max-width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .fp-fh-container {
+        max-width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .fp-fh-container {
+        max-width: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .fp-fh-container {
+        max-width: 1320px;
+    }
+}
