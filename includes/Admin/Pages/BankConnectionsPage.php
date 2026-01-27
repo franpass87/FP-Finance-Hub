@@ -120,6 +120,29 @@ class BankConnectionsPage {
                                 </button>
                             </div>
                         </form>
+                    <?php elseif (is_wp_error($institutions) && $institutions->get_error_code() === 'no_institutions') : ?>
+                        <!-- Workaround: Permetti inserimento manuale ID banca -->
+                        <div class="fp-fh-guide-warning fp-fh-mb-4" style="background: #fff3cd; border-color: #ffeaa7; padding: 12px; border-radius: 4px;">
+                            <strong>⚠️ Nessuna banca disponibile automaticamente</strong>
+                            <p class="fp-fh-mt-2">Puoi comunque collegare una banca inserendo manualmente il suo ID (es. per test: <code>modelo-sandbox</code>)</p>
+                        </div>
+                        <form method="post" action="" class="fp-fh-mt-4">
+                            <?php wp_nonce_field('fp_finance_hub_yapily_connect'); ?>
+                            <div class="fp-fh-form-group">
+                                <label for="institution_id" class="fp-fh-form-label">ID Banca (Institution ID)</label>
+                                <input type="text" name="institution_id" id="institution_id" class="fp-fh-input" 
+                                       placeholder="es. modelo-sandbox" required>
+                                <p class="fp-fh-form-description">
+                                    Inserisci l'ID della banca che vuoi collegare. 
+                                    Per test in sandbox, usa: <code>modelo-sandbox</code>
+                                </p>
+                            </div>
+                            <div class="fp-fh-card-footer">
+                                <button type="submit" class="fp-fh-btn fp-fh-btn-primary">
+                                    🔗 Collega Conto
+                                </button>
+                            </div>
+                        </form>
                         
                         <?php if (isset($_POST['institution_id'])) : ?>
                             <?php
@@ -164,19 +187,20 @@ class BankConnectionsPage {
                                             echo '<br><br>';
                                             echo '<strong>🔧 Problema identificato:</strong> L\'API Yapily restituisce un array vuoto di banche. ';
                                             echo '<br><br>';
-                                            echo '<strong>📋 Possibili soluzioni:</strong>';
+                                            echo '<strong>💡 Soluzione Rapida:</strong> Puoi comunque collegare una banca inserendo manualmente il suo <strong>Institution ID</strong> nel form qui sotto. ';
+                                            echo 'Per test in sandbox, usa: <code>modelo-sandbox</code>';
+                                            echo '<br><br>';
+                                            echo '<strong>📋 Per aggiungere banche su Yapily Console (opzionale):</strong>';
                                             echo '<ol style="margin: 8px 0 0 20px;">';
-                                            echo '<li><strong>Contatta Yapily Support:</strong> Se l\'account è nuovo o in sandbox, potrebbe essere necessario che Yapily abiliti l\'accesso alle banche. Fornisci loro:';
-                                            echo '<ul style="margin: 4px 0 0 20px;">';
-                                            echo '<li>Application ID: <code>' . esc_html(substr(get_option('fp_finance_hub_yapily_app_id', ''), 0, 20)) . '...</code></li>';
-                                            echo '<li>Richiedi accesso a banche sandbox (es. Modelo Sandbox) o banche italiane</li>';
-                                            echo '</ul>';
-                                            echo '</li>';
-                                            echo '<li><strong>Verifica su Yapily Console:</strong> Controlla su <a href="https://console.yapily.com" target="_blank">console.yapily.com</a> se ci sono banche disponibili per la tua Application</li>';
-                                            echo '<li><strong>Account Sandbox vs Production:</strong> Se sei in sandbox, alcune banche potrebbero non essere disponibili automaticamente</li>';
+                                            echo '<li>Vai su <a href="https://console.yapily.com" target="_blank">console.yapily.com</a></li>';
+                                            echo '<li>Seleziona la tua <strong>Application</strong></li>';
+                                            echo '<li>Vai a <strong>"Connected Institutions"</strong> → <strong>"Add Institutions"</strong></li>';
+                                            echo '<li>Cerca <code>modelo-sandbox</code> e clicca <strong>"Register"</strong> → <strong>"Yes, Preconfigured Credentials"</strong></li>';
+                                            echo '<li>Dopo aver aggiunto, le banche appariranno automaticamente qui</li>';
                                             echo '</ol>';
                                             echo '<br>';
-                                            echo '<strong>💡 Nota:</strong> L\'endpoint <code>/institutions</code> dovrebbe restituire automaticamente le banche disponibili per il tuo account. Se restituisce un array vuoto, potrebbe essere necessario che Yapily abiliti l\'accesso.';
+                                            echo '<strong>⚠️ Nota:</strong> Se l\'account è in sandbox, potrebbe essere necessario aggiungere manualmente le banche su Yapily Console. ';
+                                            echo 'Tuttavia, puoi sempre usare il form qui sotto per inserire manualmente l\'ID di una banca.';
                                             echo '</div>';
                                             
                                             // Mostra info di debug se WP_DEBUG è attivo
