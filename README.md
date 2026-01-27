@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # FP Finance Hub
 
 **CRM + Dashboard Finanziario Completo (Aziendale + Familiare)**
@@ -140,3 +141,6 @@ composer install
 ---
 
 **⭐ Plugin in sviluppo per Francesco Passeri**
+=======
+# FP-Finance-Hub
+>>>>>>> 9eb511b15852c46a149362f40148c3da105dcd07
