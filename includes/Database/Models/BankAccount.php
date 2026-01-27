@@ -171,7 +171,7 @@ class BankAccount {
         $sanitized = [];
         
         $allowed = [
-            'name', 'type', 'account_number', 'iban', 'currency',
+            'name', 'type', 'account_number', 'iban', 'currency', 'bank_name',
             'current_balance', 'last_balance_date', 'starting_balance',
             'is_active', 'notes',
         ];
