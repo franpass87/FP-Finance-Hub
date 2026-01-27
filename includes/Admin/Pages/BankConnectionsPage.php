@@ -31,8 +31,15 @@ class BankConnectionsPage {
         
         $yapily = new YapilyService();
         
-        // Ottieni lista banche italiane disponibili
-        $institutions = $yapily->get_institutions('IT');
+        // Ottieni lista banche italiane disponibili solo se le credenziali sono configurate
+        $institutions = null;
+        if ($yapily_configured && $yapily->is_configured()) {
+            $institutions = $yapily->get_institutions('IT');
+        } elseif (!$yapily_configured) {
+            $institutions = new \WP_Error('not_configured', 'Credenziali Yapily non configurate nelle Impostazioni.');
+        } else {
+            $institutions = new \WP_Error('not_configured', 'Credenziali Yapily non valide. Verifica Application ID e Application Secret.');
+        }
         
         // Ottieni connessioni esistenti
         $connections = self::get_user_connections();
@@ -142,7 +149,30 @@ class BankConnectionsPage {
                     <?php else : ?>
                         <div class="fp-fh-notice fp-fh-notice-error">
                             <div class="fp-fh-notice-content">
-                                <div class="fp-fh-notice-message">Errore nel caricamento banche disponibili.</div>
+                                <div class="fp-fh-notice-title">❌ Errore nel caricamento banche disponibili</div>
+                                <div class="fp-fh-notice-message">
+                                    <?php if (is_wp_error($institutions)) : ?>
+                                        <strong>Dettagli errore:</strong> <?php echo esc_html($institutions->get_error_message()); ?>
+                                        <br><br>
+                                        <strong>Possibili cause:</strong>
+                                        <ul style="margin: 10px 0; padding-left: 20px;">
+                                            <li>Credenziali Yapily non valide o scadute</li>
+                                            <li>Application ID o Application Secret errati</li>
+                                            <li>Problema di connessione con l'API Yapily</li>
+                                            <li>Account Yapily non attivo o in modalità sandbox</li>
+                                        </ul>
+                                        <br>
+                                        <strong>Come risolvere:</strong>
+                                        <ol style="margin: 10px 0; padding-left: 20px;">
+                                            <li>Verifica le credenziali Yapily in <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-settings'); ?>">Impostazioni</a></li>
+                                            <li>Assicurati che Application ID e Application Secret siano corretti</li>
+                                            <li>Controlla che l'account Yapily sia attivo su <a href="https://console.yapily.com" target="_blank">console.yapily.com</a></li>
+                                            <li>Se necessario, rigenera le credenziali su Yapily Console</li>
+                                        </ol>
+                                    <?php else : ?>
+                                        Nessuna banca disponibile. Verifica le credenziali Yapily nelle <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-settings'); ?>">Impostazioni</a>.
+                                    <?php endif; ?>
+                                </div>
                             </div>
                         </div>
                     <?php endif; ?>
