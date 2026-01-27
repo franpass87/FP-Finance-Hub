@@ -40,6 +40,11 @@ class SettingsPage {
                     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
                     <p>Configura le integrazioni e le impostazioni del plugin</p>
                 </div>
+                <div class="fp-fh-header-actions" style="display: flex; align-items: center; gap: 12px;">
+                    <button type="submit" form="fp-fh-settings-form" name="save_settings" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg" style="min-width: 180px; padding: 10px 20px; font-size: 14px; font-weight: 600; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-block;">
+                        💾 Salva Impostazioni
+                    </button>
+                </div>
             </div>
             
             <!-- Help Banner -->
@@ -59,7 +64,8 @@ class SettingsPage {
                 </div>
             <?php endif; ?>
             
-            <form method="post" class="fp-fh-card">
+            <div class="fp-fh-card">
+            <form method="post" action="" id="fp-fh-settings-form">
                 <?php wp_nonce_field('fp_finance_hub_settings'); ?>
                 
                 <div class="fp-fh-card-header">
@@ -236,12 +242,13 @@ class SettingsPage {
                     </div>
                 </div>
                 
-                <div class="fp-fh-card-footer">
-                    <button type="submit" name="save_settings" class="fp-fh-btn fp-fh-btn-primary">
-                        Salva Impostazioni
+                <div class="fp-fh-card-footer" style="display: flex; justify-content: flex-end; align-items: center; background-color: #f8f9fa; padding: 24px; margin-top: 24px; border-top: 2px solid #dee2e6; position: sticky; bottom: 0; z-index: 100;">
+                    <button type="submit" name="save_settings" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg" style="min-width: 200px; padding: 12px 24px; font-size: 16px; font-weight: 600; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-block;">
+                        💾 Salva Impostazioni
                     </button>
                 </div>
             </form>
+            </div>
             
             <!-- FASE 5: Dashboard Learning e Feedback -->
             <div class="fp-fh-card fp-fh-mt-6">
