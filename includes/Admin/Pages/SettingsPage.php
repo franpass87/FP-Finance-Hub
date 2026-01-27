@@ -40,11 +40,6 @@ class SettingsPage {
                     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
                     <p>Configura le integrazioni e le impostazioni del plugin</p>
                 </div>
-                <div class="fp-fh-header-actions" style="display: flex; align-items: center; gap: 12px;">
-                    <button type="submit" form="fp-fh-settings-form" name="save_settings" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg" style="min-width: 180px; padding: 10px 20px; font-size: 14px; font-weight: 600; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-block;">
-                        💾 Salva Impostazioni
-                    </button>
-                </div>
             </div>
             
             <!-- Help Banner -->
