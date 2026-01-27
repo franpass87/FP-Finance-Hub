@@ -124,23 +124,28 @@ class YapilyService {
             return new \WP_Error('not_configured', 'Credenziali Yapily non configurate. Inserisci Application ID e Application Secret nelle Impostazioni.');
         }
         
-        // Prova prima senza filtro per vedere se ci sono banche
-        // Yapily potrebbe richiedere parametri aggiuntivi o avere un formato diverso
-        // In sandbox, potrebbe essere necessario non filtrare per paese
-        $endpoint = '/institutions?country=' . urlencode($country);
+        // Prova prima senza filtro per vedere tutte le banche disponibili
+        // L'endpoint /institutions dovrebbe restituire tutte le banche disponibili per l'account
+        $endpoint = '/institutions';
         $result = $this->api_request('GET', $endpoint);
         
-        // Se non ci sono risultati con filtro paese, prova senza filtro (per sandbox)
-        if (!is_wp_error($result) && isset($result['data']) && empty($result['data'])) {
-            $endpoint_no_country = '/institutions';
-            $result_no_country = $this->api_request('GET', $endpoint_no_country);
-            
-            // Se senza filtro ci sono risultati, usa quelli
-            if (!is_wp_error($result_no_country) && isset($result_no_country['data']) && !empty($result_no_country['data'])) {
-                if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-                    error_log('[FP Finance Hub] Yapily: Nessuna banca trovata con filtro paese, ma trovate ' . count($result_no_country['data']) . ' banche senza filtro');
+        // Se ci sono risultati, filtra per paese se richiesto
+        if (!is_wp_error($result) && isset($result['data']) && is_array($result['data']) && !empty($result['data'])) {
+            // Se è richiesto un filtro per paese, applicalo
+            if ($country && $country !== 'ALL') {
+                $filtered = array_filter($result['data'], function($institution) use ($country) {
+                    $institution_country = $institution['country'] ?? $institution['countries'][0] ?? null;
+                    return $institution_country === $country;
+                });
+                
+                if (!empty($filtered)) {
+                    $result['data'] = array_values($filtered);
+                } else {
+                    // Se non ci sono banche per il paese richiesto, restituisci tutte le banche disponibili
+                    if (defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
+                        error_log('[FP Finance Hub] Yapily: Nessuna banca trovata per paese ' . $country . ', restituisco tutte le banche disponibili');
+                    }
                 }
-                $result = $result_no_country;
             }
         }
         

@@ -162,23 +162,21 @@ class BankConnectionsPage {
                                             echo '<div class="fp-fh-guide-tip" style="background: #d4edda; border-color: #c3e6cb; padding: 12px; border-radius: 4px; margin: 10px 0;">';
                                             echo '<strong>✅ Test connessione:</strong> Le credenziali Yapily sono valide e l\'API risponde correttamente. ';
                                             echo '<br><br>';
-                                            echo '<strong>🔧 Problema identificato:</strong> L\'account Yapily è in modalità <strong>sandbox</strong> ma non ha ancora banche configurate.';
+                                            echo '<strong>🔧 Problema identificato:</strong> L\'API Yapily restituisce un array vuoto di banche. ';
                                             echo '<br><br>';
-                                            echo '<strong>📋 Cosa fare su Yapily Console:</strong>';
+                                            echo '<strong>📋 Possibili soluzioni:</strong>';
                                             echo '<ol style="margin: 8px 0 0 20px;">';
-                                            echo '<li>Vai su <a href="https://console.yapily.com" target="_blank">console.yapily.com</a> e accedi</li>';
-                                            echo '<li>Seleziona la tua <strong>Application</strong></li>';
-                                            echo '<li>Vai alla sezione <strong>"Institutions"</strong> o <strong>"Sandbox"</strong></li>';
-                                            echo '<li><strong>Aggiungi banche sandbox</strong> alla tua applicazione:</li>';
+                                            echo '<li><strong>Contatta Yapily Support:</strong> Se l\'account è nuovo o in sandbox, potrebbe essere necessario che Yapily abiliti l\'accesso alle banche. Fornisci loro:';
                                             echo '<ul style="margin: 4px 0 0 20px;">';
-                                            echo '<li><strong>Modelo Sandbox</strong> (ID: <code>modelo-sandbox</code>) - <strong>Raccomandato!</strong> Preconfigurato, non richiede setup aggiuntivo</li>';
-                                            echo '<li>Oppure altre banche sandbox disponibili (filtra per "PRECONFIGURED SANDBOX")</li>';
+                                            echo '<li>Application ID: <code>' . esc_html(substr(get_option('fp_finance_hub_yapily_app_id', ''), 0, 20)) . '...</code></li>';
+                                            echo '<li>Richiedi accesso a banche sandbox (es. Modelo Sandbox) o banche italiane</li>';
                                             echo '</ul>';
-                                            echo '<li>Salva le modifiche</li>';
-                                            echo '<li>Ricarica questa pagina</li>';
+                                            echo '</li>';
+                                            echo '<li><strong>Verifica su Yapily Console:</strong> Controlla su <a href="https://console.yapily.com" target="_blank">console.yapily.com</a> se ci sono banche disponibili per la tua Application</li>';
+                                            echo '<li><strong>Account Sandbox vs Production:</strong> Se sei in sandbox, alcune banche potrebbero non essere disponibili automaticamente</li>';
                                             echo '</ol>';
                                             echo '<br>';
-                                            echo '<strong>💡 Nota:</strong> Le banche sandbox sono per test. Per banche reali italiane, devi passare a un account Yapily di produzione.';
+                                            echo '<strong>💡 Nota:</strong> L\'endpoint <code>/institutions</code> dovrebbe restituire automaticamente le banche disponibili per il tuo account. Se restituisce un array vuoto, potrebbe essere necessario che Yapily abiliti l\'accesso.';
                                             echo '</div>';
                                             
                                             // Mostra info di debug se WP_DEBUG è attivo
