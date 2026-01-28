@@ -30,6 +30,7 @@ class BankAccount {
         $table = self::get_table_name();
         
         $defaults = [
+            'type' => 'current',
             'currency' => 'EUR',
             'current_balance' => 0.00,
             'starting_balance' => 0.00,

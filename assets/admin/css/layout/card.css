@@ -70,7 +70,16 @@
     gap: var(--fp-fh-spacing-2);
     margin-top: var(--fp-fh-spacing-4);
     padding-top: var(--fp-fh-spacing-4);
+    padding-bottom: var(--fp-fh-spacing-2);
     border-top: 1px solid var(--fp-fh-color-border-light);
+}
+
+/* Card Footer dentro form */
+form .fp-fh-card-footer {
+    margin-top: var(--fp-fh-spacing-6);
+    padding: var(--fp-fh-spacing-4) var(--fp-fh-spacing-6);
+    background-color: var(--fp-fh-color-bg-secondary, #f8f9fa);
+    border-top: 2px solid var(--fp-fh-color-border, #dee2e6);
 }
 
 /* Card Content */

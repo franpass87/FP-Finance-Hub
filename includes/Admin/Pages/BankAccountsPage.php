@@ -224,6 +224,7 @@ class BankAccountsPage {
             'iban' => $iban,
             'bank_name' => $bank_name,
             'current_balance' => $initial_balance,
+            'starting_balance' => $initial_balance,
             'currency' => 'EUR',
             'is_active' => true,
         ];

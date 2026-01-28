@@ -54,12 +54,12 @@ class ImportPage {
             <div class="fp-fh-tabs" data-tab-group="import">
                 <ul class="fp-fh-tabs-list">
                     <li>
-                        <a href="#" class="fp-fh-tab <?php echo $tab === 'aruba' ? 'active' : ''; ?>" data-tab="aruba-tab">
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=fp-finance-hub-import&tab=aruba')); ?>" class="fp-fh-tab <?php echo $tab === 'aruba' ? 'active' : ''; ?>">
                             Aruba
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="fp-fh-tab <?php echo $tab === 'bank' ? 'active' : ''; ?>" data-tab="bank-tab">
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=fp-finance-hub-import&tab=bank')); ?>" class="fp-fh-tab <?php echo $tab === 'bank' ? 'active' : ''; ?>">
                             Conti Bancari
                         </a>
                     </li>
@@ -75,9 +75,9 @@ class ImportPage {
                                 📖 Guida Completa →
                             </a>
                         </div>
-                        <div class="fp-fh-card-body">
-                            <form method="post">
-                                <?php wp_nonce_field('fp_finance_hub_aruba_sync'); ?>
+                        <form method="post">
+                            <?php wp_nonce_field('fp_finance_hub_aruba_sync'); ?>
+                            <div class="fp-fh-card-body">
                                 <p>Sincronizza automaticamente le fatture emesse da Aruba Fatturazione Elettronica.</p>
                                 
                                 <?php if ($aruba_configured) : ?>
@@ -95,12 +95,13 @@ class ImportPage {
                                         </p>
                                     </div>
                                 <?php endif; ?>
-                                <div class="fp-fh-card-footer">
-                                    <button type="submit" name="sync_aruba" class="fp-fh-btn fp-fh-btn-primary">
-                                        🔄 Sincronizza Fatture da Aruba
-                                    </button>
-                                </div>
-                            </form>
+                            </div>
+                            <div class="fp-fh-card-footer">
+                                <button type="submit" name="sync_aruba" class="fp-fh-btn fp-fh-btn-primary">
+                                    🔄 Sincronizza Fatture da Aruba
+                                </button>
+                            </div>
+                        </form>
                             
                             <?php
                             if (isset($_POST['sync_aruba'])) {

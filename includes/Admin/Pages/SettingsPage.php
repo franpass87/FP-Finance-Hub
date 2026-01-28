@@ -185,8 +185,8 @@ class SettingsPage {
                     </div>
                 </div>
                 
-                <div class="fp-fh-card-footer" style="display: flex; justify-content: flex-end; align-items: center; background-color: #f8f9fa; padding: 24px; margin-top: 24px; border-top: 2px solid #dee2e6; position: sticky; bottom: 0; z-index: 100;">
-                    <button type="submit" name="save_settings" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg" style="min-width: 200px; padding: 12px 24px; font-size: 16px; font-weight: 600; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; display: inline-block;">
+                <div class="fp-fh-card-footer">
+                    <button type="submit" name="save_settings" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg">
                         💾 Salva Impostazioni
                     </button>
                 </div>

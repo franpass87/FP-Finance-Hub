@@ -59,8 +59,35 @@ class Schema {
         $schema->create_categorization_learning_table();
         $schema->create_aruba_logs_table();
         
+        // Migrazioni per colonne mancanti
+        $schema->migrate_bank_accounts_add_bank_name();
+        
         // Aggiorna versione database
         update_option(self::DB_VERSION_OPTION, self::DB_VERSION);
+    }
+    
+    /**
+     * Migrazione: aggiunge colonna bank_name a bank_accounts se non esiste
+     */
+    public function migrate_bank_accounts_add_bank_name() {
+        global $wpdb;
+        
+        $table_name = $this->get_table_name('bank_accounts');
+        
+        // Verifica se la colonna esiste già
+        $column_exists = $wpdb->get_results(
+            $wpdb->prepare(
+                "SHOW COLUMNS FROM {$table_name} LIKE %s",
+                'bank_name'
+            )
+        );
+        
+        // Se la colonna non esiste, aggiungila
+        if (empty($column_exists)) {
+            $wpdb->query(
+                "ALTER TABLE {$table_name} ADD COLUMN bank_name VARCHAR(255) NULL AFTER iban"
+            );
+        }
     }
     
     /**
@@ -275,6 +302,7 @@ class Schema {
             type VARCHAR(50) NOT NULL,
             account_number VARCHAR(100) NULL,
             iban VARCHAR(34) NULL,
+            bank_name VARCHAR(255) NULL,
             currency VARCHAR(3) DEFAULT 'EUR',
             current_balance DECIMAL(10,2) DEFAULT 0.00,
             last_balance_date DATE NULL,

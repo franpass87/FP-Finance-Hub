@@ -58,8 +58,12 @@ class Plugin {
      */
     private function init_components() {
         // Database Schema (verifica versione)
-        if (Database\Schema::get_instance()->check_schema_version()) {
+        $schema = Database\Schema::get_instance();
+        if ($schema->check_schema_version()) {
             Database\Schema::create_tables();
+        } else {
+            // Esegui migrazioni anche se versione DB è aggiornata (per colonne mancanti)
+            $schema->migrate_bank_accounts_add_bank_name();
         }
         
         // Services base
