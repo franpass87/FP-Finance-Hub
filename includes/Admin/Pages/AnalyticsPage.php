@@ -558,9 +558,20 @@ class AnalyticsPage {
      * Render tab Statistiche
      */
     private static function render_stats_tab() {
-        // Periodo default: anno corrente
-        $start_date = isset($_GET['start_date']) ? sanitize_text_field($_GET['start_date']) : date('Y-01-01');
-        $end_date = isset($_GET['end_date']) ? sanitize_text_field($_GET['end_date']) : date('Y-m-t');
+        // Periodo default: tutti i dati disponibili (nessun limite)
+        // Se l'utente vuole vedere tutti i dati o non ha specificato date, mostra tutto
+        if (isset($_GET['all_data']) && $_GET['all_data'] === '1') {
+            $start_date = '2000-01-01'; // Data molto lontana per includere tutti i dati
+            $end_date = date('Y-m-d', strtotime('+1 year')); // Anno futuro per includere tutto
+        } elseif (isset($_GET['start_date']) || isset($_GET['end_date'])) {
+            // Se l'utente ha specificato date, usa quelle
+            $start_date = isset($_GET['start_date']) ? sanitize_text_field($_GET['start_date']) : '2000-01-01';
+            $end_date = isset($_GET['end_date']) ? sanitize_text_field($_GET['end_date']) : date('Y-m-d', strtotime('+1 year'));
+        } else {
+            // Default: mostra tutti i dati (nessun limite)
+            $start_date = '2000-01-01';
+            $end_date = date('Y-m-d', strtotime('+1 year'));
+        }
         $type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : null;
         $account_id = isset($_GET['account_id']) ? absint($_GET['account_id']) : null;
         
