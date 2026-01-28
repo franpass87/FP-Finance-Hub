@@ -2,7 +2,18 @@
 /**
  * Client API Aruba Fatturazione Elettronica
  * 
- * Gestisce autenticazione e chiamate API Aruba (solo lettura)
+ * Gestisce autenticazione e chiamate API Aruba secondo documentazione ufficiale:
+ * https://fatturazioneelettronica.aruba.it/apidoc/docs.html
+ * 
+ * Supporta:
+ * - Autenticazione con username/password (signin + refresh token)
+ * - Ricerca fatture emesse e ricevute
+ * - Gestione multicedenti (utenze Premium)
+ * - Download fatture con file XML e PDF
+ * 
+ * NOTA: Per utenze Premium, alcuni parametri sono obbligatori:
+ * - findByUsername (fatture emesse): countrySender, vatcodeSender
+ * - findByUsername (fatture ricevute): countryReceiver, vatcodeReceiver
  */
 
 namespace FP\FinanceHub\Integration\Aruba;
@@ -194,7 +205,8 @@ class ArubaAPI {
             return $this->get_user_info();
         }
         
-        return new \WP_Error('api_error', 'Errore API Aruba userInfo: ' . ($body['error'] ?? 'Errore sconosciuto'));
+        $error_msg = $body['error'] ?? $body['errorDescription'] ?? 'Errore sconosciuto';
+        return new \WP_Error('api_error', 'Errore API Aruba userInfo: ' . $error_msg, ['http_code' => $code]);
     }
     
     /**
@@ -202,8 +214,10 @@ class ArubaAPI {
      * 
      * Secondo documentazione: GET /services/invoice/out/findByUsername
      * 
-     * @param array $filters Filtri ricerca (startDate, endDate, page, size, etc.)
-     * @return array Lista fatture con paginazione
+     * NOTA: Per utenze Premium, i parametri countrySender e vatcodeSender sono OBBLIGATORI
+     * 
+     * @param array $filters Filtri ricerca (startDate, endDate, page, size, countrySender, vatcodeSender, etc.)
+     * @return array Lista fatture con paginazione (restituisce direttamente $body['content'])
      */
     public function find_invoices($filters = []) {
         $auth_result = $this->authenticate();
@@ -224,6 +238,11 @@ class ArubaAPI {
         if (isset($params['endDate']) && !empty($params['endDate'])) {
             $params['endDate'] = date('c', strtotime($params['endDate']));
         }
+        
+        // Rimuovi parametri null/vuoti per evitare query string sporca
+        $params = array_filter($params, function($value) {
+            return $value !== null && $value !== '';
+        });
         
         $url = $this->api_base_url . '/services/invoice/out/findByUsername?' . http_build_query($params);
         
@@ -252,8 +271,139 @@ class ArubaAPI {
             return $this->find_invoices($filters);
         }
         
+        // Gestione errori specifici
         $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? 'Errore sconosciuto';
-        return new \WP_Error('api_error', 'Errore API Aruba findByUsername: ' . $error_msg);
+        
+        // Se errore 400, potrebbe essere per parametri mancanti (utenze Premium)
+        if ($code === 400) {
+            $error_msg = 'Parametri mancanti o non validi. Per utenze Premium, countrySender e vatcodeSender sono obbligatori. ' . $error_msg;
+        }
+        
+        return new \WP_Error('api_error', 'Errore API Aruba findByUsername: ' . $error_msg, ['http_code' => $code]);
+    }
+    
+    /**
+     * Ricerca fatture ricevute (GET /services/invoice/in/findByUsername)
+     * 
+     * Secondo documentazione: GET /services/invoice/in/findByUsername
+     * 
+     * NOTA: Per utenze Premium, i parametri countryReceiver e vatcodeReceiver sono OBBLIGATORI
+     * 
+     * @param array $filters Filtri ricerca (startDate, endDate, page, size, countryReceiver, vatcodeReceiver, etc.)
+     * @return array Lista fatture ricevute con paginazione
+     */
+    public function find_received_invoices($filters = []) {
+        $auth_result = $this->authenticate();
+        if (is_wp_error($auth_result)) {
+            return $auth_result;
+        }
+        
+        $params = array_merge([
+            'username' => $this->username,
+            'page' => 1,
+            'size' => 100,
+        ], $filters);
+        
+        // Converti date in formato ISO 8601 se presenti
+        if (isset($params['startDate']) && !empty($params['startDate'])) {
+            $params['startDate'] = date('c', strtotime($params['startDate']));
+        }
+        if (isset($params['endDate']) && !empty($params['endDate'])) {
+            $params['endDate'] = date('c', strtotime($params['endDate']));
+        }
+        
+        // Rimuovi parametri null/vuoti
+        $params = array_filter($params, function($value) {
+            return $value !== null && $value !== '';
+        });
+        
+        $url = $this->api_base_url . '/services/invoice/in/findByUsername?' . http_build_query($params);
+        
+        $response = wp_remote_get($url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->access_token,
+                'Accept' => 'application/json',
+            ],
+            'timeout' => 30,
+        ]);
+        
+        if (is_wp_error($response)) {
+            return $response;
+        }
+        
+        $code = wp_remote_retrieve_response_code($response);
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        
+        if ($code === 200 && isset($body['content'])) {
+            return $body['content'];
+        }
+        
+        // Se token scaduto, prova refresh
+        if ($code === 401) {
+            $this->refresh_token();
+            return $this->find_received_invoices($filters);
+        }
+        
+        $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? 'Errore sconosciuto';
+        
+        if ($code === 400) {
+            $error_msg = 'Parametri mancanti o non validi. Per utenze Premium, countryReceiver e vatcodeReceiver sono obbligatori. ' . $error_msg;
+        }
+        
+        return new \WP_Error('api_error', 'Errore API Aruba findReceivedInvoices: ' . $error_msg, ['http_code' => $code]);
+    }
+    
+    /**
+     * Ottieni lista multicedenti (GET /auth/multicedenti)
+     * 
+     * Disponibile solo per utenze Premium
+     * 
+     * @param array $filters Filtri (countryCode, vatCode, status, page, size)
+     * @return array Lista multicedenti
+     */
+    public function get_multicedenti($filters = []) {
+        $auth_result = $this->authenticate();
+        if (is_wp_error($auth_result)) {
+            return $auth_result;
+        }
+        
+        $params = array_merge([
+            'page' => 1,
+            'size' => 10,
+        ], $filters);
+        
+        $params = array_filter($params, function($value) {
+            return $value !== null && $value !== '';
+        });
+        
+        $url = $this->auth_base_url . '/auth/multicedenti?' . http_build_query($params);
+        
+        $response = wp_remote_get($url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->access_token,
+                'Accept' => 'application/json',
+            ],
+            'timeout' => 30,
+        ]);
+        
+        if (is_wp_error($response)) {
+            return $response;
+        }
+        
+        $code = wp_remote_retrieve_response_code($response);
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        
+        if ($code === 200 && isset($body['content'])) {
+            return $body;
+        }
+        
+        if ($code === 401) {
+            $this->refresh_token();
+            return $this->get_multicedenti($filters);
+        }
+        
+        $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? 'Errore sconosciuto';
+        return new \WP_Error('api_error', 'Errore API Aruba multicedenti: ' . $error_msg, ['http_code' => $code]);
     }
     
     /**
@@ -302,7 +452,7 @@ class ArubaAPI {
         }
         
         $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? 'Errore sconosciuto';
-        return new \WP_Error('api_error', 'Errore API Aruba getInvoice: ' . $error_msg);
+        return new \WP_Error('api_error', 'Errore API Aruba getInvoice: ' . $error_msg, ['http_code' => $code]);
     }
     
     /**
@@ -310,18 +460,25 @@ class ArubaAPI {
      * 
      * @param string $filename Nome file fattura (es. IT01879020517_abcde.xml.p7m)
      * @param bool $include_file Se true, include il file XML in base64
+     * @param bool $include_pdf Se true, include anche il PDF
      * @return array Dettagli fattura
      */
-    public function get_invoice_by_filename($filename, $include_file = true) {
+    public function get_invoice_by_filename($filename, $include_file = true, $include_pdf = false) {
         $auth_result = $this->authenticate();
         if (is_wp_error($auth_result)) {
             return $auth_result;
         }
         
-        $url = $this->api_base_url . '/services/invoice/out/getByFilename?' . http_build_query([
+        $query_params = [
             'filename' => $filename,
             'includeFile' => $include_file ? 'true' : 'false',
-        ]);
+        ];
+        
+        if ($include_pdf) {
+            $query_params['includePdf'] = 'true';
+        }
+        
+        $url = $this->api_base_url . '/services/invoice/out/getByFilename?' . http_build_query($query_params);
         
         $response = wp_remote_get($url, [
             'headers' => [
@@ -345,11 +502,85 @@ class ArubaAPI {
         // Se token scaduto, prova refresh
         if ($code === 401) {
             $this->refresh_token();
-            return $this->get_invoice_by_filename($filename, $include_file);
+            return $this->get_invoice_by_filename($filename, $include_file, $include_pdf);
         }
         
         $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? 'Errore sconosciuto';
-        return new \WP_Error('api_error', 'Errore API Aruba getByFilename: ' . $error_msg);
+        return new \WP_Error('api_error', 'Errore API Aruba getByFilename: ' . $error_msg, ['http_code' => $code]);
+    }
+    
+    /**
+     * Ottieni fattura ricevuta per filename (GET /services/invoice/in/getByFilename)
+     * 
+     * @param string $filename Nome file fattura
+     * @param bool $include_file Se true, include il file XML in base64
+     * @param bool $include_pdf Se true, include anche il PDF
+     * @return array Dettagli fattura ricevuta
+     */
+    public function get_received_invoice_by_filename($filename, $include_file = true, $include_pdf = false) {
+        $auth_result = $this->authenticate();
+        if (is_wp_error($auth_result)) {
+            return $auth_result;
+        }
+        
+        $query_params = [
+            'filename' => $filename,
+            'includeFile' => $include_file ? 'true' : 'false',
+        ];
+        
+        if ($include_pdf) {
+            $query_params['includePdf'] = 'true';
+        }
+        
+        $url = $this->api_base_url . '/services/invoice/in/getByFilename?' . http_build_query($query_params);
+        
+        $response = wp_remote_get($url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->access_token,
+                'Accept' => 'application/json',
+            ],
+            'timeout' => 30,
+        ]);
+        
+        if (is_wp_error($response)) {
+            return $response;
+        }
+        
+        $code = wp_remote_retrieve_response_code($response);
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        
+        if ($code === 200) {
+            return $body;
+        }
+        
+        if ($code === 401) {
+            $this->refresh_token();
+            return $this->get_received_invoice_by_filename($filename, $include_file, $include_pdf);
+        }
+        
+        $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? 'Errore sconosciuto';
+        return new \WP_Error('api_error', 'Errore API Aruba getReceivedInvoiceByFilename: ' . $error_msg, ['http_code' => $code]);
+    }
+    
+    /**
+     * Verifica se l'utente è Premium (ha multicedenti)
+     * 
+     * @return bool|WP_Error true se Premium, false se base, WP_Error in caso di errore
+     */
+    public function is_premium_user() {
+        $multicedenti = $this->get_multicedenti(['size' => 1]);
+        
+        if (is_wp_error($multicedenti)) {
+            // Se errore 403/404, probabilmente non è Premium
+            $error_data = $multicedenti->get_error_data();
+            if (isset($error_data['http_code']) && in_array($error_data['http_code'], [403, 404])) {
+                return false;
+            }
+            return $multicedenti;
+        }
+        
+        // Se ha multicedenti, è Premium
+        return isset($multicedenti['content']) && count($multicedenti['content']) > 0;
     }
     
     /**
@@ -362,13 +593,23 @@ class ArubaAPI {
             return $user_info;
         }
         
+        // Verifica se è Premium (opzionale, non blocca il test)
+        $is_premium = $this->is_premium_user();
+        $premium_status = null;
+        if (is_bool($is_premium)) {
+            $premium_status = $is_premium;
+        }
+        
         return [
             'success' => true,
             'username' => $user_info['username'] ?? null,
             'pec' => $user_info['pec'] ?? null,
             'userDescription' => $user_info['userDescription'] ?? null,
             'vatCode' => $user_info['vatCode'] ?? null,
+            'fiscalCode' => $user_info['fiscalCode'] ?? null,
             'accountStatus' => $user_info['accountStatus'] ?? null,
+            'usageStatus' => $user_info['usageStatus'] ?? null,
+            'isPremium' => $premium_status,
         ];
     }
 }
