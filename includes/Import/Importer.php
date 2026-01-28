@@ -254,13 +254,19 @@ class Importer {
                 return 'ing';
             }
             
-            // Fallback: se ha separatore `;` e 6 colonne, è probabilmente ING
-            if ($delimiter === ';' && $column_count >= 6) {
-                error_log('[FP Finance Hub] Fallback: rilevato formato ING per separatore ; e 6+ colonne');
+            // Fallback: se ha separatore `;` e almeno 5 colonne, è probabilmente ING
+            if ($delimiter === ';' && $column_count >= 5) {
+                error_log('[FP Finance Hub] Fallback: rilevato formato ING per separatore ; e ' . $column_count . ' colonne');
                 return 'ing';
             }
             
-            error_log('[FP Finance Hub] Impossibile rilevare formato CSV - Colonne: ' . $column_count . ' | Separatore: ' . $delimiter);
+            // Fallback finale: se ha separatore `;`, prova comunque ING (molto comune per banche italiane)
+            if ($delimiter === ';') {
+                error_log('[FP Finance Hub] Fallback finale: rilevato formato ING per separatore ; (formato comune banche italiane)');
+                return 'ing';
+            }
+            
+            error_log('[FP Finance Hub] Impossibile rilevare formato CSV - Colonne: ' . $column_count . ' | Separatore: ' . $delimiter . ' | Prima riga: ' . substr($first_line, 0, 150));
         }
         
         // Se non riesce a rilevare, restituisce null per generare errore più chiaro

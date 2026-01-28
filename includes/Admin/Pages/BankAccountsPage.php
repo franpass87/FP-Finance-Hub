@@ -256,6 +256,16 @@ class BankAccountsPage {
                                         </ul>
                                     </p>
                                 </div>
+                                <div class="fp-fh-form-group">
+                                    <label for="file_format" class="fp-fh-form-label">Formato File (opzionale - rilevamento automatico se vuoto)</label>
+                                    <select name="file_format" id="file_format" class="fp-fh-select">
+                                        <option value="auto">🔍 Rilevamento Automatico</option>
+                                        <option value="ing">ING Direct (CSV con separatore ;)</option>
+                                        <option value="postepay">PostePay (CSV con separatore ,)</option>
+                                        <option value="ofx">OFX Standard</option>
+                                    </select>
+                                    <p class="fp-fh-form-description">Se il rilevamento automatico non funziona, seleziona manualmente il formato del file</p>
+                                </div>
                             </div>
                             <div class="fp-fh-card-footer" style="display: flex !important; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 24px; padding: 16px 24px; background-color: #f8f9fa; border-top: 2px solid #dee2e6;">
                                 <button type="submit" name="import_file" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg" style="display: inline-flex !important; align-items: center; justify-content: center; padding: 12px 24px; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 16px;">
@@ -454,7 +464,12 @@ class BankAccountsPage {
         
         try {
             $importer = new Importer();
-            $result = $importer->import_file($account_id, $file_path, 'auto');
+            // Permetti selezione manuale formato
+            $file_format = sanitize_text_field($_POST['file_format'] ?? 'auto');
+            if (empty($file_format) || $file_format === 'auto') {
+                $file_format = 'auto';
+            }
+            $result = $importer->import_file($account_id, $file_path, $file_format);
             
             if (is_wp_error($result)) {
                 wp_die('Errore import: ' . $result->get_error_message());
