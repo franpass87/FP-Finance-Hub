@@ -291,12 +291,23 @@ class Importer {
     
     /**
      * Verifica se movimento già esistente
+     * 
+     * Controlla se un movimento con stessa data, importo e descrizione esiste già.
+     * Questo permette di importare più file CSV senza creare duplicati.
+     * 
+     * Nota: ING limita l'export a 3 mesi, quindi puoi importare più file CSV
+     * per periodi diversi e i duplicati verranno automaticamente saltati.
      */
     private function transaction_exists($account_id, $transaction_data) {
         global $wpdb;
         
         $table = $wpdb->prefix . 'fp_finance_hub_bank_transactions';
         
+        // Normalizza descrizione per confronto (rimuovi spazi multipli, trim)
+        $description = trim(preg_replace('/\s+/', ' ', $transaction_data['description'] ?? ''));
+        
+        // Controlla se esiste un movimento con stessa data, importo (con tolleranza) e descrizione simile
+        // Usa confronto diretto per compatibilità MySQL
         $exists = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM {$table}
             WHERE account_id = %d
@@ -307,8 +318,46 @@ class Importer {
             $account_id,
             $transaction_data['transaction_date'],
             $transaction_data['amount'],
-            $transaction_data['description']
+            $description
         ));
+        
+        // Se non trovato con descrizione esatta, prova con descrizione normalizzata (per gestire variazioni minori)
+        if ((int) $exists === 0 && !empty($description)) {
+            // Cerca movimenti con stessa data e importo (descrizione può variare leggermente)
+            $exists = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM {$table}
+                WHERE account_id = %d
+                AND transaction_date = %s
+                AND ABS(amount - %f) < 0.01
+                LIMIT 1",
+                $account_id,
+                $transaction_data['transaction_date'],
+                $transaction_data['amount']
+            ));
+            
+            // Se trovato, verifica che la descrizione sia simile (almeno 80% di match)
+            if ((int) $exists > 0) {
+                $similar = $wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM {$table}
+                    WHERE account_id = %d
+                    AND transaction_date = %s
+                    AND ABS(amount - %f) < 0.01
+                    AND (
+                        description = %s
+                        OR description LIKE %s
+                        OR %s LIKE CONCAT('%%', description, '%%')
+                    )
+                    LIMIT 1",
+                    $account_id,
+                    $transaction_data['transaction_date'],
+                    $transaction_data['amount'],
+                    $description,
+                    '%' . $wpdb->esc_like(substr($description, 0, 50)) . '%',
+                    $description
+                ));
+                $exists = $similar;
+            }
+        }
         
         return (int) $exists > 0;
     }

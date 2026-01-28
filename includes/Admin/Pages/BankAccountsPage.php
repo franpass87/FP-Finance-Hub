@@ -254,6 +254,15 @@ class BankAccountsPage {
                                             <li><strong>PostePay:</strong> Area Clienti → Movimenti → Esporta CSV</li>
                                             <li><strong>ING:</strong> Area Clienti → Conti → Esporta movimenti (CSV o OFX)</li>
                                         </ul>
+                                        <div style="margin-top: 12px; padding: 12px; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+                                            <strong>ℹ️ Nota importante per ING:</strong> ING limita l'export CSV agli ultimi 3 mesi. 
+                                            Per importare dati più vecchi:
+                                            <ul style="margin: 8px 0 0 20px; font-size: 13px;">
+                                                <li>Esporta più file CSV (uno per ogni periodo di 3 mesi)</li>
+                                                <li>Importa ogni file separatamente - i duplicati verranno automaticamente saltati</li>
+                                                <li>Puoi importare tutti i file che vuoi, il sistema evita automaticamente i duplicati</li>
+                                            </ul>
+                                        </div>
                                     </p>
                                 </div>
                                 <div class="fp-fh-form-group">
