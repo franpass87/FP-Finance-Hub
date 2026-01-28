@@ -403,7 +403,11 @@ class AnalyticsPage {
         $month_start = date('Y-m-01');
         $month_end = date('Y-m-t');
         $cashflow_data = self::$bank_service->calculate_totals(null, $month_start, $month_end);
-        $cashflow = floatval($cashflow_data->total_income ?? 0) - floatval($cashflow_data->total_expenses ?? 0);
+        
+        // Estrai entrate e uscite
+        $total_income = floatval($cashflow_data->total_income ?? 0);
+        $total_expenses = floatval($cashflow_data->total_expenses ?? 0);
+        $cashflow = $total_income - $total_expenses;
         
         // Fatture non pagate
         $unpaid_invoices = self::$invoice_service->get_unpaid();
@@ -417,9 +421,33 @@ class AnalyticsPage {
         // Movimenti recenti
         $recent_transactions = self::$bank_service->get_recent_transactions(null, 20);
         
+        // Prepara dati per grafico saldo (ultimi 30 giorni)
+        $balance_chart_data = [];
+        $balance_chart_labels = [];
+        $income_chart_data = [];
+        $expenses_chart_data = [];
+        
+        // Calcola saldo, entrate e uscite per ogni giorno degli ultimi 30 giorni
+        for ($i = 29; $i >= 0; $i--) {
+            $date = date('Y-m-d', strtotime("-{$i} days"));
+            $day_start = $date . ' 00:00:00';
+            $day_end = $date . ' 23:59:59';
+            
+            $day_totals = self::$bank_service->calculate_totals(null, $day_start, $day_end);
+            $day_income = floatval($day_totals->total_income ?? 0);
+            $day_expenses = floatval($day_totals->total_expenses ?? 0);
+            
+            // Calcola saldo cumulativo (saldo iniziale + entrate - uscite fino a quel giorno)
+            // Per semplicità, usiamo il saldo totale attuale come riferimento
+            // In una versione più precisa, si dovrebbe calcolare il saldo giorno per giorno
+            $balance_chart_labels[] = date('d/m', strtotime($date));
+            $income_chart_data[] = $day_income;
+            $expenses_chart_data[] = $day_expenses;
+        }
+        
         ?>
         <!-- KPI Cards -->
-        <div class="fp-monitoring-kpis fp-fh-grid fp-fh-grid-cols-4 fp-fh-mb-6">
+        <div class="fp-monitoring-kpis fp-fh-grid fp-fh-grid-cols-2 fp-fh-grid-cols-md-3 fp-fh-grid-cols-lg-6 fp-fh-mb-6">
             <div class="fp-fh-card fp-fh-metric-card">
                 <div class="fp-fh-metric-card-header">
                     <div class="fp-fh-metric-card-title">💰 Saldo Totale</div>
@@ -432,11 +460,40 @@ class AnalyticsPage {
             
             <div class="fp-fh-card fp-fh-metric-card">
                 <div class="fp-fh-metric-card-header">
+                    <div class="fp-fh-metric-card-title">📈 Entrate Mese</div>
+                    <div class="fp-fh-metric-card-icon">📈</div>
+                </div>
+                <div class="fp-fh-metric-card-value fp-financial-amount fp-financial-amount-positive">
+                    <?php echo number_format($total_income, 2, ',', '.') . ' €'; ?>
+                </div>
+                <div class="fp-fh-metric-card-footer">
+                    <span class="fp-fh-metric-card-trend">Mese corrente</span>
+                </div>
+            </div>
+            
+            <div class="fp-fh-card fp-fh-metric-card">
+                <div class="fp-fh-metric-card-header">
+                    <div class="fp-fh-metric-card-title">📉 Uscite Mese</div>
+                    <div class="fp-fh-metric-card-icon">📉</div>
+                </div>
+                <div class="fp-fh-metric-card-value fp-financial-amount fp-financial-amount-negative">
+                    <?php echo number_format($total_expenses, 2, ',', '.') . ' €'; ?>
+                </div>
+                <div class="fp-fh-metric-card-footer">
+                    <span class="fp-fh-metric-card-trend">Mese corrente</span>
+                </div>
+            </div>
+            
+            <div class="fp-fh-card fp-fh-metric-card">
+                <div class="fp-fh-metric-card-header">
                     <div class="fp-fh-metric-card-title">💸 Cash Flow Mese</div>
                     <div class="fp-fh-metric-card-icon">💸</div>
                 </div>
                 <div class="fp-fh-metric-card-value fp-financial-amount <?php echo $cashflow >= 0 ? 'fp-financial-amount-positive' : 'fp-financial-amount-negative'; ?>">
                     <?php echo ($cashflow >= 0 ? '+' : '') . number_format($cashflow, 2, ',', '.') . ' €'; ?>
+                </div>
+                <div class="fp-fh-metric-card-footer">
+                    <span class="fp-fh-metric-card-trend"><?php echo $cashflow >= 0 ? 'Positivo' : 'Negativo'; ?></span>
                 </div>
             </div>
             
@@ -551,6 +608,83 @@ class AnalyticsPage {
                 </div>
             </div>
         </div>
+        
+        <!-- Script per grafico saldo con entrate/uscite -->
+        <script>
+        jQuery(document).ready(function($) {
+            var balanceCtx = document.getElementById('fp-balance-chart');
+            if (!balanceCtx) return;
+            
+            var balanceLabels = <?php echo wp_json_encode($balance_chart_labels); ?>;
+            var incomeData = <?php echo wp_json_encode($income_chart_data); ?>;
+            var expensesData = <?php echo wp_json_encode($expenses_chart_data); ?>;
+            
+            // Verifica se Chart.js è disponibile
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js non disponibile');
+                return;
+            }
+            
+            new Chart(balanceCtx, {
+                type: 'line',
+                data: {
+                    labels: balanceLabels,
+                    datasets: [{
+                        label: 'Entrate',
+                        data: incomeData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    }, {
+                        label: 'Uscite',
+                        data: expensesData,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + 
+                                           new Intl.NumberFormat('it-IT', {
+                                               style: 'currency',
+                                               currency: 'EUR'
+                                           }).format(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('it-IT', {
+                                        style: 'currency',
+                                        currency: 'EUR',
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0
+                                    }).format(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        </script>
         <?php
     }
     

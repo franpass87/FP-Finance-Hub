@@ -231,31 +231,73 @@ class Transaction {
         
         $table = self::get_table_name();
         
-        $where = [
-            "account_id = %d",
-            "transaction_date BETWEEN %s AND %s",
-        ];
+        $where = [];
+        $values = [];
         
-        $values = [$account_id, $start_date, $end_date];
+        // Se account_id è null, calcola per tutti i conti
+        if ($account_id !== null) {
+            $where[] = "account_id = %d";
+            $values[] = $account_id;
+        }
         
+        // Filtro data
+        if ($start_date && $end_date) {
+            $where[] = "transaction_date BETWEEN %s AND %s";
+            $values[] = $start_date;
+            $values[] = $end_date;
+        } elseif ($start_date) {
+            $where[] = "transaction_date >= %s";
+            $values[] = $start_date;
+        } elseif ($end_date) {
+            $where[] = "transaction_date <= %s";
+            $values[] = $end_date;
+        }
+        
+        // Filtro tipo (business/personal)
         if ($type === 'business') {
             $where[] = "is_business = 1";
         } elseif ($type === 'personal') {
             $where[] = "is_personal = 1";
         }
         
-        $where_clause = implode(' AND ', $where);
+        $where_clause = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
         
-        $sql = $wpdb->prepare(
-            "SELECT 
-                SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END) as total_income,
-                SUM(CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END) as total_expenses
+        // Prepara query
+        if (!empty($values)) {
+            $sql = $wpdb->prepare(
+                "SELECT 
+                    COALESCE(SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END), 0) as total_income,
+                    COALESCE(SUM(CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END), 0) as total_expenses,
+                    COUNT(*) as transaction_count
+                FROM {$table}
+                {$where_clause}",
+                $values
+            );
+        } else {
+            $sql = "SELECT 
+                COALESCE(SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END), 0) as total_income,
+                COALESCE(SUM(CASE WHEN amount < 0 THEN ABS(amount) ELSE 0 END), 0) as total_expenses,
+                COUNT(*) as transaction_count
             FROM {$table}
-            WHERE {$where_clause}",
-            $values
-        );
+            {$where_clause}";
+        }
         
-        return $wpdb->get_row($sql);
+        $result = $wpdb->get_row($sql);
+        
+        // Assicura che i valori siano sempre numerici (non null)
+        if (!$result) {
+            $result = (object) [
+                'total_income' => 0,
+                'total_expenses' => 0,
+                'transaction_count' => 0,
+            ];
+        } else {
+            $result->total_income = floatval($result->total_income ?? 0);
+            $result->total_expenses = floatval($result->total_expenses ?? 0);
+            $result->transaction_count = intval($result->transaction_count ?? 0);
+        }
+        
+        return $result;
     }
     
     /**
