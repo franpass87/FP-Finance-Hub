@@ -65,6 +65,19 @@ class BankService {
     }
     
     /**
+     * Aggiorna conto bancario
+     */
+    public function update_account($id, $data) {
+        $result = BankAccountModel::update($id, $data);
+        
+        // Invalida cache saldo totale
+        $cache_service = CacheService::get_instance();
+        $cache_service->delete('total_balance_all');
+        
+        return $result;
+    }
+    
+    /**
      * Aggiorna saldo conto (invalida cache)
      */
     public function update_account_balance($account_id, $balance, $balance_date = null) {

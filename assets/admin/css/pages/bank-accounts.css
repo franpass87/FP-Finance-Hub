@@ -70,6 +70,22 @@
     border-top: 1px solid var(--fp-fh-color-border-light);
 }
 
+.fp-account-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--fp-fh-spacing-2);
+    margin-top: var(--fp-fh-spacing-4);
+    padding-top: var(--fp-fh-spacing-4);
+    border-top: 1px solid var(--fp-fh-color-border-light);
+    font-size: var(--fp-fh-font-size-sm);
+    color: var(--fp-fh-color-text-light);
+}
+
+.fp-account-card-footer .fp-fh-btn {
+    flex-shrink: 0;
+}
+
 /* Total Balance Widget */
 .fp-total-balance {
     font-size: var(--fp-fh-font-size-4xl);

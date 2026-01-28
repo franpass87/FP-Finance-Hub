@@ -28,6 +28,11 @@ class BankAccountsPage {
             self::handle_create_account();
         }
         
+        // Gestione modifica conto
+        if (isset($_POST['update_account'])) {
+            self::handle_update_account();
+        }
+        
         // Gestione upload CSV/OFX
         if (isset($_POST['import_file']) && isset($_FILES['csv_file'])) {
             self::handle_file_import();
@@ -69,6 +74,9 @@ class BankAccountsPage {
                             </div>
                             <div class="fp-account-card-footer">
                                 <span>Aggiornato: <?php echo esc_html($account->last_balance_date ?: 'Mai'); ?></span>
+                                <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts&action=edit&id=' . $account->id); ?>" class="fp-fh-btn fp-fh-btn-secondary fp-fh-btn-sm" style="margin-left: auto;">
+                                    ✏️ Modifica
+                                </a>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -91,9 +99,9 @@ class BankAccountsPage {
                     <div class="fp-fh-card-header">
                         <h2 class="fp-fh-card-title">➕ Aggiungi Nuovo Conto Bancario</h2>
                     </div>
-                    <div class="fp-fh-card-body">
-                        <form method="post">
-                            <?php wp_nonce_field('fp_finance_hub_create_account'); ?>
+                    <form method="post">
+                        <?php wp_nonce_field('fp_finance_hub_create_account'); ?>
+                        <div class="fp-fh-card-body">
                             <div class="fp-fh-form-group">
                                 <label for="account_name" class="fp-fh-form-label">Nome Conto *</label>
                                 <input type="text" name="account_name" id="account_name" class="fp-fh-input" 
@@ -118,18 +126,76 @@ class BankAccountsPage {
                                        step="0.01" placeholder="0.00">
                                 <p class="fp-fh-form-description">Saldo attuale del conto (verrà aggiornato automaticamente dopo il primo import)</p>
                             </div>
-                            <div class="fp-fh-card-footer">
-                                <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts'); ?>" class="fp-fh-btn fp-fh-btn-secondary">
-                                    Annulla
-                                </a>
-                                <button type="submit" name="create_account" class="fp-fh-btn fp-fh-btn-primary">
-                                    ➕ Crea Conto
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="fp-fh-card-footer" style="display: flex !important; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 24px; padding: 16px 24px; background-color: #f8f9fa; border-top: 2px solid #dee2e6;">
+                            <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts'); ?>" class="fp-fh-btn fp-fh-btn-secondary">
+                                Annulla
+                            </a>
+                            <button type="submit" name="create_account" class="fp-fh-btn fp-fh-btn-primary" style="display: inline-flex !important; align-items: center; justify-content: center; padding: 10px 20px; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                                ➕ Crea Conto
+                            </button>
+                        </div>
+                    </form>
                 </div>
             <?php endif; ?>
+            
+            <?php if ($action === 'edit' && isset($_GET['id'])) : ?>
+                <?php
+                $account_id = intval($_GET['id']);
+                $account = $bank_service->get_account($account_id);
+                
+                if (!$account) {
+                    echo '<div class="fp-fh-notice fp-fh-notice-error"><p>Conto non trovato.</p></div>';
+                } else :
+                ?>
+                <div class="fp-fh-card fp-fh-mb-6">
+                    <div class="fp-fh-card-header">
+                        <h2 class="fp-fh-card-title">✏️ Modifica Conto Bancario</h2>
+                    </div>
+                    <form method="post">
+                        <?php wp_nonce_field('fp_finance_hub_update_account'); ?>
+                        <input type="hidden" name="account_id" value="<?php echo esc_attr($account_id); ?>">
+                        <div class="fp-fh-card-body">
+                            <div class="fp-fh-form-group">
+                                <label for="account_name" class="fp-fh-form-label">Nome Conto *</label>
+                                <input type="text" name="account_name" id="account_name" class="fp-fh-input" 
+                                       value="<?php echo esc_attr($account->name); ?>" required>
+                                <p class="fp-fh-form-description">Un nome descrittivo per identificare questo conto</p>
+                            </div>
+                            <div class="fp-fh-form-group">
+                                <label for="iban" class="fp-fh-form-label">IBAN</label>
+                                <input type="text" name="iban" id="iban" class="fp-fh-input" 
+                                       value="<?php echo esc_attr($account->iban ?? ''); ?>"
+                                       placeholder="IT60 X054 2811 1010 0000 0123 456" maxlength="34">
+                                <p class="fp-fh-form-description">IBAN del conto (opzionale ma consigliato)</p>
+                            </div>
+                            <div class="fp-fh-form-group">
+                                <label for="bank_name" class="fp-fh-form-label">Banca</label>
+                                <input type="text" name="bank_name" id="bank_name" class="fp-fh-input" 
+                                       value="<?php echo esc_attr($account->bank_name ?? ''); ?>"
+                                       placeholder="es. ING Direct, PostePay, Unicredit">
+                                <p class="fp-fh-form-description">Nome della banca (opzionale)</p>
+                            </div>
+                            <div class="fp-fh-form-group">
+                                <label for="notes" class="fp-fh-form-label">Note</label>
+                                <textarea name="notes" id="notes" class="fp-fh-input" rows="3"><?php echo esc_textarea($account->notes ?? ''); ?></textarea>
+                                <p class="fp-fh-form-description">Note aggiuntive sul conto (opzionale)</p>
+                            </div>
+                        </div>
+                        <div class="fp-fh-card-footer" style="display: flex !important; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 24px; padding: 16px 24px; background-color: #f8f9fa; border-top: 2px solid #dee2e6;">
+                            <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts'); ?>" class="fp-fh-btn fp-fh-btn-secondary">
+                                Annulla
+                            </a>
+                            <button type="submit" name="update_account" class="fp-fh-btn fp-fh-btn-primary" style="display: inline-flex !important; align-items: center; justify-content: center; padding: 10px 20px; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
+                                💾 Salva Modifiche
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <?php
+                endif; // if (!$account)
+                ?>
+            <?php endif; // if ($action === 'edit' && isset($_GET['id'])) ?>
             
             <div class="fp-import-section fp-fh-card fp-fh-mb-6">
                 <div class="fp-fh-card-header">
@@ -158,34 +224,36 @@ class BankAccountsPage {
                     <?php else : ?>
                         <form method="post" enctype="multipart/form-data">
                             <?php wp_nonce_field('fp_finance_hub_import'); ?>
-                            <div class="fp-fh-form-group">
-                                <label for="account_id" class="fp-fh-form-label">Conto Bancario</label>
-                                <select name="account_id" id="account_id" class="fp-fh-select" required>
-                                    <?php foreach ($accounts as $account) : ?>
-                                        <option value="<?php echo esc_attr($account->id); ?>">
-                                            <?php echo esc_html($account->name); ?> 
-                                            <?php if ($account->iban) : ?>
-                                                (<?php echo esc_html($account->iban); ?>)
-                                            <?php endif; ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
+                            <div class="fp-fh-card-body">
+                                <div class="fp-fh-form-group">
+                                    <label for="account_id" class="fp-fh-form-label">Conto Bancario</label>
+                                    <select name="account_id" id="account_id" class="fp-fh-select" required>
+                                        <?php foreach ($accounts as $account) : ?>
+                                            <option value="<?php echo esc_attr($account->id); ?>">
+                                                <?php echo esc_html($account->name); ?> 
+                                                <?php if ($account->iban) : ?>
+                                                    (<?php echo esc_html($account->iban); ?>)
+                                                <?php endif; ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="fp-fh-form-group">
+                                    <label for="csv_file" class="fp-fh-form-label">File CSV/OFX</label>
+                                    <input type="file" name="csv_file" id="csv_file" class="fp-fh-file-input" accept=".csv,.ofx" required>
+                                    <p class="fp-fh-form-description">
+                                        <strong>Formati supportati:</strong> CSV PostePay, CSV ING Direct, OFX standard
+                                        <br>
+                                        <strong>Come ottenere il file:</strong>
+                                        <ul style="margin: 8px 0 0 20px; font-size: 13px;">
+                                            <li><strong>PostePay:</strong> Area Clienti → Movimenti → Esporta CSV</li>
+                                            <li><strong>ING:</strong> Area Clienti → Conti → Esporta movimenti (CSV o OFX)</li>
+                                        </ul>
+                                    </p>
+                                </div>
                             </div>
-                            <div class="fp-fh-form-group">
-                                <label for="csv_file" class="fp-fh-form-label">File CSV/OFX</label>
-                                <input type="file" name="csv_file" id="csv_file" class="fp-fh-file-input" accept=".csv,.ofx" required>
-                                <p class="fp-fh-form-description">
-                                    <strong>Formati supportati:</strong> CSV PostePay, CSV ING Direct, OFX standard
-                                    <br>
-                                    <strong>Come ottenere il file:</strong>
-                                    <ul style="margin: 8px 0 0 20px; font-size: 13px;">
-                                        <li><strong>PostePay:</strong> Area Clienti → Movimenti → Esporta CSV</li>
-                                        <li><strong>ING:</strong> Area Clienti → Conti → Esporta movimenti (CSV o OFX)</li>
-                                    </ul>
-                                </p>
-                            </div>
-                            <div class="fp-fh-card-footer">
-                                <button type="submit" name="import_file" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg">
+                            <div class="fp-fh-card-footer" style="display: flex !important; align-items: center; justify-content: flex-end; gap: 12px; margin-top: 24px; padding: 16px 24px; background-color: #f8f9fa; border-top: 2px solid #dee2e6;">
+                                <button type="submit" name="import_file" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg" style="display: inline-flex !important; align-items: center; justify-content: center; padding: 12px 24px; background-color: #0073aa; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 16px;">
                                     📥 Importa Movimenti
                                 </button>
                             </div>
@@ -203,6 +271,11 @@ class BankAccountsPage {
      * Gestisce creazione nuovo conto bancario
      */
     private static function handle_create_account() {
+        // Assicura che non ci sia output prima del redirect
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
+        
         check_admin_referer('fp_finance_hub_create_account');
         
         if (!current_user_can('manage_options')) {
@@ -210,7 +283,11 @@ class BankAccountsPage {
         }
         
         // Assicura che la colonna bank_name esista (migrazione per installazioni esistenti)
-        Schema::get_instance()->migrate_bank_accounts_add_bank_name();
+        try {
+            Schema::get_instance()->migrate_bank_accounts_add_bank_name();
+        } catch (\Exception $e) {
+            error_log('[FP Finance Hub] Errore migrazione bank_name: ' . $e->getMessage());
+        }
         
         $account_name = sanitize_text_field($_POST['account_name'] ?? '');
         $iban = sanitize_text_field($_POST['iban'] ?? '');
@@ -239,10 +316,73 @@ class BankAccountsPage {
             wp_die('Errore creazione conto: ' . $result->get_error_message());
         }
         
-        wp_redirect(add_query_arg([
+        // Redirect sicuro (previene redirect a domini esterni)
+        $redirect_url = add_query_arg([
             'account_created' => '1',
             'account_id' => $result,
-        ], admin_url('admin.php?page=fp-finance-hub-bank-accounts')));
+        ], admin_url('admin.php?page=fp-finance-hub-bank-accounts'));
+        
+        wp_safe_redirect($redirect_url);
+        exit;
+    }
+    
+    /**
+     * Gestisce modifica conto bancario
+     */
+    private static function handle_update_account() {
+        // Assicura che non ci sia output prima del redirect
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
+        
+        check_admin_referer('fp_finance_hub_update_account');
+        
+        if (!current_user_can('manage_options')) {
+            wp_die('Non autorizzato');
+        }
+        
+        $account_id = intval($_POST['account_id'] ?? 0);
+        
+        if (!$account_id) {
+            wp_die('ID conto non valido');
+        }
+        
+        $bank_service = BankService::get_instance();
+        $account = $bank_service->get_account($account_id);
+        
+        if (!$account) {
+            wp_die('Conto non trovato');
+        }
+        
+        $account_name = sanitize_text_field($_POST['account_name'] ?? '');
+        $iban = sanitize_text_field($_POST['iban'] ?? '');
+        $bank_name = sanitize_text_field($_POST['bank_name'] ?? '');
+        $notes = sanitize_textarea_field($_POST['notes'] ?? '');
+        
+        if (empty($account_name)) {
+            wp_die('Nome conto obbligatorio');
+        }
+        
+        $account_data = [
+            'name' => $account_name,
+            'iban' => $iban,
+            'bank_name' => $bank_name,
+            'notes' => $notes,
+        ];
+        
+        $result = $bank_service->update_account($account_id, $account_data);
+        
+        if (is_wp_error($result)) {
+            wp_die('Errore aggiornamento conto: ' . $result->get_error_message());
+        }
+        
+        // Redirect sicuro
+        $redirect_url = add_query_arg([
+            'account_updated' => '1',
+            'account_id' => $account_id,
+        ], admin_url('admin.php?page=fp-finance-hub-bank-accounts'));
+        
+        wp_safe_redirect($redirect_url);
         exit;
     }
     
@@ -250,10 +390,15 @@ class BankAccountsPage {
      * Gestisce import file CSV/OFX
      */
     private static function handle_file_import() {
+        // Assicura che non ci sia output prima del redirect
+        if (ob_get_level() > 0) {
+            ob_clean();
+        }
+        
         check_admin_referer('fp_finance_hub_import');
         
         if (!isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== UPLOAD_ERR_OK) {
-            wp_die('Errore upload file');
+            wp_die('Errore upload file: ' . ($_FILES['csv_file']['error'] ?? 'File non caricato'));
         }
         
         // Verifica capability
@@ -262,10 +407,8 @@ class BankAccountsPage {
         }
         
         // Validazione tipo file
-        $allowed_types = ['text/csv', 'application/csv', 'application/vnd.ms-excel', 'application/ofx', 'text/xml', 'application/xml'];
         $allowed_extensions = ['csv', 'ofx'];
         $file_name = sanitize_file_name($_FILES['csv_file']['name']);
-        $file_type = $_FILES['csv_file']['type'];
         $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
         
         // Verifica estensione
@@ -279,33 +422,45 @@ class BankAccountsPage {
             wp_die('File troppo grande. Dimensione massima: 10MB.');
         }
         
-        $account_id = absint($_POST['account_id']);
+        $account_id = absint($_POST['account_id'] ?? 0);
+        
+        if (!$account_id) {
+            wp_die('Conto bancario non selezionato.');
+        }
+        
         $file_path = $_FILES['csv_file']['tmp_name'];
         
-        // Verifica che il file sia dentro directory temporanea di upload (sicurezza path traversal)
-        $upload_dir = wp_upload_dir();
-        $tmp_dir = sys_get_temp_dir();
-        $real_file_path = realpath($file_path);
-        $real_tmp_dir = realpath($tmp_dir);
-        
-        if (!$real_file_path || strpos($real_file_path, $real_tmp_dir) !== 0) {
-            wp_die('Percorso file non valido.');
+        if (!file_exists($file_path)) {
+            wp_die('File temporaneo non trovato.');
         }
         
-        $importer = new Importer();
-        $result = $importer->import_file($account_id, $file_path, 'auto');
-        
-        if (is_wp_error($result)) {
-            wp_die($result->get_error_message());
+        try {
+            $importer = new Importer();
+            $result = $importer->import_file($account_id, $file_path, 'auto');
+            
+            if (is_wp_error($result)) {
+                wp_die('Errore import: ' . $result->get_error_message());
+            }
+            
+            // Verifica che il risultato sia un array con le chiavi attese
+            if (!is_array($result) || !isset($result['imported'])) {
+                wp_die('Errore: risultato import non valido.');
+            }
+            
+            // Redirect sicuro con messaggio successo
+            $redirect_url = add_query_arg([
+                'imported' => absint($result['imported'] ?? 0),
+                'skipped' => absint($result['skipped'] ?? 0),
+                'import_success' => '1',
+            ], admin_url('admin.php?page=fp-finance-hub-bank-accounts'));
+            
+            wp_safe_redirect($redirect_url);
+            exit;
+            
+        } catch (\Exception $e) {
+            error_log('[FP Finance Hub] Errore import file: ' . $e->getMessage());
+            wp_die('Errore durante l\'import: ' . $e->getMessage());
         }
-        
-        // Redirect con messaggio successo
-        wp_redirect(add_query_arg([
-            'imported' => $result['imported'],
-            'skipped' => $result['skipped'],
-            'import_success' => '1',
-        ], admin_url('admin.php?page=fp-finance-hub-bank-accounts')));
-        exit;
     }
     
     /**
@@ -345,6 +500,25 @@ class BankAccountsPage {
                     if (window.history && window.history.replaceState) {
                         var url = new URL(window.location);
                         url.searchParams.delete('account_created');
+                        url.searchParams.delete('account_id');
+                        window.history.replaceState({}, document.title, url);
+                    }
+                }
+            });
+            </script>
+            <?php
+        }
+        
+        if (isset($_GET['account_updated'])) {
+            ?>
+            <script>
+            jQuery(document).ready(function($) {
+                if (typeof fpToast !== 'undefined') {
+                    fpToast.success('<?php echo esc_js(__('Conto bancario aggiornato con successo!', 'fp-finance-hub')); ?>');
+                    // Rimuovi parametri dall'URL
+                    if (window.history && window.history.replaceState) {
+                        var url = new URL(window.location);
+                        url.searchParams.delete('account_updated');
                         url.searchParams.delete('account_id');
                         window.history.replaceState({}, document.title, url);
                     }

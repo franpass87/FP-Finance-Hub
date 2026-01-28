@@ -188,11 +188,3 @@ class Importer {
         return (int) $exists > 0;
     }
 }
-action_data['transaction_date'],
-            $transaction_data['amount'],
-            $transaction_data['description']
-        ));
-        
-        return (int) $exists > 0;
-    }
-}
