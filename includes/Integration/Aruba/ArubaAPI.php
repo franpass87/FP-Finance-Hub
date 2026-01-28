@@ -231,6 +231,20 @@ class ArubaAPI {
             'size' => 100,
         ], $filters);
         
+        // Se mancano countrySender/vatcodeSender, prova a recuperarli automaticamente
+        // (necessari per utenze Premium)
+        if (empty($params['countrySender']) || empty($params['vatcodeSender'])) {
+            $premium_params = $this->get_premium_params();
+            if (!is_wp_error($premium_params)) {
+                if (empty($params['countrySender']) && !empty($premium_params['countrySender'])) {
+                    $params['countrySender'] = $premium_params['countrySender'];
+                }
+                if (empty($params['vatcodeSender']) && !empty($premium_params['vatcodeSender'])) {
+                    $params['vatcodeSender'] = $premium_params['vatcodeSender'];
+                }
+            }
+        }
+        
         // Converti date in formato ISO 8601 se presenti
         if (isset($params['startDate']) && !empty($params['startDate'])) {
             $params['startDate'] = date('c', strtotime($params['startDate']));
@@ -272,11 +286,12 @@ class ArubaAPI {
         }
         
         // Gestione errori specifici
-        $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? 'Errore sconosciuto';
+        $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? $body['message'] ?? 'Errore sconosciuto';
         
-        // Se errore 400, potrebbe essere per parametri mancanti (utenze Premium)
-        if ($code === 400) {
-            $error_msg = 'Parametri mancanti o non validi. Per utenze Premium, countrySender e vatcodeSender sono obbligatori. ' . $error_msg;
+        // Se errore 400 o "Errore deleghe utente", potrebbe essere per parametri mancanti (utenze Premium)
+        if ($code === 400 || (is_string($error_msg) && stripos($error_msg, 'deleghe') !== false)) {
+            $error_msg = 'Errore deleghe utente: Per utenze Premium, countrySender e vatcodeSender sono obbligatori. ' . 
+                        'Verifica le impostazioni Aruba o contatta il supporto. Dettaglio: ' . $error_msg;
         }
         
         return new \WP_Error('api_error', 'Errore API Aruba findByUsername: ' . $error_msg, ['http_code' => $code]);
@@ -303,6 +318,20 @@ class ArubaAPI {
             'page' => 1,
             'size' => 100,
         ], $filters);
+        
+        // Se mancano countryReceiver/vatcodeReceiver, prova a recuperarli automaticamente
+        // (necessari per utenze Premium)
+        if (empty($params['countryReceiver']) || empty($params['vatcodeReceiver'])) {
+            $premium_params = $this->get_premium_params();
+            if (!is_wp_error($premium_params)) {
+                if (empty($params['countryReceiver']) && !empty($premium_params['countrySender'])) {
+                    $params['countryReceiver'] = $premium_params['countrySender'];
+                }
+                if (empty($params['vatcodeReceiver']) && !empty($premium_params['vatcodeSender'])) {
+                    $params['vatcodeReceiver'] = $premium_params['vatcodeSender'];
+                }
+            }
+        }
         
         // Converti date in formato ISO 8601 se presenti
         if (isset($params['startDate']) && !empty($params['startDate'])) {
@@ -344,10 +373,12 @@ class ArubaAPI {
             return $this->find_received_invoices($filters);
         }
         
-        $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? 'Errore sconosciuto';
+        $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? $body['message'] ?? 'Errore sconosciuto';
         
-        if ($code === 400) {
-            $error_msg = 'Parametri mancanti o non validi. Per utenze Premium, countryReceiver e vatcodeReceiver sono obbligatori. ' . $error_msg;
+        // Se errore 400 o "Errore deleghe utente", potrebbe essere per parametri mancanti (utenze Premium)
+        if ($code === 400 || (is_string($error_msg) && stripos($error_msg, 'deleghe') !== false)) {
+            $error_msg = 'Errore deleghe utente: Per utenze Premium, countryReceiver e vatcodeReceiver sono obbligatori. ' . 
+                        'Verifica le impostazioni Aruba o contatta il supporto. Dettaglio: ' . $error_msg;
         }
         
         return new \WP_Error('api_error', 'Errore API Aruba findReceivedInvoices: ' . $error_msg, ['http_code' => $code]);
@@ -581,6 +612,47 @@ class ArubaAPI {
         
         // Se ha multicedenti, è Premium
         return isset($multicedenti['content']) && count($multicedenti['content']) > 0;
+    }
+    
+    /**
+     * Recupera parametri Premium (countrySender, vatcodeSender) da userInfo o multicedenti
+     * 
+     * @return array|WP_Error Array con countrySender e vatcodeSender, o WP_Error
+     */
+    private function get_premium_params() {
+        // Prova prima a recuperare da userInfo
+        $user_info = $this->get_user_info();
+        if (!is_wp_error($user_info)) {
+            $vat_code = $user_info['vatCode'] ?? null;
+            if ($vat_code) {
+                // Per il paese, prova a dedurlo dal VAT code o usa default IT
+                // I VAT code italiani iniziano con IT
+                $country = 'IT'; // Default Italia
+                if (preg_match('/^([A-Z]{2})/', $vat_code, $matches)) {
+                    $country = $matches[1];
+                }
+                
+                return [
+                    'countrySender' => $country,
+                    'vatcodeSender' => $vat_code,
+                ];
+            }
+        }
+        
+        // Se non disponibile da userInfo, prova multicedenti (primo elemento)
+        $multicedenti = $this->get_multicedenti(['size' => 1]);
+        if (!is_wp_error($multicedenti) && isset($multicedenti['content']) && count($multicedenti['content']) > 0) {
+            $first = $multicedenti['content'][0];
+            if (isset($first['countryCode']) && isset($first['vatCode'])) {
+                return [
+                    'countrySender' => $first['countryCode'],
+                    'vatcodeSender' => $first['vatCode'],
+                ];
+            }
+        }
+        
+        // Se non disponibile, restituisci errore
+        return new \WP_Error('premium_params_missing', 'Impossibile recuperare countrySender e vatcodeSender. Verifica le impostazioni Aruba.');
     }
     
     /**
