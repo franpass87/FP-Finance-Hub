@@ -332,17 +332,19 @@ class ArubaAPI {
                             '"Parametri Premium (Opzionali)" e inserisci manualmente Codice Paese (es: IT) e Partita IVA completa. ' .
                             'Dettaglio API: ' . $error_msg;
             } elseif ($is_premium === false) {
-                // Account base: errore inaspettato, potrebbe essere problema di permessi/configurazione
-                $error_msg = 'Errore deleghe utente: Account base rilevato ma API restituisce errore. ' .
-                            'Questo potrebbe indicare: 1) Problema di permessi dell\'account Aruba, 2) Account non configurato correttamente per API, ' .
-                            '3) Necessità di contattare Aruba per abilitare l\'accesso API. ' .
-                            'Dettaglio API: ' . $error_msg . ' ' .
-                            'SUGGERIMENTO: Contatta il supporto Aruba (assistenza@aruba.it) per verificare che il tuo account base abbia i permessi per accedere alle API.';
+                // Account base: errore "deleghe" indica problema di permessi/configurazione account
+                $error_msg = 'Errore deleghe utente: Il tuo account base Aruba non ha i permessi per accedere alle API. ' .
+                            'SOLUZIONE: Contatta il supporto Aruba per abilitare l\'accesso API sul tuo account base. ' .
+                            'Email: assistenza@aruba.it | Telefono: 800.99.99.99 ' .
+                            'Specifica che: 1) Hai un account base (non Premium), 2) Vuoi integrare via Web Service/API, ' .
+                            '3) Ricevi errore "Errore deleghe utente" quando chiami findByUsername. ' .
+                            'Aruba potrebbe dover abilitare manualmente i permessi API per il tuo account base. ' .
+                            'Dettaglio API: ' . $error_msg;
             } else {
                 // Impossibile determinare (errore nel controllo)
                 $error_msg = 'Errore deleghe utente: ' . $error_msg . 
                             ' Se hai un account Premium, inserisci manualmente Codice Paese e Partita IVA nelle Impostazioni Aruba (Parametri Premium). ' .
-                            'Se hai un account base, contatta il supporto Aruba per verificare i permessi API.';
+                            'Se hai un account base, contatta il supporto Aruba (assistenza@aruba.it) per verificare i permessi API.';
             }
         }
         
@@ -372,10 +374,11 @@ class ArubaAPI {
         ], $filters);
         
         // Verifica se l'utente è Premium (solo per utenti Premium servono countryReceiver/vatcodeReceiver)
+        // IMPORTANTE: Per account base, NON aggiungere questi parametri
         $is_premium = $this->is_premium_user();
         
-        // Se è Premium e mancano i parametri, prova a recuperarli automaticamente
-        if (is_bool($is_premium) && $is_premium && (empty($params['countryReceiver']) || empty($params['vatcodeReceiver']))) {
+        // Solo se è CERTAMENTE Premium (bool true), gestisci i parametri
+        if ($is_premium === true && (empty($params['countryReceiver']) || empty($params['vatcodeReceiver']))) {
             $premium_params = $this->get_premium_params();
             if (!is_wp_error($premium_params)) {
                 if (empty($params['countryReceiver']) && !empty($premium_params['countrySender'])) {
@@ -386,6 +389,8 @@ class ArubaAPI {
                 }
             }
         }
+        
+        // Per account base (is_premium === false), NON aggiungere parametri Premium
         
         // Converti date in formato ISO 8601 se presenti
         if (isset($params['startDate']) && !empty($params['startDate'])) {
@@ -429,16 +434,31 @@ class ArubaAPI {
         
         $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? $body['message'] ?? 'Errore sconosciuto';
         
-        // Se errore 400 o "Errore deleghe utente", potrebbe essere per parametri mancanti (utenze Premium)
+        // Se errore 400 o "Errore deleghe utente", gestisci in base al tipo di account
         if ($code === 400 || (is_string($error_msg) && stripos($error_msg, 'deleghe') !== false)) {
             // Verifica se è Premium per dare un messaggio più preciso
             $is_premium = $this->is_premium_user();
-            if (is_bool($is_premium) && $is_premium) {
-                $error_msg = 'Errore deleghe utente: Per utenze Premium, countryReceiver e vatcodeReceiver sono obbligatori. ' . 
-                            'Il sistema ha tentato di recuperarli automaticamente. Verifica le impostazioni Aruba o contatta il supporto. Dettaglio: ' . $error_msg;
+            
+            if ($is_premium === true) {
+                // Account Premium: richiede parametri
+                $error_msg = 'Errore deleghe utente: Account Premium rilevato ma parametri countryReceiver/vatcodeReceiver mancanti o non validi. ' . 
+                            'SOLUZIONE: Vai in Impostazioni → FP Finance Hub → Impostazioni → Sezione "Integrazione Aruba" → ' .
+                            '"Parametri Premium (Opzionali)" e inserisci manualmente Codice Paese (es: IT) e Partita IVA completa. ' .
+                            'Dettaglio API: ' . $error_msg;
+            } elseif ($is_premium === false) {
+                // Account base: errore "deleghe" indica problema di permessi/configurazione account
+                $error_msg = 'Errore deleghe utente: Il tuo account base Aruba non ha i permessi per accedere alle API. ' .
+                            'SOLUZIONE: Contatta il supporto Aruba per abilitare l\'accesso API sul tuo account base. ' .
+                            'Email: assistenza@aruba.it | Telefono: 800.99.99.99 ' .
+                            'Specifica che: 1) Hai un account base (non Premium), 2) Vuoi integrare via Web Service/API, ' .
+                            '3) Ricevi errore "Errore deleghe utente" quando chiami findReceivedInvoices. ' .
+                            'Aruba potrebbe dover abilitare manualmente i permessi API per il tuo account base. ' .
+                            'Dettaglio API: ' . $error_msg;
             } else {
+                // Impossibile determinare
                 $error_msg = 'Errore deleghe utente: ' . $error_msg . 
-                            ' Se hai un account Premium, verifica che countryReceiver e vatcodeReceiver siano configurati correttamente.';
+                            ' Se hai un account Premium, inserisci manualmente Codice Paese e Partita IVA nelle Impostazioni Aruba (Parametri Premium). ' .
+                            'Se hai un account base, contatta il supporto Aruba (assistenza@aruba.it) per verificare i permessi API.';
             }
         }
         
