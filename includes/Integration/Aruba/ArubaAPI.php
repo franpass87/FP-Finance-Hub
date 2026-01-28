@@ -244,6 +244,32 @@ class ArubaAPI {
                 if (empty($params['vatcodeSender']) && !empty($premium_params['vatcodeSender'])) {
                     $params['vatcodeSender'] = $premium_params['vatcodeSender'];
                 }
+            } else {
+                // Se il recupero automatico fallisce e mancano i parametri, blocca la chiamata
+                if (empty($params['countrySender']) || empty($params['vatcodeSender'])) {
+                    $error = $premium_params->get_error_message();
+                    return new \WP_Error(
+                        'premium_params_required',
+                        'Account Premium rilevato ma parametri countrySender/vatcodeSender non disponibili. ' .
+                        'SOLUZIONE: Vai in Impostazioni → FP Finance Hub → Impostazioni → Sezione "Integrazione Aruba" → ' .
+                        '"Parametri Premium (Opzionali)" e inserisci manualmente Codice Paese (es: IT) e Partita IVA. ' .
+                        'Dettaglio: ' . $error,
+                        ['http_code' => 400]
+                    );
+                }
+            }
+        }
+        
+        // Verifica finale: se è Premium, i parametri DEVONO essere presenti
+        if (is_bool($is_premium) && $is_premium) {
+            if (empty($params['countrySender']) || empty($params['vatcodeSender'])) {
+                return new \WP_Error(
+                    'premium_params_required',
+                    'Account Premium rilevato ma parametri countrySender/vatcodeSender mancanti nella richiesta. ' .
+                    'SOLUZIONE: Vai in Impostazioni → FP Finance Hub → Impostazioni → Sezione "Integrazione Aruba" → ' .
+                    '"Parametri Premium (Opzionali)" e inserisci manualmente Codice Paese (es: IT) e Partita IVA.',
+                    ['http_code' => 400]
+                );
             }
         }
         
@@ -295,11 +321,13 @@ class ArubaAPI {
             // Verifica se è Premium per dare un messaggio più preciso
             $is_premium = $this->is_premium_user();
             if (is_bool($is_premium) && $is_premium) {
-                $error_msg = 'Errore deleghe utente: Per utenze Premium, countrySender e vatcodeSender sono obbligatori. ' . 
-                            'Il sistema ha tentato di recuperarli automaticamente. Verifica le impostazioni Aruba o contatta il supporto. Dettaglio: ' . $error_msg;
+                $error_msg = 'Errore deleghe utente: Account Premium rilevato ma parametri countrySender/vatcodeSender mancanti o non validi. ' . 
+                            'SOLUZIONE: Vai in Impostazioni → FP Finance Hub → Impostazioni → Sezione "Integrazione Aruba" → ' .
+                            '"Parametri Premium (Opzionali)" e inserisci manualmente Codice Paese (es: IT) e Partita IVA completa. ' .
+                            'Dettaglio API: ' . $error_msg;
             } else {
                 $error_msg = 'Errore deleghe utente: ' . $error_msg . 
-                            ' Se hai un account Premium, verifica che countrySender e vatcodeSender siano configurati correttamente.';
+                            ' Se hai un account Premium, inserisci manualmente Codice Paese e Partita IVA nelle Impostazioni Aruba (Parametri Premium).';
             }
         }
         
