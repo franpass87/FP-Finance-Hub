@@ -159,15 +159,31 @@ class Importer {
         // CSV: prova a capire se è PostePay o ING
         if ($extension === 'csv') {
             $lines = explode("\n", $content);
-            $first_line = $lines[0] ?? '';
+            $first_line = strtolower($lines[0] ?? '');
+            
+            // Rileva separatore
+            $delimiter = ';';
+            if (strpos($first_line, ',') !== false && strpos($first_line, ';') === false) {
+                $delimiter = ',';
+            }
+            
+            $columns = str_getcsv($first_line, $delimiter);
+            
+            // ING: riconosci da header specifico
+            if (stripos($first_line, 'data contabile') !== false || 
+                stripos($first_line, 'uscite') !== false ||
+                stripos($first_line, 'entrate') !== false ||
+                (count($columns) >= 6 && (stripos($first_line, 'valuta') !== false || stripos($first_line, 'addebito') !== false))) {
+                return 'ing';
+            }
             
             // PostePay: Data,Descrizione,Importo,Saldo (4 colonne)
-            // ING: Data,Valuta,Descrizione,Addebito,Accredito,Saldo (6 colonne)
-            $columns = str_getcsv($first_line);
-            
             if (count($columns) === 4) {
                 return 'postepay';
-            } elseif (count($columns) >= 6) {
+            }
+            
+            // Default: prova ING se ha 6+ colonne
+            if (count($columns) >= 6) {
                 return 'ing';
             }
         }

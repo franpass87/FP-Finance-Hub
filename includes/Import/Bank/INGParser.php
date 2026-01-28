@@ -16,7 +16,8 @@ class INGParser {
     /**
      * Parse CSV ING Direct
      * 
-     * Formato atteso: Data,Valuta,Descrizione,Addebito,Accredito,Saldo
+     * Formato reale: DATA CONTABILE;DATA VALUTA;USCITE;ENTRATE;CAUSALE;DESCRIZIONE OPERAZIONE
+     * Oppure formato alternativo: Data,Valuta,Descrizione,Addebito,Accredito,Saldo
      * 
      * @param string $csv_content Contenuto CSV
      * @return array Array con 'transactions' e 'final_balance'
@@ -24,13 +25,28 @@ class INGParser {
     public function parse($csv_content) {
         $lines = explode("\n", $csv_content);
         $transactions = [];
-        $last_balance = null;
+        $final_balance = null;
+        $running_balance = null;
+        
+        // Rileva separatore (; o ,)
+        $delimiter = ';';
+        if (strpos($lines[0] ?? '', ',') !== false && strpos($lines[0] ?? '', ';') === false) {
+            $delimiter = ',';
+        }
         
         // Skip header se presente
         $start_line = 0;
-        if (!empty($lines[0]) && (stripos($lines[0], 'data') !== false || stripos($lines[0], 'date') !== false)) {
+        $header_line = strtolower($lines[0] ?? '');
+        if (stripos($header_line, 'data contabile') !== false || 
+            stripos($header_line, 'data') !== false || 
+            stripos($header_line, 'date') !== false) {
             $start_line = 1;
         }
+        
+        // Determina formato in base all'header
+        $is_ing_format = stripos($header_line, 'data contabile') !== false || 
+                         stripos($header_line, 'uscite') !== false ||
+                         stripos($header_line, 'entrate') !== false;
         
         for ($i = $start_line; $i < count($lines); $i++) {
             $line = trim($lines[$i]);
@@ -38,38 +54,91 @@ class INGParser {
                 continue;
             }
             
-            $data = str_getcsv($line);
+            // Parse con il delimitatore corretto
+            $data = str_getcsv($line, $delimiter);
             
-            // Formato: Data,Valuta,Descrizione,Addebito,Accredito,Saldo
-            if (count($data) >= 6) {
-                $date = $this->parse_date($data[0]);
-                $currency = trim($data[1]);
-                $description = $data[2];
-                $addebito = $this->parse_amount($data[3] ?: '0');
-                $accredito = $this->parse_amount($data[4] ?: '0');
-                
-                // Calcola amount (positivo=accredito, negativo=addebito)
-                $amount = $accredito > 0 ? $accredito : -$addebito;
-                
-                $balance = floatval($data[5]);
-                
-                // Salva ultimo saldo
-                $last_balance = $balance;
-                
-                $transactions[] = [
-                    'transaction_date' => $date,
-                    'value_date' => $date,
-                    'amount' => $amount,
-                    'balance' => $balance,
-                    'description' => $description,
-                    'reference' => null,
-                ];
+            if ($is_ing_format) {
+                // Formato ING reale: DATA CONTABILE;DATA VALUTA;USCITE;ENTRATE;CAUSALE;DESCRIZIONE OPERAZIONE
+                if (count($data) >= 6) {
+                    $data_contabile = trim($data[0]);
+                    $data_valuta = trim($data[1]);
+                    $uscite = trim($data[2]);
+                    $entrate = trim($data[3]);
+                    $causale = trim($data[4]);
+                    $descrizione = trim($data[5]);
+                    
+                    // Verifica se è la riga "Saldo finale"
+                    if (stripos($descrizione, 'saldo finale') !== false || 
+                        stripos($descrizione, 'saldo iniziale') !== false) {
+                        // Estrai saldo dalla colonna ENTRATE o USCITE
+                        $balance_str = !empty($entrate) ? $entrate : $uscite;
+                        if (!empty($balance_str)) {
+                            $final_balance = $this->parse_amount($balance_str);
+                            // Se è nella colonna USCITE ma ha il segno +, è positivo
+                            if (!empty($entrate) && strpos($entrate, '+') === 0) {
+                                $final_balance = abs($final_balance);
+                            }
+                        }
+                        continue;
+                    }
+                    
+                    // Parse date
+                    $transaction_date = $this->parse_date($data_contabile);
+                    $value_date = !empty($data_valuta) ? $this->parse_date($data_valuta) : $transaction_date;
+                    
+                    // Parse importi
+                    $uscite_amount = !empty($uscite) ? $this->parse_amount($uscite) : 0;
+                    $entrate_amount = !empty($entrate) ? $this->parse_amount($entrate) : 0;
+                    
+                    // Calcola amount (positivo=entrate, negativo=uscite)
+                    $amount = $entrate_amount > 0 ? $entrate_amount : -$uscite_amount;
+                    
+                    // Combina causale e descrizione
+                    $full_description = trim($causale . ' ' . $descrizione);
+                    
+                    $transactions[] = [
+                        'transaction_date' => $transaction_date,
+                        'value_date' => $value_date,
+                        'amount' => $amount,
+                        'balance' => null, // Non disponibile nel formato ING
+                        'description' => $full_description,
+                        'reference' => null,
+                    ];
+                }
+            } else {
+                // Formato alternativo: Data,Valuta,Descrizione,Addebito,Accredito,Saldo
+                if (count($data) >= 6) {
+                    $date = $this->parse_date($data[0]);
+                    $currency = trim($data[1]);
+                    $description = $data[2];
+                    $addebito = $this->parse_amount($data[3] ?: '0');
+                    $accredito = $this->parse_amount($data[4] ?: '0');
+                    
+                    // Calcola amount (positivo=accredito, negativo=addebito)
+                    $amount = $accredito > 0 ? $accredito : -$addebito;
+                    
+                    $balance = !empty($data[5]) ? $this->parse_amount($data[5]) : null;
+                    
+                    // Salva ultimo saldo se disponibile
+                    if ($balance !== null) {
+                        $final_balance = $balance;
+                    }
+                    
+                    $transactions[] = [
+                        'transaction_date' => $date,
+                        'value_date' => $date,
+                        'amount' => $amount,
+                        'balance' => $balance,
+                        'description' => $description,
+                        'reference' => null,
+                    ];
+                }
             }
         }
         
         return [
             'transactions' => $transactions,
-            'final_balance' => $last_balance,
+            'final_balance' => $final_balance,
         ];
     }
     
@@ -92,27 +161,48 @@ class INGParser {
     }
     
     /**
-     * Parse importo (gestisce separatori decimali)
+     * Parse importo (gestisce separatori decimali formato italiano)
+     * Formato italiano: 1.234,56 (punto=migliaia, virgola=decimali)
      */
     private function parse_amount($amount_string) {
-        // Rimuovi spazi e caratteri non numerici tranne punto/virgola/segno meno
+        // Rimuovi spazi e caratteri non numerici tranne punto/virgola/segno più/segno meno
         $amount_string = trim($amount_string);
         
         if (empty($amount_string)) {
             return 0.0;
         }
         
-        // Sostituisci virgola con punto se presente
-        $amount_string = str_replace(',', '.', $amount_string);
+        // Rimuovi segno + se presente (gestito separatamente)
+        $is_positive = (strpos($amount_string, '+') === 0);
+        $amount_string = ltrim($amount_string, '+');
         
-        // Rimuovi eventuali punti come separatori migliaia
-        if (substr_count($amount_string, '.') > 1) {
-            // Ha separatori migliaia: rimuovi tutti tranne l'ultimo
-            $parts = explode('.', $amount_string);
-            $last = array_pop($parts);
-            $amount_string = implode('', $parts) . '.' . $last;
+        // Gestisce formato italiano: 1.234,56 (punto=migliaia, virgola=decimali)
+        // Se ha sia punto che virgola, assume formato italiano
+        if (strpos($amount_string, '.') !== false && strpos($amount_string, ',') !== false) {
+            // Formato italiano: rimuovi punti (migliaia) e sostituisci virgola con punto (decimali)
+            $amount_string = str_replace('.', '', $amount_string);
+            $amount_string = str_replace(',', '.', $amount_string);
+        } 
+        // Se ha solo virgola, assume sia decimale
+        elseif (strpos($amount_string, ',') !== false && strpos($amount_string, '.') === false) {
+            $amount_string = str_replace(',', '.', $amount_string);
+        }
+        // Se ha solo punti, potrebbe essere formato inglese o italiano
+        elseif (strpos($amount_string, '.') !== false) {
+            // Se ha più di un punto, probabilmente sono migliaia (formato italiano)
+            if (substr_count($amount_string, '.') > 1) {
+                $amount_string = str_replace('.', '', $amount_string);
+            }
+            // Altrimenti è formato inglese (punto=decimale), lascia così
         }
         
-        return floatval($amount_string);
+        $amount = floatval($amount_string);
+        
+        // Applica segno positivo se era presente
+        if ($is_positive && $amount < 0) {
+            $amount = abs($amount);
+        }
+        
+        return $amount;
     }
 }
