@@ -482,11 +482,20 @@ class SettingsPage {
                             message += 'Ragione Sociale: ' + (data.userDescription || 'N/A') + '\n';
                             message += 'Partita IVA: ' + (data.vatCode || 'N/A');
                             
+                            if (data.isPremium !== null) {
+                                message += '\n\nAccount Premium: ' + (data.isPremium ? 'Sì' : 'No');
+                            }
+                            
                             if (data.accountStatus) {
                                 message += '\n\nStato Account: ' + (data.accountStatus.expired ? 'Scaduto' : 'Attivo');
                                 if (data.accountStatus.expirationDate) {
                                     message += '\nScadenza: ' + data.accountStatus.expirationDate;
                                 }
+                            }
+                            
+                            // Mostra warning se presente
+                            if (data.warning) {
+                                message += '\n\n⚠️ ATTENZIONE:\n' + data.warning;
                             }
                             
                             alert(message);

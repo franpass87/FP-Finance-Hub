@@ -715,7 +715,27 @@ class ArubaAPI {
         $user_info = $this->get_user_info();
         
         if (is_wp_error($user_info)) {
-            return $user_info;
+            // Se userInfo fallisce, prova comunque a vedere se l'autenticazione funziona
+            $auth_result = $this->authenticate();
+            if (is_wp_error($auth_result)) {
+                return $user_info; // Restituisci l'errore originale
+            }
+            
+            // Autenticazione OK ma userInfo non disponibile
+            return [
+                'success' => true,
+                'username' => null,
+                'pec' => null,
+                'userDescription' => null,
+                'vatCode' => null,
+                'fiscalCode' => null,
+                'accountStatus' => null,
+                'usageStatus' => null,
+                'isPremium' => null,
+                'warning' => 'Autenticazione riuscita ma impossibile recuperare informazioni utente. ' .
+                            'Verifica i permessi dell\'account Aruba o contatta il supporto.',
+                'raw_response' => $user_info->get_error_message(),
+            ];
         }
         
         // Verifica se è Premium (opzionale, non blocca il test)
@@ -725,7 +745,10 @@ class ArubaAPI {
             $premium_status = $is_premium;
         }
         
-        return [
+        // Se userInfo è vuoto o non contiene dati, potrebbe essere un problema di permessi
+        $has_data = !empty($user_info) && (isset($user_info['username']) || isset($user_info['vatCode']));
+        
+        $result = [
             'success' => true,
             'username' => $user_info['username'] ?? null,
             'pec' => $user_info['pec'] ?? null,
@@ -736,5 +759,16 @@ class ArubaAPI {
             'usageStatus' => $user_info['usageStatus'] ?? null,
             'isPremium' => $premium_status,
         ];
+        
+        // Se non ci sono dati e l'utente è Premium, suggerisci di inserire manualmente i parametri
+        if (!$has_data && $premium_status === true) {
+            $result['warning'] = 'Account Premium rilevato ma informazioni utente non disponibili. ' .
+                                'Inserisci manualmente Codice Paese e Partita IVA nelle Impostazioni Aruba (Parametri Premium).';
+        } elseif (!$has_data) {
+            $result['warning'] = 'Informazioni utente non disponibili. ' .
+                                'Se hai un account Premium e ricevi errori, inserisci manualmente Codice Paese e Partita IVA nelle Impostazioni.';
+        }
+        
+        return $result;
     }
 }
