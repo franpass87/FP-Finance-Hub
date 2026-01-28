@@ -14,6 +14,9 @@
     "require": {
         "php": ">=7.4"
     },
+    "suggest": {
+        "phpoffice/phpspreadsheet": "Per importare file Excel (.xls/.xlsx) dal riepilogo Aruba"
+    },
     "autoload": {
         "psr-4": {
             "FP\\FinanceHub\\": "includes/"

@@ -96,7 +96,7 @@ class ArubaManualImporter {
     }
     
     /**
-     * Processa un singolo file (XML o ZIP)
+     * Processa un singolo file (XML, ZIP o Excel)
      */
     private function process_file($file_path, $file_name) {
         $extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
@@ -106,8 +106,88 @@ class ArubaManualImporter {
             return $this->process_zip($file_path);
         }
         
+        // Se è Excel, processa come Excel
+        if (in_array($extension, ['xls', 'xlsx'])) {
+            return $this->process_excel_file($file_path, $file_name);
+        }
+        
         // Altrimenti processa come XML
         return $this->process_xml_file($file_path, $file_name);
+    }
+    
+    /**
+     * Processa file Excel
+     */
+    private function process_excel_file($file_path, $file_name) {
+        require_once __DIR__ . '/ArubaExcelParser.php';
+        $excel_parser = new ArubaExcelParser();
+        
+        $invoices = $excel_parser->parse($file_path);
+        
+        if (is_wp_error($invoices)) {
+            return $invoices;
+        }
+        
+        if (empty($invoices)) {
+            return new \WP_Error('no_invoices', 'Nessuna fattura trovata nel file Excel');
+        }
+        
+        $imported = 0;
+        $updated = 0;
+        $errors = 0;
+        $error_details = [];
+        
+        foreach ($invoices as $invoice_data) {
+            // Verifica se fattura già esistente
+            $existing = null;
+            if (!empty($invoice_data['number'])) {
+                $existing = \FP\FinanceHub\Database\Models\Invoice::find_by_number($invoice_data['number']);
+                // Verifica anche che la data corrisponda
+                if ($existing && !empty($invoice_data['date']) && $existing->issue_date !== $invoice_data['date']) {
+                    $existing = null;
+                }
+            }
+            
+            // Crea struttura dati simile a quella di Aruba API
+            $aruba_invoice_data = [
+                'id' => md5($file_name . ($invoice_data['number'] ?? '') . ($invoice_data['date'] ?? '')),
+                'idSdi' => null,
+                'status' => $invoice_data['aruba_status'] ?? 'Inviata',
+                'filename' => $file_name,
+            ];
+            
+            // Importa/aggiorna fattura
+            $wp_invoice_id = $this->invoice_service->import_from_aruba($aruba_invoice_data, $invoice_data);
+            
+            if (is_wp_error($wp_invoice_id)) {
+                $errors++;
+                $error_details[] = "Fattura '{$invoice_data['number']}': " . $wp_invoice_id->get_error_message();
+            } else {
+                if ($existing) {
+                    $updated++;
+                } else {
+                    $imported++;
+                }
+                
+                // Importa cliente se presente
+                if (!empty($invoice_data['receiver'])) {
+                    $this->client_service->import_from_aruba($invoice_data['receiver']);
+                }
+                
+                Logger::log('aruba_excel_import_success', 'Fattura importata da Excel', [
+                    'file' => $file_name,
+                    'invoice_number' => $invoice_data['number'] ?? null,
+                    'invoice_id' => $wp_invoice_id,
+                ]);
+            }
+        }
+        
+        return [
+            'imported' => $imported,
+            'updated' => $updated,
+            'errors' => $errors,
+            'error_details' => $error_details,
+        ];
     }
     
     /**

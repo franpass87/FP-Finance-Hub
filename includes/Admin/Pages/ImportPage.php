@@ -143,7 +143,19 @@ class ImportPage {
                                 <li><strong>Esporta dal pannello Aruba:</strong> Accedi a <a href="https://fatturazioneelettronica.aruba.it" target="_blank">fatturazioneelettronica.aruba.it</a>, vai su "Fatture Inviate" e scarica i file XML delle fatture (singoli file o ZIP con più fatture).</li>
                                 <li><strong>Importa qui:</strong> Carica i file XML qui sotto. Il plugin estrae automaticamente tutti i dati (fatture, clienti, importi, IVA).</li>
                             </ol>
-                            <p class="fp-fh-mt-4 fp-fh-mb-0"><strong>Formati supportati:</strong> File XML singoli (.xml, .xml.p7m) o archivi ZIP contenenti più file XML.</p>
+                            <p class="fp-fh-mt-4 fp-fh-mb-0">
+                                <strong>Formati supportati:</strong> 
+                                <ul class="fp-fh-list fp-fh-mt-2" style="margin-left: 1.5rem;">
+                                    <li>File XML singoli (.xml, .xml.p7m)</li>
+                                    <li>Archivi ZIP contenenti più file XML</li>
+                                    <li>File Excel riepilogo (.xls, .xlsx) - <strong>Richiede PhpSpreadsheet</strong></li>
+                                </ul>
+                            </p>
+                            <div class="fp-fh-alert fp-fh-alert-info fp-fh-mt-3">
+                                <strong>📋 Per file Excel:</strong> Se esporti un riepilogo Excel da Aruba, installa PhpSpreadsheet eseguendo 
+                                <code>composer require phpoffice/phpspreadsheet</code> nella cartella del plugin. 
+                                In alternativa, esporta da Excel come CSV e importa il CSV.
+                            </div>
                         </div>
                         <form method="post" enctype="multipart/form-data">
                             <?php wp_nonce_field('fp_finance_hub_aruba_import_xml'); ?>
@@ -155,7 +167,7 @@ class ImportPage {
                                     <input type="file" 
                                            id="aruba_xml_files" 
                                            name="aruba_xml_files[]" 
-                                           accept=".xml,.p7m,.zip"
+                                           accept=".xml,.p7m,.zip,.xls,.xlsx"
                                            multiple
                                            class="fp-fh-input"
                                            required>
