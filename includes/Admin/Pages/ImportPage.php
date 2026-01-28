@@ -68,9 +68,10 @@ class ImportPage {
             
             <?php if ($tab === 'aruba') : ?>
                 <div id="aruba-tab" class="fp-fh-tab-content <?php echo $tab === 'aruba' ? 'active' : ''; ?>">
-                    <div class="fp-fh-card">
+                    <!-- Sincronizzazione Automatica -->
+                    <div class="fp-fh-card fp-fh-mb-6">
                         <div class="fp-fh-card-header">
-                            <h2 class="fp-fh-card-title">Import da Aruba</h2>
+                            <h2 class="fp-fh-card-title">Sincronizzazione Automatica da Aruba</h2>
                             <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=aruba-sync'); ?>" class="fp-fh-help-link" target="_blank">
                                 📖 Guida Completa →
                             </a>
@@ -78,7 +79,7 @@ class ImportPage {
                         <form method="post">
                             <?php wp_nonce_field('fp_finance_hub_aruba_sync'); ?>
                             <div class="fp-fh-card-body">
-                                <p>Sincronizza automaticamente le fatture emesse da Aruba Fatturazione Elettronica.</p>
+                                <p>Sincronizza automaticamente le fatture emesse da Aruba Fatturazione Elettronica tramite API.</p>
                                 
                                 <?php if ($aruba_configured) : ?>
                                     <div class="fp-fh-guide-info fp-fh-mb-4">
@@ -94,10 +95,14 @@ class ImportPage {
                                             Le fatture già importate vengono aggiornate, non duplicate.
                                         </p>
                                     </div>
+                                <?php else : ?>
+                                    <div class="fp-fh-alert fp-fh-alert-warning">
+                                        <strong>⚠️ Richiede Account Premium:</strong> La sincronizzazione automatica richiede un account Premium Aruba o un account base collegato a Premium tramite delega.
+                                    </div>
                                 <?php endif; ?>
                             </div>
                             <div class="fp-fh-card-footer">
-                                <button type="submit" name="sync_aruba" class="fp-fh-btn fp-fh-btn-primary">
+                                <button type="submit" name="sync_aruba" class="fp-fh-btn fp-fh-btn-primary" <?php echo !$aruba_configured ? 'disabled' : ''; ?>>
                                     🔄 Sincronizza Fatture da Aruba
                                 </button>
                             </div>
@@ -125,7 +130,84 @@ class ImportPage {
                                 }
                             }
                             ?>
+                    </div>
+                    
+                    <!-- Import Manuale File XML -->
+                    <div class="fp-fh-card">
+                        <div class="fp-fh-card-header">
+                            <h2 class="fp-fh-card-title">Import Manuale File XML</h2>
                         </div>
+                        <div class="fp-fh-card-body">
+                            <p><strong>Soluzione per account base:</strong> Esporta le fatture dal pannello Aruba e importale manualmente.</p>
+                            <ol class="fp-fh-list fp-fh-mt-3" style="margin-left: 1.5rem;">
+                                <li><strong>Esporta dal pannello Aruba:</strong> Accedi a <a href="https://fatturazioneelettronica.aruba.it" target="_blank">fatturazioneelettronica.aruba.it</a>, vai su "Fatture Inviate" e scarica i file XML delle fatture (singoli file o ZIP con più fatture).</li>
+                                <li><strong>Importa qui:</strong> Carica i file XML qui sotto. Il plugin estrae automaticamente tutti i dati (fatture, clienti, importi, IVA).</li>
+                            </ol>
+                            <p class="fp-fh-mt-4 fp-fh-mb-0"><strong>Formati supportati:</strong> File XML singoli (.xml, .xml.p7m) o archivi ZIP contenenti più file XML.</p>
+                        </div>
+                        <form method="post" enctype="multipart/form-data">
+                            <?php wp_nonce_field('fp_finance_hub_aruba_import_xml'); ?>
+                            <div class="fp-fh-card-body">
+                                <div class="fp-fh-form-group">
+                                    <label for="aruba_xml_files" class="fp-fh-label">
+                                        <strong>Seleziona file XML o ZIP:</strong>
+                                    </label>
+                                    <input type="file" 
+                                           id="aruba_xml_files" 
+                                           name="aruba_xml_files[]" 
+                                           accept=".xml,.p7m,.zip"
+                                           multiple
+                                           class="fp-fh-input"
+                                           required>
+                                    <p class="fp-fh-text-sm fp-fh-mt-2" style="color: #666;">
+                                        Puoi selezionare più file contemporaneamente. Dimensione massima: 50MB per file.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="fp-fh-card-footer">
+                                <button type="submit" name="import_aruba_xml" class="fp-fh-btn fp-fh-btn-primary">
+                                    📥 Importa File XML
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <?php
+                        if (isset($_POST['import_aruba_xml'])) {
+                            check_admin_referer('fp_finance_hub_aruba_import_xml');
+                            
+                            require_once __DIR__ . '/../../Integration/Aruba/ArubaManualImporter.php';
+                            $importer = new \FP\FinanceHub\Integration\Aruba\ArubaManualImporter();
+                            $result = $importer->import_files($_FILES['aruba_xml_files'] ?? []);
+                            
+                            if (!is_wp_error($result)) {
+                                echo '<div class="fp-fh-notice fp-fh-notice-success fp-fh-mt-4">';
+                                echo '<div class="fp-fh-notice-content">';
+                                echo '<div class="fp-fh-notice-message">';
+                                echo '<strong>✅ Import completato!</strong><br>';
+                                echo 'Fatture importate: ' . $result['imported'] . '<br>';
+                                echo 'Fatture aggiornate: ' . $result['updated'] . '<br>';
+                                if ($result['errors'] > 0) {
+                                    echo 'Errori: ' . $result['errors'] . '<br>';
+                                }
+                                if (!empty($result['error_details'])) {
+                                    echo '<details class="fp-fh-mt-2"><summary>Dettagli errori</summary><ul>';
+                                    foreach ($result['error_details'] as $error) {
+                                        echo '<li>' . esc_html($error) . '</li>';
+                                    }
+                                    echo '</ul></details>';
+                                }
+                                echo '</div>';
+                                echo '</div>';
+                                echo '</div>';
+                            } else {
+                                echo '<div class="fp-fh-notice fp-fh-notice-error fp-fh-mt-4">';
+                                echo '<div class="fp-fh-notice-content">';
+                                echo '<div class="fp-fh-notice-message">' . esc_html($result->get_error_message()) . '</div>';
+                                echo '</div>';
+                                echo '</div>';
+                            }
+                        }
+                        ?>
                     </div>
                 </div>
             <?php elseif ($tab === 'bank') : ?>
