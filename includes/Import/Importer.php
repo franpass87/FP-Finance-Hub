@@ -60,8 +60,12 @@ class Importer {
             return new \WP_Error('read_error', 'Errore durante lettura file');
         }
         
+        // Log per debug
+        error_log('[FP Finance Hub] File letto - Dimensione: ' . strlen($content) . ' bytes | Prime 200 caratteri: ' . substr($content, 0, 200));
+        
         if ($format === 'auto') {
             $format = $this->detect_format($file_path, $content);
+            error_log('[FP Finance Hub] Formato rilevato: ' . ($format ?? 'NULL'));
         }
         
         // Parse file
@@ -154,6 +158,9 @@ class Importer {
      * Rileva formato file automaticamente
      */
     private function detect_format($file_path, $content) {
+        // Rimuovi BOM UTF-8 se presente
+        $content = ltrim($content, "\xEF\xBB\xBF");
+        
         $extension = strtolower(pathinfo($file_path, PATHINFO_EXTENSION));
         
         // OFX ha estensione .ofx o contiene tag OFX
@@ -163,14 +170,25 @@ class Importer {
         
         // CSV: prova a capire se è PostePay o ING
         if ($extension === 'csv') {
+            // Normalizza line breaks
+            $content = str_replace(["\r\n", "\r"], "\n", $content);
             $lines = explode("\n", $content);
-            $first_line = trim($lines[0] ?? '');
-            $first_line_lower = strtolower($first_line);
+            
+            // Trova la prima riga non vuota
+            $first_line = '';
+            $first_line_index = 0;
+            for ($i = 0; $i < min(5, count($lines)); $i++) {
+                $line = trim($lines[$i]);
+                if (!empty($line)) {
+                    $first_line = $line;
+                    $first_line_index = $i;
+                    break;
+                }
+            }
             
             if (empty($first_line)) {
-                // Se la prima riga è vuota, prova la seconda
-                $first_line = trim($lines[1] ?? '');
-                $first_line_lower = strtolower($first_line);
+                error_log('[FP Finance Hub] Prima riga CSV vuota o non trovata');
+                return null;
             }
             
             // Rileva separatore (conta occorrenze)
@@ -178,46 +196,71 @@ class Importer {
             $comma_count = substr_count($first_line, ',');
             $delimiter = ($semicolon_count > $comma_count) ? ';' : ',';
             
+            // Log per debug
+            error_log('[FP Finance Hub] Rilevamento formato CSV - Prima riga: ' . substr($first_line, 0, 100) . ' | Separatore: ' . $delimiter . ' | Punto e virgola: ' . $semicolon_count . ' | Virgole: ' . $comma_count);
+            
             $columns = str_getcsv($first_line, $delimiter);
             $column_count = count($columns);
             
-            // ING: riconosci da header specifico (case-insensitive)
-            if (stripos($first_line, 'data contabile') !== false || 
-                stripos($first_line, 'uscite') !== false ||
-                stripos($first_line, 'entrate') !== false ||
-                stripos($first_line, 'causale') !== false ||
-                stripos($first_line, 'descrizione operazione') !== false) {
-                return 'ing';
+            // Log colonne rilevate
+            error_log('[FP Finance Hub] Colonne rilevate: ' . $column_count . ' | Prime 3 colonne: ' . implode(' | ', array_slice($columns, 0, 3)));
+            
+            // Normalizza prima riga per confronto (rimuovi spazi extra)
+            $first_line_normalized = preg_replace('/\s+/', ' ', strtolower($first_line));
+            
+            // ING: riconosci da header specifico (case-insensitive, gestisce spazi multipli)
+            $ing_keywords = [
+                'data contabile',
+                'uscite',
+                'entrate',
+                'causale',
+                'descrizione operazione',
+                'data valuta'
+            ];
+            
+            foreach ($ing_keywords as $keyword) {
+                if (stripos($first_line_normalized, $keyword) !== false) {
+                    error_log('[FP Finance Hub] Rilevato formato ING per keyword: ' . $keyword);
+                    return 'ing';
+                }
             }
             
             // ING: se ha 6 colonne e separatore `;`, è molto probabile che sia ING
             if ($column_count === 6 && $delimiter === ';') {
+                error_log('[FP Finance Hub] Rilevato formato ING per 6 colonne con separatore ;');
                 return 'ing';
             }
             
             // ING: formato alternativo con header "Data,Valuta,Descrizione,Addebito,Accredito,Saldo"
-            if ($column_count >= 6 && (
-                stripos($first_line, 'valuta') !== false || 
-                stripos($first_line, 'addebito') !== false ||
-                stripos($first_line, 'accredito') !== false
-            )) {
-                return 'ing';
+            if ($column_count >= 6) {
+                $alt_keywords = ['valuta', 'addebito', 'accredito', 'saldo'];
+                foreach ($alt_keywords as $keyword) {
+                    if (stripos($first_line_normalized, $keyword) !== false) {
+                        error_log('[FP Finance Hub] Rilevato formato ING alternativo per keyword: ' . $keyword);
+                        return 'ing';
+                    }
+                }
             }
             
             // PostePay: Data,Descrizione,Importo,Saldo (4 colonne con virgola)
             if ($column_count === 4 && $delimiter === ',') {
+                error_log('[FP Finance Hub] Rilevato formato PostePay per 4 colonne con separatore ,');
                 return 'postepay';
             }
             
             // Fallback: se ha 6+ colonne, prova ING (formato più comune)
             if ($column_count >= 6) {
+                error_log('[FP Finance Hub] Fallback: rilevato formato ING per 6+ colonne');
                 return 'ing';
             }
             
             // Fallback: se ha separatore `;` e 6 colonne, è probabilmente ING
             if ($delimiter === ';' && $column_count >= 6) {
+                error_log('[FP Finance Hub] Fallback: rilevato formato ING per separatore ; e 6+ colonne');
                 return 'ing';
             }
+            
+            error_log('[FP Finance Hub] Impossibile rilevare formato CSV - Colonne: ' . $column_count . ' | Separatore: ' . $delimiter);
         }
         
         // Se non riesce a rilevare, restituisce null per generare errore più chiaro
