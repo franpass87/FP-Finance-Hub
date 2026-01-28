@@ -74,18 +74,29 @@ class Schema {
         
         $table_name = $this->get_table_name('bank_accounts');
         
+        // Verifica che la tabella esista
+        $table_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT 1 FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+            DB_NAME,
+            $table_name
+        ));
+        
+        if (!$table_exists) {
+            return;
+        }
+        
         // Verifica se la colonna esiste già
-        $column_exists = $wpdb->get_results(
-            $wpdb->prepare(
-                "SHOW COLUMNS FROM {$table_name} LIKE %s",
-                'bank_name'
-            )
-        );
+        $column_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT 1 FROM information_schema.columns WHERE table_schema = %s AND table_name = %s AND column_name = %s",
+            DB_NAME,
+            $table_name,
+            'bank_name'
+        ));
         
         // Se la colonna non esiste, aggiungila
-        if (empty($column_exists)) {
+        if (!$column_exists) {
             $wpdb->query(
-                "ALTER TABLE {$table_name} ADD COLUMN bank_name VARCHAR(255) NULL AFTER iban"
+                "ALTER TABLE `{$table_name}` ADD COLUMN bank_name VARCHAR(255) NULL AFTER iban"
             );
         }
     }

@@ -9,6 +9,7 @@ namespace FP\FinanceHub\Admin\Pages;
 
 use FP\FinanceHub\Services\BankService;
 use FP\FinanceHub\Import\Importer;
+use FP\FinanceHub\Database\Schema;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -207,6 +208,9 @@ class BankAccountsPage {
         if (!current_user_can('manage_options')) {
             wp_die('Non autorizzato');
         }
+        
+        // Assicura che la colonna bank_name esista (migrazione per installazioni esistenti)
+        Schema::get_instance()->migrate_bank_accounts_add_bank_name();
         
         $account_name = sanitize_text_field($_POST['account_name'] ?? '');
         $iban = sanitize_text_field($_POST['iban'] ?? '');

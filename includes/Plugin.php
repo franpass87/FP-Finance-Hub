@@ -41,6 +41,7 @@ class Plugin {
         add_action('plugins_loaded', [$this, 'init_database'], 5);
         
         // Admin
+        add_action('admin_init', [$this, 'run_db_migrations'], 5);
         add_action('admin_menu', [$this, 'init_admin'], 9);
         
         // REST API
@@ -107,6 +108,14 @@ class Plugin {
      */
     public function init_database() {
         Database\Schema::get_instance();
+    }
+    
+    /**
+     * Esegue migrazioni DB (colonne mancanti) su ogni caricamento admin
+     */
+    public function run_db_migrations() {
+        $schema = Database\Schema::get_instance();
+        $schema->migrate_bank_accounts_add_bank_name();
     }
     
     /**
