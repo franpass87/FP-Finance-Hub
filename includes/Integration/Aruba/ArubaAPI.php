@@ -333,12 +333,11 @@ class ArubaAPI {
                             'Dettaglio API: ' . $error_msg;
             } elseif ($is_premium === false) {
                 // Account base: errore "deleghe" indica problema di permessi/configurazione account
-                $error_msg = 'Errore deleghe utente: Il tuo account base Aruba non ha i permessi per accedere alle API. ' .
-                            'SOLUZIONE: Contatta il supporto Aruba per abilitare l\'accesso API sul tuo account base. ' .
-                            'Email: assistenza@aruba.it | Telefono: 800.99.99.99 ' .
-                            'Specifica che: 1) Hai un account base (non Premium), 2) Vuoi integrare via Web Service/API, ' .
-                            '3) Ricevi errore "Errore deleghe utente" quando chiami findByUsername. ' .
-                            'Aruba potrebbe dover abilitare manualmente i permessi API per il tuo account base. ' .
+                $error_msg = 'Errore deleghe utente: Il tuo account base Aruba potrebbe non avere i permessi configurati correttamente. ' .
+                            'SOLUZIONE: Verifica nel pannello web Aruba (https://fatturazioneelettronica.aruba.it) → ' .
+                            'Sezione "Deleghe" o "Configurazione" → Assicurati che l\'accesso alle API Web Service sia abilitato. ' .
+                            'Se non trovi questa opzione nel pannello, potrebbe essere necessario che l\'account base sia collegato ' .
+                            'a un account Premium tramite delega (vedi sezione "Deleghe" nel pannello Aruba). ' .
                             'Dettaglio API: ' . $error_msg;
             } else {
                 // Impossibile determinare (errore nel controllo)
@@ -447,12 +446,11 @@ class ArubaAPI {
                             'Dettaglio API: ' . $error_msg;
             } elseif ($is_premium === false) {
                 // Account base: errore "deleghe" indica problema di permessi/configurazione account
-                $error_msg = 'Errore deleghe utente: Il tuo account base Aruba non ha i permessi per accedere alle API. ' .
-                            'SOLUZIONE: Contatta il supporto Aruba per abilitare l\'accesso API sul tuo account base. ' .
-                            'Email: assistenza@aruba.it | Telefono: 800.99.99.99 ' .
-                            'Specifica che: 1) Hai un account base (non Premium), 2) Vuoi integrare via Web Service/API, ' .
-                            '3) Ricevi errore "Errore deleghe utente" quando chiami findReceivedInvoices. ' .
-                            'Aruba potrebbe dover abilitare manualmente i permessi API per il tuo account base. ' .
+                $error_msg = 'Errore deleghe utente: Il tuo account base Aruba potrebbe non avere i permessi configurati correttamente. ' .
+                            'SOLUZIONE: Verifica nel pannello web Aruba (https://fatturazioneelettronica.aruba.it) → ' .
+                            'Sezione "Deleghe" o "Configurazione" → Assicurati che l\'accesso alle API Web Service sia abilitato. ' .
+                            'Se non trovi questa opzione nel pannello, potrebbe essere necessario che l\'account base sia collegato ' .
+                            'a un account Premium tramite delega (vedi sezione "Deleghe" nel pannello Aruba). ' .
                             'Dettaglio API: ' . $error_msg;
             } else {
                 // Impossibile determinare
