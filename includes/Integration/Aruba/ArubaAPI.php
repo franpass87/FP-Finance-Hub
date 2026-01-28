@@ -332,18 +332,21 @@ class ArubaAPI {
                             '"Parametri Premium (Opzionali)" e inserisci manualmente Codice Paese (es: IT) e Partita IVA completa. ' .
                             'Dettaglio API: ' . $error_msg;
             } elseif ($is_premium === false) {
-                // Account base: errore "deleghe" indica problema di permessi/configurazione account
-                $error_msg = 'Errore deleghe utente: Il tuo account base Aruba potrebbe non avere i permessi configurati correttamente. ' .
-                            'SOLUZIONE: Verifica nel pannello web Aruba (https://fatturazioneelettronica.aruba.it) → ' .
-                            'Sezione "Deleghe" o "Configurazione" → Assicurati che l\'accesso alle API Web Service sia abilitato. ' .
-                            'Se non trovi questa opzione nel pannello, potrebbe essere necessario che l\'account base sia collegato ' .
-                            'a un account Premium tramite delega (vedi sezione "Deleghe" nel pannello Aruba). ' .
+                // Account base: errore "deleghe" indica che l'account base non può usare le API direttamente
+                // Secondo documentazione Aruba: "I Web Services sono a disposizione delle utenze Premium o utenze base a loro collegate mediante delega"
+                $error_msg = 'Errore deleghe utente: Gli account base Aruba non possono accedere direttamente alle API Web Service. ' .
+                            'Secondo la documentazione Aruba, i Web Services sono disponibili solo per: ' .
+                            '1) Utenti Premium, oppure 2) Account base collegati a un account Premium tramite delega. ' .
+                            'SOLUZIONE: Per utilizzare le API con un account base, è necessario: ' .
+                            'a) Passare a un account Premium Aruba, oppure b) Collegare l\'account base a un account Premium tramite delega ' .
+                            '(sezione "Deleghe" nel pannello Aruba). ' .
                             'Dettaglio API: ' . $error_msg;
             } else {
                 // Impossibile determinare (errore nel controllo)
                 $error_msg = 'Errore deleghe utente: ' . $error_msg . 
                             ' Se hai un account Premium, inserisci manualmente Codice Paese e Partita IVA nelle Impostazioni Aruba (Parametri Premium). ' .
-                            'Se hai un account base, contatta il supporto Aruba (assistenza@aruba.it) per verificare i permessi API.';
+                            'Se hai un account base, ricorda che gli account base non possono usare le API direttamente: ' .
+                            'è necessario un account Premium o una delega a un account Premium.';
             }
         }
         
@@ -445,12 +448,14 @@ class ArubaAPI {
                             '"Parametri Premium (Opzionali)" e inserisci manualmente Codice Paese (es: IT) e Partita IVA completa. ' .
                             'Dettaglio API: ' . $error_msg;
             } elseif ($is_premium === false) {
-                // Account base: errore "deleghe" indica problema di permessi/configurazione account
-                $error_msg = 'Errore deleghe utente: Il tuo account base Aruba potrebbe non avere i permessi configurati correttamente. ' .
-                            'SOLUZIONE: Verifica nel pannello web Aruba (https://fatturazioneelettronica.aruba.it) → ' .
-                            'Sezione "Deleghe" o "Configurazione" → Assicurati che l\'accesso alle API Web Service sia abilitato. ' .
-                            'Se non trovi questa opzione nel pannello, potrebbe essere necessario che l\'account base sia collegato ' .
-                            'a un account Premium tramite delega (vedi sezione "Deleghe" nel pannello Aruba). ' .
+                // Account base: errore "deleghe" indica che l'account base non può usare le API direttamente
+                // Secondo documentazione Aruba: "I Web Services sono a disposizione delle utenze Premium o utenze base a loro collegate mediante delega"
+                $error_msg = 'Errore deleghe utente: Gli account base Aruba non possono accedere direttamente alle API Web Service. ' .
+                            'Secondo la documentazione Aruba, i Web Services sono disponibili solo per: ' .
+                            '1) Utenti Premium, oppure 2) Account base collegati a un account Premium tramite delega. ' .
+                            'SOLUZIONE: Per utilizzare le API con un account base, è necessario: ' .
+                            'a) Passare a un account Premium Aruba, oppure b) Collegare l\'account base a un account Premium tramite delega ' .
+                            '(sezione "Deleghe" nel pannello Aruba). ' .
                             'Dettaglio API: ' . $error_msg;
             } else {
                 // Impossibile determinare
