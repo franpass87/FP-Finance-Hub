@@ -231,9 +231,11 @@ class ArubaAPI {
             'size' => 100,
         ], $filters);
         
-        // Se mancano countrySender/vatcodeSender, prova a recuperarli automaticamente
-        // (necessari per utenze Premium)
-        if (empty($params['countrySender']) || empty($params['vatcodeSender'])) {
+        // Verifica se l'utente è Premium (solo per utenti Premium servono countrySender/vatcodeSender)
+        $is_premium = $this->is_premium_user();
+        
+        // Se è Premium e mancano i parametri, prova a recuperarli automaticamente
+        if (is_bool($is_premium) && $is_premium && (empty($params['countrySender']) || empty($params['vatcodeSender']))) {
             $premium_params = $this->get_premium_params();
             if (!is_wp_error($premium_params)) {
                 if (empty($params['countrySender']) && !empty($premium_params['countrySender'])) {
@@ -290,8 +292,15 @@ class ArubaAPI {
         
         // Se errore 400 o "Errore deleghe utente", potrebbe essere per parametri mancanti (utenze Premium)
         if ($code === 400 || (is_string($error_msg) && stripos($error_msg, 'deleghe') !== false)) {
-            $error_msg = 'Errore deleghe utente: Per utenze Premium, countrySender e vatcodeSender sono obbligatori. ' . 
-                        'Verifica le impostazioni Aruba o contatta il supporto. Dettaglio: ' . $error_msg;
+            // Verifica se è Premium per dare un messaggio più preciso
+            $is_premium = $this->is_premium_user();
+            if (is_bool($is_premium) && $is_premium) {
+                $error_msg = 'Errore deleghe utente: Per utenze Premium, countrySender e vatcodeSender sono obbligatori. ' . 
+                            'Il sistema ha tentato di recuperarli automaticamente. Verifica le impostazioni Aruba o contatta il supporto. Dettaglio: ' . $error_msg;
+            } else {
+                $error_msg = 'Errore deleghe utente: ' . $error_msg . 
+                            ' Se hai un account Premium, verifica che countrySender e vatcodeSender siano configurati correttamente.';
+            }
         }
         
         return new \WP_Error('api_error', 'Errore API Aruba findByUsername: ' . $error_msg, ['http_code' => $code]);
@@ -319,9 +328,11 @@ class ArubaAPI {
             'size' => 100,
         ], $filters);
         
-        // Se mancano countryReceiver/vatcodeReceiver, prova a recuperarli automaticamente
-        // (necessari per utenze Premium)
-        if (empty($params['countryReceiver']) || empty($params['vatcodeReceiver'])) {
+        // Verifica se l'utente è Premium (solo per utenti Premium servono countryReceiver/vatcodeReceiver)
+        $is_premium = $this->is_premium_user();
+        
+        // Se è Premium e mancano i parametri, prova a recuperarli automaticamente
+        if (is_bool($is_premium) && $is_premium && (empty($params['countryReceiver']) || empty($params['vatcodeReceiver']))) {
             $premium_params = $this->get_premium_params();
             if (!is_wp_error($premium_params)) {
                 if (empty($params['countryReceiver']) && !empty($premium_params['countrySender'])) {
@@ -377,8 +388,15 @@ class ArubaAPI {
         
         // Se errore 400 o "Errore deleghe utente", potrebbe essere per parametri mancanti (utenze Premium)
         if ($code === 400 || (is_string($error_msg) && stripos($error_msg, 'deleghe') !== false)) {
-            $error_msg = 'Errore deleghe utente: Per utenze Premium, countryReceiver e vatcodeReceiver sono obbligatori. ' . 
-                        'Verifica le impostazioni Aruba o contatta il supporto. Dettaglio: ' . $error_msg;
+            // Verifica se è Premium per dare un messaggio più preciso
+            $is_premium = $this->is_premium_user();
+            if (is_bool($is_premium) && $is_premium) {
+                $error_msg = 'Errore deleghe utente: Per utenze Premium, countryReceiver e vatcodeReceiver sono obbligatori. ' . 
+                            'Il sistema ha tentato di recuperarli automaticamente. Verifica le impostazioni Aruba o contatta il supporto. Dettaglio: ' . $error_msg;
+            } else {
+                $error_msg = 'Errore deleghe utente: ' . $error_msg . 
+                            ' Se hai un account Premium, verifica che countryReceiver e vatcodeReceiver siano configurati correttamente.';
+            }
         }
         
         return new \WP_Error('api_error', 'Errore API Aruba findReceivedInvoices: ' . $error_msg, ['http_code' => $code]);
