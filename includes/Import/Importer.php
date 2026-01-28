@@ -66,9 +66,14 @@ class Importer {
         
         // Parse file
         try {
+            // Se il formato è null, significa che il rilevamento automatico non è riuscito
+            if ($format === null) {
+                return new \WP_Error('invalid_format', 'Impossibile rilevare il formato del file. Assicurati che sia un CSV PostePay, CSV ING o file OFX valido.');
+            }
+            
             $parser = $this->get_parser($format);
             if (!$parser) {
-                return new \WP_Error('invalid_format', 'Formato file non supportato: ' . $format);
+                return new \WP_Error('invalid_format', 'Formato file non supportato: ' . $format . '. Formati supportati: postepay, ing, ofx');
             }
             
             $parsed = $parser->parse($content);
@@ -159,36 +164,64 @@ class Importer {
         // CSV: prova a capire se è PostePay o ING
         if ($extension === 'csv') {
             $lines = explode("\n", $content);
-            $first_line = strtolower($lines[0] ?? '');
+            $first_line = trim($lines[0] ?? '');
+            $first_line_lower = strtolower($first_line);
             
-            // Rileva separatore
-            $delimiter = ';';
-            if (strpos($first_line, ',') !== false && strpos($first_line, ';') === false) {
-                $delimiter = ',';
+            if (empty($first_line)) {
+                // Se la prima riga è vuota, prova la seconda
+                $first_line = trim($lines[1] ?? '');
+                $first_line_lower = strtolower($first_line);
             }
             
-            $columns = str_getcsv($first_line, $delimiter);
+            // Rileva separatore (conta occorrenze)
+            $semicolon_count = substr_count($first_line, ';');
+            $comma_count = substr_count($first_line, ',');
+            $delimiter = ($semicolon_count > $comma_count) ? ';' : ',';
             
-            // ING: riconosci da header specifico
+            $columns = str_getcsv($first_line, $delimiter);
+            $column_count = count($columns);
+            
+            // ING: riconosci da header specifico (case-insensitive)
             if (stripos($first_line, 'data contabile') !== false || 
                 stripos($first_line, 'uscite') !== false ||
                 stripos($first_line, 'entrate') !== false ||
-                (count($columns) >= 6 && (stripos($first_line, 'valuta') !== false || stripos($first_line, 'addebito') !== false))) {
+                stripos($first_line, 'causale') !== false ||
+                stripos($first_line, 'descrizione operazione') !== false) {
                 return 'ing';
             }
             
-            // PostePay: Data,Descrizione,Importo,Saldo (4 colonne)
-            if (count($columns) === 4) {
+            // ING: se ha 6 colonne e separatore `;`, è molto probabile che sia ING
+            if ($column_count === 6 && $delimiter === ';') {
+                return 'ing';
+            }
+            
+            // ING: formato alternativo con header "Data,Valuta,Descrizione,Addebito,Accredito,Saldo"
+            if ($column_count >= 6 && (
+                stripos($first_line, 'valuta') !== false || 
+                stripos($first_line, 'addebito') !== false ||
+                stripos($first_line, 'accredito') !== false
+            )) {
+                return 'ing';
+            }
+            
+            // PostePay: Data,Descrizione,Importo,Saldo (4 colonne con virgola)
+            if ($column_count === 4 && $delimiter === ',') {
                 return 'postepay';
             }
             
-            // Default: prova ING se ha 6+ colonne
-            if (count($columns) >= 6) {
+            // Fallback: se ha 6+ colonne, prova ING (formato più comune)
+            if ($column_count >= 6) {
+                return 'ing';
+            }
+            
+            // Fallback: se ha separatore `;` e 6 colonne, è probabilmente ING
+            if ($delimiter === ';' && $column_count >= 6) {
                 return 'ing';
             }
         }
         
-        return 'csv';
+        // Se non riesce a rilevare, restituisce null per generare errore più chiaro
+        return null;
     }
     
     /**
