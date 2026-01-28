@@ -18,25 +18,30 @@ if (!defined('ABSPATH')) {
 class BankAccountsPage {
     
     /**
-     * Render pagina conti bancari
+     * Inizializza gestione form (chiamato su admin_init)
      */
-    public static function render() {
-        $bank_service = BankService::get_instance();
-        
+    public static function init() {
         // Gestione creazione conto
-        if (isset($_POST['create_account'])) {
+        if (isset($_POST['create_account']) && isset($_GET['page']) && $_GET['page'] === 'fp-finance-hub-bank-accounts') {
             self::handle_create_account();
         }
         
         // Gestione modifica conto
-        if (isset($_POST['update_account'])) {
+        if (isset($_POST['update_account']) && isset($_GET['page']) && $_GET['page'] === 'fp-finance-hub-bank-accounts') {
             self::handle_update_account();
         }
         
         // Gestione upload CSV/OFX
-        if (isset($_POST['import_file']) && isset($_FILES['csv_file'])) {
+        if (isset($_POST['import_file']) && isset($_FILES['csv_file']) && isset($_GET['page']) && $_GET['page'] === 'fp-finance-hub-bank-accounts') {
             self::handle_file_import();
         }
+    }
+    
+    /**
+     * Render pagina conti bancari
+     */
+    public static function render() {
+        $bank_service = BankService::get_instance();
         
         $action = isset($_GET['action']) ? sanitize_text_field($_GET['action']) : '';
         $accounts = $bank_service->get_active_accounts();
@@ -271,10 +276,11 @@ class BankAccountsPage {
      * Gestisce creazione nuovo conto bancario
      */
     private static function handle_create_account() {
-        // Assicura che non ci sia output prima del redirect
+        // Previeni qualsiasi output prima del redirect
         if (ob_get_level() > 0) {
-            ob_clean();
+            ob_end_clean();
         }
+        ob_start();
         
         check_admin_referer('fp_finance_hub_create_account');
         
@@ -322,6 +328,11 @@ class BankAccountsPage {
             'account_id' => $result,
         ], admin_url('admin.php?page=fp-finance-hub-bank-accounts'));
         
+        // Pulisci qualsiasi output buffer
+        if (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        
         wp_safe_redirect($redirect_url);
         exit;
     }
@@ -330,10 +341,11 @@ class BankAccountsPage {
      * Gestisce modifica conto bancario
      */
     private static function handle_update_account() {
-        // Assicura che non ci sia output prima del redirect
+        // Previeni qualsiasi output prima del redirect
         if (ob_get_level() > 0) {
-            ob_clean();
+            ob_end_clean();
         }
+        ob_start();
         
         check_admin_referer('fp_finance_hub_update_account');
         
@@ -376,6 +388,11 @@ class BankAccountsPage {
             wp_die('Errore aggiornamento conto: ' . $result->get_error_message());
         }
         
+        // Pulisci qualsiasi output buffer
+        if (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        
         // Redirect sicuro
         $redirect_url = add_query_arg([
             'account_updated' => '1',
@@ -390,10 +407,11 @@ class BankAccountsPage {
      * Gestisce import file CSV/OFX
      */
     private static function handle_file_import() {
-        // Assicura che non ci sia output prima del redirect
+        // Previeni qualsiasi output prima del redirect
         if (ob_get_level() > 0) {
-            ob_clean();
+            ob_end_clean();
         }
+        ob_start();
         
         check_admin_referer('fp_finance_hub_import');
         
@@ -445,6 +463,11 @@ class BankAccountsPage {
             // Verifica che il risultato sia un array con le chiavi attese
             if (!is_array($result) || !isset($result['imported'])) {
                 wp_die('Errore: risultato import non valido.');
+            }
+            
+            // Pulisci qualsiasi output buffer
+            if (ob_get_level() > 0) {
+                ob_end_clean();
             }
             
             // Redirect sicuro con messaggio successo

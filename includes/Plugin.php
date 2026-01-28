@@ -7,6 +7,8 @@
 
 namespace FP\FinanceHub;
 
+use FP\FinanceHub\Admin\Pages\BankAccountsPage;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -42,6 +44,7 @@ class Plugin {
         
         // Admin
         add_action('admin_init', [$this, 'run_db_migrations'], 5);
+        add_action('admin_init', [Admin\Pages\BankAccountsPage::class, 'init'], 10);
         add_action('admin_menu', [$this, 'init_admin'], 9);
         
         // REST API
