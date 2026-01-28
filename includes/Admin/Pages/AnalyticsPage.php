@@ -407,7 +407,16 @@ class AnalyticsPage {
         // Estrai entrate e uscite
         $total_income = floatval($cashflow_data->total_income ?? 0);
         $total_expenses = floatval($cashflow_data->total_expenses ?? 0);
+        $transaction_count = intval($cashflow_data->transaction_count ?? 0);
         $cashflow = $total_income - $total_expenses;
+        
+        // Debug: verifica se ci sono transazioni
+        if ($transaction_count === 0 && empty($recent_transactions)) {
+            // Nessuna transazione trovata - potrebbe essere un problema di importazione
+            $has_transactions = false;
+        } else {
+            $has_transactions = true;
+        }
         
         // Fatture non pagate
         $unpaid_invoices = self::$invoice_service->get_unpaid();
@@ -446,6 +455,24 @@ class AnalyticsPage {
         }
         
         ?>
+        <?php if (!$has_transactions) : ?>
+            <!-- Avviso se non ci sono transazioni -->
+            <div class="fp-fh-card fp-fh-mb-6 fp-fh-notice fp-fh-notice-warning">
+                <div class="fp-fh-notice-icon">⚠️</div>
+                <div class="fp-fh-notice-content">
+                    <div class="fp-fh-notice-title">Nessuna transazione trovata</div>
+                    <div class="fp-fh-notice-message">
+                        Non risultano transazioni importate nel database. Verifica che:
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Hai importato i file CSV dai conti bancari (vedi <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts'); ?>">Conti Bancari</a>)</li>
+                            <li>Le transazioni sono state importate correttamente</li>
+                            <li>Le date delle transazioni rientrano nel periodo selezionato</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+        
         <!-- KPI Cards -->
         <div class="fp-monitoring-kpis fp-fh-grid fp-fh-grid-cols-2 fp-fh-grid-cols-md-3 fp-fh-grid-cols-lg-6 fp-fh-mb-6">
             <div class="fp-fh-card fp-fh-metric-card">
