@@ -54,8 +54,7 @@
                         // Aggiorna step completati
                         // Mapping tra chiavi progress e data-step
                         const stepMapping = {
-                            'yapily_configured': 'yapily',
-                            'bank_connected': 'bank-connection',
+                            'bank_data': 'bank-connection',
                             'aruba_configured': 'aruba',
                             'aruba_synced': 'aruba-sync'
                         };

@@ -71,52 +71,24 @@
         },
         
         /**
-         * Mostra guida Yapily
+         * @deprecated Yapily non è più supportato. Usa Import CSV/OFX invece.
          */
         showYapilyGuide: function() {
             const content = `
                 <div class="fp-fh-guide-modal-content">
-                    <h3>Come Ottenere le Credenziali Yapily</h3>
-                    
-                    <div class="fp-fh-guide-substep fp-fh-mb-4">
-                        <h4>Step 1: Registrati su Yapily Console</h4>
-                        <ol class="fp-fh-list fp-fh-list-ordered">
-                            <li>Vai su <a href="https://console.yapily.com" target="_blank" rel="noopener">console.yapily.com</a></li>
-                            <li>Clicca su "Sign Up" o "Registrati"</li>
-                            <li>Compila il form con la tua email</li>
-                            <li>Verifica la tua email</li>
-                            <li>Accedi al Yapily Console</li>
-                        </ol>
+                    <div class="fp-fh-guide-warning fp-fh-mb-4">
+                        <strong>⚠️ Yapily Open Banking non è più disponibile</strong>
                     </div>
-                    
-                    <div class="fp-fh-guide-substep fp-fh-mb-4">
-                        <h4>Step 2: Crea Applicazione e Ottieni Credenziali</h4>
-                        <ol class="fp-fh-list fp-fh-list-ordered">
-                            <li>Dopo l'accesso, vai alla sezione "Applications"</li>
-                            <li>Clicca su "Create Application"</li>
-                            <li>Scegli un nome per la tua applicazione e clicca "Create application"</li>
-                            <li>Clicca su "Download Application ID & Application Secret" per scaricare il file JSON</li>
-                            <li><strong>IMPORTANTE:</strong> Copia subito le credenziali - l'Application Secret viene mostrato solo una volta!</li>
-                            <li>Salva le credenziali in un posto sicuro</li>
-                        </ol>
-                    </div>
-                    
-                    <div class="fp-fh-guide-warning fp-fh-mt-4">
-                        <strong>⚠️ Attenzione:</strong> L'Application Secret viene mostrato una sola volta. Se lo perdi, dovrai generarne uno nuovo.
-                    </div>
-                    
-                    <div class="fp-fh-guide-tip fp-fh-mt-4">
-                        <strong>💡 Suggerimento:</strong> Yapily offre account gratuito per sviluppatori. I tuoi dati bancari non vengono mai condivisi con terze parti.
-                    </div>
+                    <p>Per importare movimenti bancari, usa la funzionalità <strong>Import CSV/OFX</strong> dalla pagina Conti Bancari.</p>
+                    <p class="fp-fh-mt-2">Vai su <strong>Conti Bancari</strong> → <strong>Import Dati</strong> per caricare i file CSV o OFX dalla tua banca.</p>
                 </div>
             `;
             
-            FPHelpModal.show('Guida Configurazione Yapily', content);
+            FPHelpModal.show('Open Banking non disponibile', content);
         },
         
         /**
-         * Mostra guida GoCardless Bank Account Data (deprecato - mantenuto per compatibilità)
-         * @deprecated Usa showYapilyGuide() invece
+         * @deprecated Nordigen non è più supportato. Usa Import CSV/OFX invece.
          */
         showNordigenGuide: function() {
             this.showYapilyGuide();
@@ -177,6 +149,7 @@
                 const guide = $(this).data('guide');
                 
                 if (guide === 'yapily' || guide === 'nordigen') {
+                    // Deprecato: mostra messaggio che Yapily/Nordigen non sono più disponibili
                     FPHelpModal.showYapilyGuide();
                 } else if (guide === 'aruba') {
                     FPHelpModal.showArubaGuide();

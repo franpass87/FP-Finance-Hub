@@ -234,8 +234,8 @@ class DashboardPage {
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-invoices&action=new'); ?>" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-block">
                             📄 Nuova Fattura
                         </a>
-                        <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-connections'); ?>" class="fp-fh-btn fp-fh-btn-secondary fp-fh-btn-block">
-                            🔗 Collega Conto
+                        <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-import&tab=bank'); ?>" class="fp-fh-btn fp-fh-btn-secondary fp-fh-btn-block">
+                            📤 Import CSV/OFX
                         </a>
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-analytics&tab=ai-insights'); ?>" class="fp-fh-btn fp-fh-btn-secondary fp-fh-btn-block">
                             🧠 AI Insights

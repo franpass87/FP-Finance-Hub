@@ -55,7 +55,6 @@ class Schema {
         $schema->create_thresholds_table();
         $schema->create_alerts_table();
         $schema->create_recurring_expenses_table();
-        $schema->create_bank_connections_table();
         $schema->create_categorization_rules_table();
         $schema->create_categorization_learning_table();
         $schema->create_aruba_logs_table();
@@ -482,47 +481,6 @@ class Schema {
             PRIMARY KEY (id),
             KEY frequency (frequency),
             KEY expense_type (expense_type),
-            KEY is_active (is_active)
-        ) $charset_collate;";
-        
-        dbDelta($sql);
-    }
-    
-    /**
-     * Crea tabella connessioni Open Banking
-     */
-    private function create_bank_connections_table() {
-        global $wpdb;
-        
-        $table_name = $this->get_table_name('bank_connections');
-        
-        $charset_collate = $wpdb->get_charset_collate();
-        
-        $sql = "CREATE TABLE $table_name (
-            id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            user_id BIGINT(20) UNSIGNED NOT NULL,
-            provider VARCHAR(50) DEFAULT 'yapily',
-            connection_id VARCHAR(255) NOT NULL,
-            account_id VARCHAR(255) NOT NULL,
-            bank_name VARCHAR(255) NULL,
-            account_type VARCHAR(50) NULL,
-            account_name VARCHAR(255) NULL,
-            iban VARCHAR(34) NULL,
-            currency VARCHAR(3) DEFAULT 'EUR',
-            access_token TEXT NULL,
-            refresh_token TEXT NULL,
-            token_expires_at DATETIME NULL,
-            last_sync_at DATETIME NULL,
-            next_sync_at DATETIME NULL,
-            sync_frequency INT DEFAULT 6,
-            is_active BOOLEAN DEFAULT TRUE,
-            sync_enabled BOOLEAN DEFAULT TRUE,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            KEY user_id (user_id),
-            KEY connection_id (connection_id),
-            KEY next_sync_at (next_sync_at),
             KEY is_active (is_active)
         ) $charset_collate;";
         

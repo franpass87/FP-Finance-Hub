@@ -192,21 +192,6 @@ class BankAccountsPage {
                     <?php endif; ?>
                 </div>
             </div>
-            
-            <div class="fp-open-banking-section fp-fh-card">
-                <div class="fp-fh-card-header">
-                    <h2 class="fp-fh-card-title">🔗 Collegamento Automatico (Yapily - Opzionale)</h2>
-                </div>
-                <div class="fp-fh-card-body">
-                    <div class="fp-fh-guide-info fp-fh-mb-4" style="background: #f8f9fa; border-color: #dee2e6; padding: 12px; border-radius: 4px;">
-                        <p><strong>⚠️ Nota:</strong> Yapily Open Banking richiede configurazione e potrebbe non essere disponibile per tutte le banche italiane in modalità sandbox.</p>
-                        <p class="fp-fh-mt-2">Per ING e PostePay, <strong>l'import CSV/OFX è la soluzione più semplice e immediata</strong>.</p>
-                    </div>
-                    <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-connections'); ?>" class="fp-fh-btn fp-fh-btn-secondary">
-                        Collega Conto via Yapily (Opzionale)
-                    </a>
-                </div>
-            </div>
         </div>
         
         <?php self::render_toast_script(); ?>

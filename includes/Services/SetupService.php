@@ -29,30 +29,11 @@ class SetupService {
      * Verifica se setup è completato
      */
     public function is_setup_complete() {
-        $yapily_configured = $this->is_yapily_configured();
         $aruba_configured = $this->is_aruba_configured();
-        $has_bank_connections = $this->has_bank_connections();
+        $has_bank_data = $this->has_bank_data();
         $has_aruba_sync = $this->has_aruba_sync();
         
-        return $yapily_configured && $aruba_configured && ($has_bank_connections || $has_aruba_sync);
-    }
-    
-    /**
-     * Verifica se Yapily è configurato
-     */
-    public function is_yapily_configured() {
-        $app_id = get_option('fp_finance_hub_yapily_app_id', '');
-        $app_secret = get_option('fp_finance_hub_yapily_app_secret', '');
-        
-        return !empty($app_id) && !empty($app_secret);
-    }
-    
-    /**
-     * Verifica se GoCardless Bank Account Data è configurato (deprecato - mantenuto per compatibilità)
-     * @deprecated Usa is_yapily_configured() invece
-     */
-    public function is_nordigen_configured() {
-        return $this->is_yapily_configured();
+        return $aruba_configured && ($has_bank_data || $has_aruba_sync);
     }
     
     /**
@@ -66,18 +47,17 @@ class SetupService {
     }
     
     /**
-     * Verifica se ci sono conti bancari collegati
+     * Verifica se ci sono conti bancari o transazioni (da import CSV)
      */
-    public function has_bank_connections() {
+    public function has_bank_data() {
         global $wpdb;
-        $table = $wpdb->prefix . 'fp_finance_hub_bank_connections';
+        $accounts_table = $wpdb->prefix . 'fp_finance_hub_bank_accounts';
+        $transactions_table = $wpdb->prefix . 'fp_finance_hub_bank_transactions';
         
-        $count = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) FROM {$table} WHERE user_id = %d AND is_active = 1",
-            get_current_user_id()
-        ));
+        $accounts_count = $wpdb->get_var("SELECT COUNT(*) FROM {$accounts_table}");
+        $transactions_count = $wpdb->get_var("SELECT COUNT(*) FROM {$transactions_table}");
         
-        return intval($count) > 0;
+        return intval($accounts_count) > 0 || intval($transactions_count) > 0;
     }
     
     /**
@@ -99,15 +79,10 @@ class SetupService {
      */
     public function get_setup_progress() {
         $steps = [
-            'yapily_configured' => [
-                'name' => 'Configurazione Yapily',
-                'completed' => $this->is_yapily_configured(),
-                'url' => admin_url('admin.php?page=fp-finance-hub-settings'),
-            ],
-            'bank_connected' => [
-                'name' => 'Collega Conto Bancario',
-                'completed' => $this->has_bank_connections(),
-                'url' => admin_url('admin.php?page=fp-finance-hub-bank-connections'),
+            'bank_data' => [
+                'name' => 'Conti Bancari / Import',
+                'completed' => $this->has_bank_data(),
+                'url' => admin_url('admin.php?page=fp-finance-hub-bank-accounts'),
             ],
             'aruba_configured' => [
                 'name' => 'Configurazione Aruba',

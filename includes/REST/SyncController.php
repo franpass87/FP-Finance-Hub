@@ -8,7 +8,6 @@
 namespace FP\FinanceHub\REST;
 
 use FP\FinanceHub\Integration\Aruba\ArubaSync;
-use FP\FinanceHub\Integration\OpenBanking\YapilySyncService;
 use FP\FinanceHub\Integration\PublisherSync;
 use FP\FinanceHub\Integration\TaskAgendaSync;
 use FP\FinanceHub\Integration\DMSSync;
@@ -48,12 +47,6 @@ class SyncController extends Controller {
             'permission_callback' => [$this, 'check_permission'],
         ]);
         
-        register_rest_route(self::NAMESPACE, '/sync/yapily', [
-            'methods' => \WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'sync_yapily'],
-            'permission_callback' => [$this, 'check_permission'],
-        ]);
-        
         register_rest_route(self::NAMESPACE, '/sync/publisher', [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'sync_publisher'],
@@ -85,16 +78,6 @@ class SyncController extends Controller {
         }
         
         return new \WP_REST_Response($result, 200);
-    }
-    
-    /**
-     * POST /sync/yapily
-     */
-    public function sync_yapily($request) {
-        $yapily_sync = new YapilySyncService();
-        $yapily_sync->sync_all_accounts();
-        
-        return new \WP_REST_Response(['message' => 'Sync avviata'], 200);
     }
     
     /**

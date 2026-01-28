@@ -11,7 +11,6 @@ use FP\FinanceHub\Admin\Pages\DashboardPage;
 use FP\FinanceHub\Admin\Pages\ClientsPage;
 use FP\FinanceHub\Admin\Pages\InvoicesPage;
 use FP\FinanceHub\Admin\Pages\BankAccountsPage;
-use FP\FinanceHub\Admin\Pages\BankConnectionsPage;
 use FP\FinanceHub\Admin\Pages\AnalyticsPage;
 use FP\FinanceHub\Admin\Pages\AlertsPage;
 use FP\FinanceHub\Admin\Pages\ImportPage;
@@ -110,16 +109,6 @@ class Menus {
             $capability,
             'fp-finance-hub-bank-accounts',
             [BankAccountsPage::class, 'render']
-        );
-        
-        // Collegamenti Open Banking
-        add_submenu_page(
-            'fp-finance-hub',
-            __('Collega Conti', 'fp-finance-hub'),
-            __('🔗 Collega Conti', 'fp-finance-hub'),
-            $capability,
-            'fp-finance-hub-bank-connections',
-            [BankConnectionsPage::class, 'render']
         );
         
         // Analisi Finanziarie (Proiezioni, Monitoraggio, Statistiche unificati)

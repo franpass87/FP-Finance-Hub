@@ -27,10 +27,8 @@ class SetupGuidePage {
         $current_step = isset($_GET['step']) ? sanitize_text_field($_GET['step']) : null;
         if (!$current_step) {
             if ($next_step) {
-                // Mapping tra chiavi progress e step wizard
                 $step_mapping = [
-                    'yapily_configured' => 'yapily',
-                    'bank_connected' => 'bank-connection',
+                    'bank_data' => 'bank-connection',
                     'aruba_configured' => 'aruba',
                     'aruba_synced' => 'aruba-sync'
                 ];
@@ -76,33 +74,27 @@ class SetupGuidePage {
                             <span class="fp-fh-wizard-step-label">Benvenuto</span>
                         </a>
                     </li>
-                    <li class="fp-fh-wizard-step <?php echo $current_step === 'yapily' ? 'active' : ''; ?> <?php echo $progress['steps']['yapily_configured']['completed'] ? 'completed' : ''; ?>" data-step="yapily">
-                        <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>" class="fp-fh-wizard-step-link">
-                            <span class="fp-fh-wizard-step-number">2</span>
-                            <span class="fp-fh-wizard-step-label">Yapily</span>
-                        </a>
-                    </li>
-                    <li class="fp-fh-wizard-step <?php echo $current_step === 'bank-connection' ? 'active' : ''; ?> <?php echo $progress['steps']['bank_connected']['completed'] ? 'completed' : ''; ?>" data-step="bank-connection">
+                    <li class="fp-fh-wizard-step <?php echo $current_step === 'bank-connection' ? 'active' : ''; ?> <?php echo $progress['steps']['bank_data']['completed'] ? 'completed' : ''; ?>" data-step="bank-connection">
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=bank-connection'); ?>" class="fp-fh-wizard-step-link">
-                            <span class="fp-fh-wizard-step-number">3</span>
+                            <span class="fp-fh-wizard-step-number">2</span>
                             <span class="fp-fh-wizard-step-label">Conti Bancari</span>
                         </a>
                     </li>
                     <li class="fp-fh-wizard-step <?php echo $current_step === 'aruba' ? 'active' : ''; ?> <?php echo $progress['steps']['aruba_configured']['completed'] ? 'completed' : ''; ?>" data-step="aruba">
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=aruba'); ?>" class="fp-fh-wizard-step-link">
-                            <span class="fp-fh-wizard-step-number">4</span>
+                            <span class="fp-fh-wizard-step-number">3</span>
                             <span class="fp-fh-wizard-step-label">Aruba</span>
                         </a>
                     </li>
                     <li class="fp-fh-wizard-step <?php echo $current_step === 'aruba-sync' ? 'active' : ''; ?> <?php echo $progress['steps']['aruba_synced']['completed'] ? 'completed' : ''; ?>" data-step="aruba-sync">
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=aruba-sync'); ?>" class="fp-fh-wizard-step-link">
-                            <span class="fp-fh-wizard-step-number">5</span>
+                            <span class="fp-fh-wizard-step-number">4</span>
                             <span class="fp-fh-wizard-step-label">Sincronizza</span>
                         </a>
                     </li>
                     <li class="fp-fh-wizard-step <?php echo $current_step === 'complete' ? 'active' : ''; ?> <?php echo $progress['is_complete'] ? 'completed' : ''; ?>" data-step="complete">
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=complete'); ?>" class="fp-fh-wizard-step-link">
-                            <span class="fp-fh-wizard-step-number">6</span>
+                            <span class="fp-fh-wizard-step-number">5</span>
                             <span class="fp-fh-wizard-step-label">Completato</span>
                         </a>
                     </li>
@@ -115,9 +107,6 @@ class SetupGuidePage {
                 switch ($current_step) {
                     case 'welcome':
                         self::render_welcome_step($progress);
-                        break;
-                    case 'yapily':
-                        self::render_yapily_step($progress);
                         break;
                     case 'bank-connection':
                         self::render_bank_connection_step($progress);
@@ -157,7 +146,7 @@ class SetupGuidePage {
                         <div class="fp-fh-feature-card">
                             <div class="fp-fh-feature-icon">🏦</div>
                             <h3 class="fp-fh-feature-title">Conti Bancari</h3>
-                            <p class="fp-fh-feature-description">Collega i tuoi conti tramite Open Banking (Yapily) per sincronizzazione automatica.</p>
+                            <p class="fp-fh-feature-description">Importa movimenti e saldi tramite CSV (ING, PostePay, OFX) da Conti Bancari e Import Dati.</p>
                         </div>
                         
                         <div class="fp-fh-feature-card">
@@ -170,14 +159,14 @@ class SetupGuidePage {
                     <div class="fp-fh-guide-info fp-fh-mt-6">
                         <h3 class="fp-fh-text-lg fp-fh-font-semibold fp-fh-mb-4">Cosa ti serve:</h3>
                         <ul class="fp-fh-list fp-fh-list-check">
-                            <li>Account Yapily Console gratuito (per Open Banking)</li>
                             <li>Credenziali Aruba Fatturazione Elettronica (API Key e Username)</li>
+                            <li>Export CSV o OFX dalla tua banca (es. ING, PostePay) per i movimenti</li>
                             <li>Circa 10-15 minuti del tuo tempo</li>
                         </ul>
                     </div>
                     
                     <div class="fp-fh-wizard-actions fp-fh-mt-6">
-                        <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg">
+                        <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=bank-connection'); ?>" class="fp-fh-btn fp-fh-btn-primary fp-fh-btn-lg">
                             Inizia Setup →
                         </a>
                     </div>
@@ -188,209 +177,69 @@ class SetupGuidePage {
     }
     
     /**
-     * Render step Configurazione Yapily
+     * Render step Conti Bancari / Import
      */
-    private static function render_yapily_step($progress) {
-        $is_configured = $progress['steps']['yapily_configured']['completed'];
+    private static function render_bank_connection_step($progress) {
+        $is_done = $progress['steps']['bank_data']['completed'];
         
         ?>
         <div class="fp-fh-card fp-fh-wizard-step-card">
             <div class="fp-fh-card-header">
-                <h2 class="fp-fh-card-title">🔧 Configurazione Yapily (Open Banking)</h2>
-                <?php if ($is_configured) : ?>
+                <h2 class="fp-fh-card-title">🏦 Conti Bancari e Import Movimenti</h2>
+                <?php if ($is_done) : ?>
                     <span class="fp-fh-badge fp-fh-badge-success">✅ Completato</span>
                 <?php endif; ?>
             </div>
             <div class="fp-fh-card-body">
                 <div class="fp-fh-guide-step">
-                    <p class="fp-fh-text-base fp-fh-mb-6">Yapily ti permette di collegare i tuoi conti bancari in modo sicuro tramite Open Banking. Account gratuito per sviluppatori disponibile.</p>
+                    <p class="fp-fh-text-base fp-fh-mb-6">Importa movimenti e saldi tramite CSV (ING, PostePay Evolution, OFX) dalla pagina Conti Bancari e Import Dati.</p>
                     
-                    <!-- Step 1: Registrazione -->
                     <div class="fp-fh-guide-substep fp-fh-mb-6">
                         <div class="fp-fh-guide-substep-header">
                             <span class="fp-fh-guide-substep-number">1</span>
-                            <h3 class="fp-fh-guide-substep-title">Registrati su Yapily Console</h3>
+                            <h3 class="fp-fh-guide-substep-title">Scarica i CSV dalla tua banca</h3>
                         </div>
                         <div class="fp-fh-guide-substep-content">
-                            <ol class="fp-fh-list fp-fh-list-ordered">
-                                <li>Vai su <a href="https://console.yapily.com" target="_blank" rel="noopener">console.yapily.com</a></li>
-                                <li>Clicca su "Sign Up" o "Registrati"</li>
-                                <li>Compila il form di registrazione con la tua email</li>
-                                <li>Verifica la tua email</li>
-                                <li>Accedi al Yapily Console</li>
-                            </ol>
-                            <div class="fp-fh-guide-tip fp-fh-mt-4">
-                                <strong>💡 Suggerimento:</strong> Yapily offre account gratuito per sviluppatori. I tuoi dati bancari non vengono mai condivisi con terze parti.
-                            </div>
+                            <p>Usa lo script Playwright nella cartella <code>bank-automation</code> del plugin (se disponibile) oppure esporta manualmente CSV/OFX dal sito della tua banca (ING, PostePay, ecc.).</p>
                         </div>
                     </div>
                     
-                    <!-- Step 2: Ottenere Credenziali -->
                     <div class="fp-fh-guide-substep fp-fh-mb-6">
                         <div class="fp-fh-guide-substep-header">
                             <span class="fp-fh-guide-substep-number">2</span>
-                            <h3 class="fp-fh-guide-substep-title">Crea Applicazione e Ottieni Credenziali</h3>
+                            <h3 class="fp-fh-guide-substep-title">Carica i file</h3>
                         </div>
                         <div class="fp-fh-guide-substep-content">
-                            <ol class="fp-fh-list fp-fh-list-ordered">
-                                <li>Dopo aver effettuato l'accesso, vai alla sezione "Applications"</li>
-                                <li>Clicca su "Create Application"</li>
-                                <li>Scegli un nome per la tua applicazione e clicca "Create application"</li>
-                                <li>Clicca su "Download Application ID & Application Secret" per scaricare il file JSON</li>
-                                <li><strong>Importante:</strong> Copia subito le credenziali - l'Application Secret viene mostrato solo una volta!</li>
-                                <li>Salva le credenziali in un posto sicuro (password manager consigliato)</li>
-                            </ol>
-                            <div class="fp-fh-guide-warning fp-fh-mt-4">
-                                <strong>⚠️ Attenzione:</strong> L'Application Secret viene mostrato una sola volta. Se lo perdi, dovrai generarne uno nuovo.
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 3: Inserire Credenziali -->
-                    <div class="fp-fh-guide-substep fp-fh-mb-6">
-                        <div class="fp-fh-guide-substep-header">
-                            <span class="fp-fh-guide-substep-number">3</span>
-                            <h3 class="fp-fh-guide-substep-title">Inserisci le Credenziali nelle Impostazioni</h3>
-                        </div>
-                        <div class="fp-fh-guide-substep-content">
-                            <?php if (!$is_configured) : ?>
+                            <?php if (!$is_done) : ?>
                                 <ol class="fp-fh-list fp-fh-list-ordered">
-                                    <li>Vai alla pagina <strong>Impostazioni</strong> del plugin</li>
-                                    <li>Nella sezione "Integrazione Yapily (Open Banking)"</li>
-                                    <li>Incolla l'<strong>Application ID</strong> (applicationUuid) nel campo "Application ID"</li>
-                                    <li>Incolla l'<strong>Application Secret</strong> (secret) nel campo "Application Secret"</li>
-                                    <li>Clicca su "Salva Impostazioni"</li>
+                                    <li>Vai alla pagina <strong>Conti Bancari</strong> per creare/gestire i conti</li>
+                                    <li>Vai alla scheda <strong>Import Dati → Conti Bancari</strong> per caricare CSV/OFX</li>
+                                    <li>Dopo l'import, i movimenti saranno disponibili per analisi e proiezioni</li>
                                 </ol>
                                 <div class="fp-fh-wizard-actions fp-fh-mt-4">
-                                    <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-settings'); ?>" class="fp-fh-btn fp-fh-btn-primary" target="_blank">
-                                        Apri Impostazioni →
+                                    <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts'); ?>" class="fp-fh-btn fp-fh-btn-primary" target="_blank">
+                                        Apri Conti Bancari →
                                     </a>
-                                </div>
-                                <div class="fp-fh-guide-refresh fp-fh-mt-4">
-                                    <p class="fp-fh-text-sm fp-fh-text-muted">
-                                        <strong>Dopo aver salvato:</strong> Ricarica questa pagina per verificare che la configurazione sia completata.
-                                    </p>
+                                    <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-import&tab=bank'); ?>" class="fp-fh-btn fp-fh-btn-secondary" target="_blank">
+                                        Import Dati →
+                                    </a>
                                 </div>
                             <?php else : ?>
                                 <div class="fp-fh-guide-success">
-                                    <p>✅ Credenziali Yapily configurate correttamente!</p>
+                                    <p>✅ Hai già conti o movimenti importati.</p>
+                                    <p class="fp-fh-text-sm fp-fh-text-muted fp-fh-mt-2">Puoi aggiungere altri CSV dalla pagina Conti Bancari e Import Dati.</p>
                                 </div>
                             <?php endif; ?>
                         </div>
                     </div>
                     
-                    <!-- Navigation -->
                     <div class="fp-fh-wizard-actions fp-fh-mt-6">
                         <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=welcome'); ?>" class="fp-fh-btn fp-fh-btn-secondary">
                             ← Indietro
                         </a>
-                        <?php if ($is_configured) : ?>
-                            <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=bank-connection'); ?>" class="fp-fh-btn fp-fh-btn-primary">
-                                Prossimo: Collega Conti →
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php
-    }
-    
-    /**
-     * Render step Collega Conti Bancari
-     */
-    private static function render_bank_connection_step($progress) {
-        $is_configured = $progress['steps']['yapily_configured']['completed'];
-        $is_connected = $progress['steps']['bank_connected']['completed'];
-        
-        if (!$is_configured) {
-            ?>
-            <div class="fp-fh-card fp-fh-wizard-step-card">
-                <div class="fp-fh-card-body">
-                    <div class="fp-fh-guide-error">
-                        <p>⚠️ Prima devi configurare le credenziali Yapily. Vai allo step precedente.</p>
-                        <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>" class="fp-fh-btn fp-fh-btn-primary fp-fh-mt-4">
-                            Configura Yapily →
+                        <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=aruba'); ?>" class="fp-fh-btn fp-fh-btn-primary">
+                            Prossimo: Configura Aruba →
                         </a>
-                    </div>
-                </div>
-            </div>
-            <?php
-            return;
-        }
-        
-        ?>
-        <div class="fp-fh-card fp-fh-wizard-step-card">
-            <div class="fp-fh-card-header">
-                <h2 class="fp-fh-card-title">🏦 Collega il Tuo Conto Bancario</h2>
-                <?php if ($is_connected) : ?>
-                    <span class="fp-fh-badge fp-fh-badge-success">✅ Completato</span>
-                <?php endif; ?>
-            </div>
-            <div class="fp-fh-card-body">
-                <div class="fp-fh-guide-step">
-                    <p class="fp-fh-text-base fp-fh-mb-6">Ora puoi collegare i tuoi conti bancari in modo sicuro tramite Open Banking.</p>
-                    
-                    <!-- Come funziona OAuth -->
-                    <div class="fp-fh-guide-substep fp-fh-mb-6">
-                        <div class="fp-fh-guide-substep-header">
-                            <span class="fp-fh-guide-substep-number">1</span>
-                            <h3 class="fp-fh-guide-substep-title">Come Funziona il Collegamento</h3>
-                        </div>
-                        <div class="fp-fh-guide-substep-content">
-                            <p>Il processo di collegamento è molto semplice e sicuro:</p>
-                            <ol class="fp-fh-list fp-fh-list-ordered fp-fh-mt-4">
-                                <li><strong>Selezioni la tua banca</strong> dall'elenco (es. ING, Poste Pay, ecc.)</li>
-                                <li><strong>Vieni reindirizzato al sito della tua banca</strong> (collegamento sicuro)</li>
-                                <li><strong>Accedi con le credenziali della tua banca</strong> (come fai normalmente)</li>
-                                <li><strong>Autorizzi l'accesso</strong> per FP Finance Hub</li>
-                                <li><strong>Vieni riportato qui</strong> e il conto è collegato!</li>
-                            </ol>
-                            <div class="fp-fh-guide-tip fp-fh-mt-4">
-                                <strong>🔒 Sicurezza:</strong> Non salviamo mai le credenziali della tua banca. Usiamo solo token sicuri forniti dalla banca stessa tramite Open Banking.
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Istruzioni pratiche -->
-                    <div class="fp-fh-guide-substep fp-fh-mb-6">
-                        <div class="fp-fh-guide-substep-header">
-                            <span class="fp-fh-guide-substep-number">2</span>
-                            <h3 class="fp-fh-guide-substep-title">Collega il Primo Conto</h3>
-                        </div>
-                        <div class="fp-fh-guide-substep-content">
-                            <?php if (!$is_connected) : ?>
-                                <ol class="fp-fh-list fp-fh-list-ordered">
-                                    <li>Vai alla pagina <strong>"Collega Conti"</strong></li>
-                                    <li>Seleziona la tua banca dal menu a tendina</li>
-                                    <li>Clicca su "Collega Conto"</li>
-                                    <li>Segui le istruzioni sul sito della tua banca</li>
-                                    <li>Torna qui dopo aver completato il collegamento</li>
-                                </ol>
-                                <div class="fp-fh-wizard-actions fp-fh-mt-4">
-                                    <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-connections'); ?>" class="fp-fh-btn fp-fh-btn-primary" target="_blank">
-                                        Apri Collega Conti →
-                                    </a>
-                                </div>
-                            <?php else : ?>
-                                <div class="fp-fh-guide-success">
-                                    <p>✅ Conto bancario collegato correttamente!</p>
-                                    <p class="fp-fh-text-sm fp-fh-text-muted fp-fh-mt-2">Puoi aggiungere altri conti in qualsiasi momento dalla pagina "Collega Conti".</p>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    
-                    <!-- Navigation -->
-                    <div class="fp-fh-wizard-actions fp-fh-mt-6">
-                        <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>" class="fp-fh-btn fp-fh-btn-secondary">
-                            ← Indietro
-                        </a>
-                        <?php if ($is_connected) : ?>
-                            <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=aruba'); ?>" class="fp-fh-btn fp-fh-btn-primary">
-                                Prossimo: Configura Aruba →
-                            </a>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -691,10 +540,8 @@ class SetupGuidePage {
                                 <?php
                                 $next = $setup_service->get_next_step();
                                 if ($next) :
-                                    // Mapping tra chiavi progress e step wizard
                                     $step_mapping = [
-                                        'yapily_configured' => 'yapily',
-                                        'bank_connected' => 'bank-connection',
+                                        'bank_data' => 'bank-connection',
                                         'aruba_configured' => 'aruba',
                                         'aruba_synced' => 'aruba-sync'
                                     ];

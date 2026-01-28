@@ -27,10 +27,6 @@ class SettingsPage {
         $setup_service = SetupService::get_instance();
         $aruba_api_key = get_option('fp_finance_hub_aruba_api_key', '');
         $aruba_username = get_option('fp_finance_hub_aruba_username', '');
-        $yapily_app_id = get_option('fp_finance_hub_yapily_app_id', '');
-        $yapily_app_secret = get_option('fp_finance_hub_yapily_app_secret', '');
-        
-        $yapily_configured = $setup_service->is_yapily_configured();
         $aruba_configured = $setup_service->is_aruba_configured();
         
         ?>
@@ -43,7 +39,7 @@ class SettingsPage {
             </div>
             
             <!-- Help Banner -->
-            <?php if (!$yapily_configured || !$aruba_configured) : ?>
+            <?php if (!$aruba_configured) : ?>
                 <div class="fp-fh-help-banner fp-fh-help-banner-warning">
                     <div class="fp-fh-help-banner-header">
                         <strong>💡 Serve Aiuto?</strong>
@@ -103,54 +99,6 @@ class SettingsPage {
                         <input type="text" name="aruba_username" id="aruba_username" 
                                value="<?php echo esc_attr($aruba_username); ?>" class="fp-fh-input">
                         <p class="fp-fh-form-description">Inserisci il tuo username Aruba</p>
-                    </div>
-                </div>
-                
-                <div class="fp-fh-card-header fp-fh-mt-6">
-                    <h2 class="fp-fh-card-title">Integrazione Yapily (Open Banking)</h2>
-                    <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>" class="fp-fh-help-link" target="_blank">
-                        📖 Guida Completa →
-                    </a>
-                </div>
-                <div class="fp-fh-card-body">
-                    <?php if (!$yapily_configured) : ?>
-                        <div class="fp-fh-guide-tip fp-fh-mb-4">
-                            <strong>💡 Yapily offre account gratuito per sviluppatori!</strong> 
-                            Se non hai ancora un account, <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>">segui la guida</a> per registrarti e ottenere le credenziali.
-                        </div>
-                    <?php endif; ?>
-                    
-                    <div class="fp-fh-form-group">
-                        <label for="yapily_app_id" class="fp-fh-form-label">
-                            Application ID
-                            <span class="fp-fh-tooltip">
-                                <span class="fp-fh-help-icon" title="L'Application ID viene generato quando crei un'applicazione su console.yapily.com. Lo trovi nel dashboard Yapily nella sezione Applications.">?</span>
-                                <span class="fp-fh-tooltip-content">L'Application ID (Application UUID) viene generato quando crei una nuova applicazione nel Yapily Console. Lo trovi dopo aver creato l'applicazione su console.yapily.com.</span>
-                            </span>
-                        </label>
-                        <input type="text" name="yapily_app_id" id="yapily_app_id" 
-                               value="<?php echo esc_attr($yapily_app_id); ?>" class="fp-fh-input">
-                        <p class="fp-fh-form-description">Inserisci il tuo Application ID Yapily</p>
-                        <?php if (!$yapily_configured) : ?>
-                            <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=yapily'); ?>" class="fp-fh-help-link">Come ottenerlo? →</a>
-                        <?php endif; ?>
-                    </div>
-                    <div class="fp-fh-form-group">
-                        <label for="yapily_app_secret" class="fp-fh-form-label">
-                            Application Secret
-                            <span class="fp-fh-tooltip">
-                                <span class="fp-fh-help-icon" title="⚠️ IMPORTANTE: L'Application Secret viene mostrato solo una volta quando lo generi. Copialo subito e salvalo in un posto sicuro!">?</span>
-                                <span class="fp-fh-tooltip-content">L'Application Secret viene generato insieme all'Application ID, ma viene mostrato solo una volta. Se lo perdi, dovrai generarne uno nuovo. Salvalo in un password manager.</span>
-                            </span>
-                        </label>
-                        <input type="password" name="yapily_app_secret" id="yapily_app_secret" 
-                               value="<?php echo esc_attr($yapily_app_secret); ?>" class="fp-fh-input">
-                        <p class="fp-fh-form-description">Inserisci la tua Application Secret Yapily</p>
-                        <?php if (!$yapily_configured) : ?>
-                            <div class="fp-fh-guide-warning fp-fh-mt-2">
-                                <strong>⚠️ Attenzione:</strong> L'Application Secret viene mostrato solo una volta. Se non l'hai salvato, devi generarne uno nuovo su console.yapily.com
-                            </div>
-                        <?php endif; ?>
                     </div>
                 </div>
                 
@@ -411,12 +359,6 @@ class SettingsPage {
         }
         if (isset($_POST['aruba_username'])) {
             update_option('fp_finance_hub_aruba_username', sanitize_text_field($_POST['aruba_username']));
-        }
-        if (isset($_POST['yapily_app_id'])) {
-            update_option('fp_finance_hub_yapily_app_id', sanitize_text_field($_POST['yapily_app_id']));
-        }
-        if (isset($_POST['yapily_app_secret'])) {
-            update_option('fp_finance_hub_yapily_app_secret', sanitize_text_field($_POST['yapily_app_secret']));
         }
         
         // Impostazioni Intelligence

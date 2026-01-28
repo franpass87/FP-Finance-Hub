@@ -8,7 +8,6 @@
 namespace FP\FinanceHub\Cron;
 
 use FP\FinanceHub\Integration\Aruba\ArubaSync;
-use FP\FinanceHub\Integration\OpenBanking\YapilySyncService;
 use FP\FinanceHub\Services\ReconciliationService;
 use FP\FinanceHub\Services\AlertService;
 use FP\FinanceHub\Services\ProjectionService;
@@ -46,11 +45,6 @@ class Jobs {
         // Sync Aruba giornaliero
         if (!wp_next_scheduled('fp_finance_hub_sync_aruba_daily')) {
             wp_schedule_event(time(), 'daily', 'fp_finance_hub_sync_aruba_daily');
-        }
-        
-        // Sync Yapily ogni 6 ore
-        if (!wp_next_scheduled('fp_finance_hub_sync_yapily_accounts')) {
-            wp_schedule_event(time(), 'fp_finance_hub_6hours', 'fp_finance_hub_sync_yapily_accounts');
         }
         
         // Riconciliazione ogni 6 ore
@@ -95,7 +89,6 @@ class Jobs {
     public static function unschedule() {
         $hooks = [
             'fp_finance_hub_sync_aruba_daily',
-            'fp_finance_hub_sync_yapily_accounts',
             'fp_finance_hub_reconcile_transactions',
             'fp_finance_hub_check_alerts',
             'fp_finance_hub_calculate_projections',
@@ -132,14 +125,6 @@ class Jobs {
             date('Y-m-d', strtotime('-30 days')),
             date('Y-m-d')
         );
-    }
-    
-    /**
-     * Sync Yapily conti
-     */
-    public static function sync_yapily_accounts() {
-        $yapily_sync = new YapilySyncService();
-        $yapily_sync->sync_all_accounts();
     }
     
     /**
@@ -193,7 +178,6 @@ class Jobs {
 
 // Registra hook cron
 add_action('fp_finance_hub_sync_aruba_daily', [Jobs::class, 'sync_aruba_daily']);
-add_action('fp_finance_hub_sync_yapily_accounts', [Jobs::class, 'sync_yapily_accounts']);
 add_action('fp_finance_hub_reconcile_transactions', [Jobs::class, 'reconcile_transactions']);
 add_action('fp_finance_hub_check_alerts', [Jobs::class, 'check_alerts']);
 add_action('fp_finance_hub_calculate_projections', [Jobs::class, 'calculate_projections']);

@@ -129,12 +129,20 @@ class ImportPage {
                 </div>
             <?php elseif ($tab === 'bank') : ?>
                 <div id="bank-tab" class="fp-fh-tab-content <?php echo $tab === 'bank' ? 'active' : ''; ?>">
-                    <div class="fp-fh-card">
+                    <div class="fp-fh-card fp-fh-mb-6">
                         <div class="fp-fh-card-header">
-                            <h2 class="fp-fh-card-title">Import Conti Bancari</h2>
+                            <h2 class="fp-fh-card-title">Import Conti Bancari (ING, PostePay)</h2>
                         </div>
                         <div class="fp-fh-card-body">
-                            <p>Vai alla pagina <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts'); ?>" class="fp-fh-btn fp-fh-btn-outline">Conti Bancari</a> per importare CSV/OFX.</p>
+                            <p><strong>Soluzione consigliata per privati:</strong> Import CSV/OFX (gratuito, funziona con tutte le banche).</p>
+                            <ol class="fp-fh-list fp-fh-mt-3" style="margin-left: 1.5rem;">
+                                <li><strong>Scarica i CSV</strong> – Esegui lo script Playwright nella cartella <code>bank-automation/</code> del plugin: <code>node bank.js</code>. Fai login manuale a ING e PostePay quando richiesto; i file <code>ing.csv</code> e <code>postepay.csv</code> verranno scaricati automaticamente.</li>
+                                <li><strong>Importa nel plugin</strong> – Vai alla pagina <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts'); ?>">Conti Bancari</a>, seleziona il conto (o creane uno per ING e uno per PostePay) e carica i file CSV.</li>
+                            </ol>
+                            <p class="fp-fh-mt-4 fp-fh-mb-0">Il plugin riconosce automaticamente il formato (ING o PostePay), importa movimenti e saldi e applica la categorizzazione.</p>
+                            <div class="fp-fh-card-footer fp-fh-mt-4">
+                                <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts'); ?>" class="fp-fh-btn fp-fh-btn-primary">Vai a Conti Bancari e Import CSV</a>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -35,6 +35,32 @@
 
 **Importante:** L'account base è **gratuito** per sviluppatori.
 
+### **Step 2: Aggiungi Istituzioni Bancarie**
+
+**⚠️ IMPORTANTE - Sei un Privato (Non Regolamentato):**
+
+Se sei un privato (non hai licenza AISP/PISP), devi usare **Yapily Connect** (Delegated Registration):
+
+1. **NON compilare** il form che richiede certificati QSEAL/QWAC (quello è per aziende regolamentate)
+2. Contatta **Yapily Support**: https://support.yapily.com
+3. Indica che vuoi usare **Yapily Connect** (delegated registration)
+4. Chiedi di aggiungere le istituzioni che ti servono (es. BancoPosta, PostePay, ING Italia)
+5. Fornisci il tuo **Application ID**
+6. Yapily aggiungerà le istituzioni al tuo account (senza bisogno di certificati)
+
+**Con Yapily Connect:**
+- ✅ Non servono certificati QSEAL/QWAC
+- ✅ Yapily gestisce la registrazione per te
+- ✅ Processo semplice per privati
+- ⚠️ Alcune banche potrebbero essere disponibili solo in sandbox per privati
+
+**Se sei un'Azienda Regolamentata (AISP/PISP):**
+- Usa **Direct Registration** con i tuoi certificati
+- Carica certificati QWAC e QSEAL nella Console
+- Registra ogni istituzione manualmente
+
+**Documentazione:** https://docs.yapily.com/pages/getting-started/integration-setup/registration/#delegated-registration
+
 ---
 
 ## 🗄️ **DATABASE SCHEMA**
