@@ -114,6 +114,39 @@ class SettingsPage {
                             </select>
                             <p class="fp-fh-form-description">Scegli l'ambiente Aruba da utilizzare</p>
                         </div>
+                        
+                        <!-- Parametri Premium (opzionali, solo se account Premium) -->
+                        <div class="fp-fh-form-group">
+                            <label class="fp-fh-form-label">
+                                Parametri Premium (Opzionali)
+                                <span class="fp-fh-tooltip">
+                                    <span class="fp-fh-help-icon" title="Solo per utenti Premium: se il recupero automatico fallisce, inserisci manualmente questi valori.">?</span>
+                                    <span class="fp-fh-tooltip-content">Solo per utenti Premium: se ricevi l'errore "Errore deleghe utente", inserisci manualmente il codice paese (es: IT) e il codice partita IVA. Se lasciati vuoti, il sistema proverà a recuperarli automaticamente.</span>
+                                </span>
+                            </label>
+                            <div class="fp-fh-grid fp-fh-grid-cols-2 fp-fh-gap-4">
+                                <div>
+                                    <label for="aruba_country_sender" class="fp-fh-form-label-small">Codice Paese (es: IT)</label>
+                                    <input type="text" name="aruba_country_sender" id="aruba_country_sender" 
+                                           value="<?php echo esc_attr($aruba_country_sender); ?>" 
+                                           class="fp-fh-input" 
+                                           placeholder="IT" 
+                                           maxlength="2" 
+                                           pattern="[A-Z]{2}"
+                                           style="text-transform: uppercase;">
+                                    <p class="fp-fh-form-description-small">Codice paese ISO (2 lettere, es: IT, FR, DE)</p>
+                                </div>
+                                <div>
+                                    <label for="aruba_vatcode_sender" class="fp-fh-form-label-small">Partita IVA / VAT Code</label>
+                                    <input type="text" name="aruba_vatcode_sender" id="aruba_vatcode_sender" 
+                                           value="<?php echo esc_attr($aruba_vatcode_sender); ?>" 
+                                           class="fp-fh-input" 
+                                           placeholder="IT12345678901">
+                                    <p class="fp-fh-form-description-small">Partita IVA completa (es: IT12345678901)</p>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <?php if ($aruba_username && $aruba_password) : ?>
                             <div class="fp-fh-form-group">
                                 <button type="button" id="test-aruba-connection" class="fp-fh-btn fp-fh-btn-secondary">
