@@ -1,0 +1,25 @@
+{
+  "name": "bank-csv-downloader",
+  "version": "1.0.0",
+  "description": "Automated CSV downloader for ING Italy and PostePay Evolution using Playwright",
+  "main": "bank.js",
+  "scripts": {
+    "start": "node bank.js"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "banking",
+    "csv",
+    "ing",
+    "postepay"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "playwright": "^1.40.0"
+  }
+}

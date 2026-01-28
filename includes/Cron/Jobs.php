@@ -77,6 +77,16 @@ class Jobs {
         if (!wp_next_scheduled('fp_finance_hub_refresh_intelligence')) {
             wp_schedule_event(time(), 'daily', 'fp_finance_hub_refresh_intelligence');
         }
+        
+        // Auto import CSV/OFX ogni ora
+        if (!wp_next_scheduled('fp_finance_hub_auto_import_csv')) {
+            wp_schedule_event(time(), 'hourly', 'fp_finance_hub_auto_import_csv');
+        }
+        
+        // Pulizia file vecchi settimanale
+        if (!wp_next_scheduled('fp_finance_hub_cleanup_import_files')) {
+            wp_schedule_event(time(), 'weekly', 'fp_finance_hub_cleanup_import_files');
+        }
     }
     
     /**

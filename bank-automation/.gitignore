@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# CSV files
+*.csv
+
+# Playwright cache
+playwright/.cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
