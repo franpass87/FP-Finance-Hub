@@ -633,12 +633,28 @@ class ArubaAPI {
     }
     
     /**
-     * Recupera parametri Premium (countrySender, vatcodeSender) da userInfo o multicedenti
+     * Recupera parametri Premium (countrySender, vatcodeSender) 
+     * 
+     * Ordine di priorità:
+     * 1. Impostazioni manuali (se configurate)
+     * 2. userInfo (vatCode)
+     * 3. multicedenti (primo elemento)
      * 
      * @return array|WP_Error Array con countrySender e vatcodeSender, o WP_Error
      */
     private function get_premium_params() {
-        // Prova prima a recuperare da userInfo
+        // 1. Prova prima dalle impostazioni manuali (priorità massima)
+        $manual_country = get_option('fp_finance_hub_aruba_country_sender', '');
+        $manual_vatcode = get_option('fp_finance_hub_aruba_vatcode_sender', '');
+        
+        if (!empty($manual_country) && !empty($manual_vatcode)) {
+            return [
+                'countrySender' => strtoupper($manual_country),
+                'vatcodeSender' => $manual_vatcode,
+            ];
+        }
+        
+        // 2. Prova a recuperare da userInfo
         $user_info = $this->get_user_info();
         if (!is_wp_error($user_info)) {
             $vat_code = $user_info['vatCode'] ?? null;
@@ -650,27 +666,46 @@ class ArubaAPI {
                     $country = $matches[1];
                 }
                 
-                return [
-                    'countrySender' => $country,
-                    'vatcodeSender' => $vat_code,
-                ];
+                // Se manca il paese manuale, usa quello dedotto
+                if (empty($manual_country)) {
+                    $manual_country = $country;
+                }
+                
+                // Se manca il VAT code manuale, usa quello da userInfo
+                if (empty($manual_vatcode)) {
+                    $manual_vatcode = $vat_code;
+                }
+                
+                if (!empty($manual_country) && !empty($manual_vatcode)) {
+                    return [
+                        'countrySender' => strtoupper($manual_country),
+                        'vatcodeSender' => $manual_vatcode,
+                    ];
+                }
             }
         }
         
-        // Se non disponibile da userInfo, prova multicedenti (primo elemento)
+        // 3. Se non disponibile da userInfo, prova multicedenti (primo elemento)
         $multicedenti = $this->get_multicedenti(['size' => 1]);
         if (!is_wp_error($multicedenti) && isset($multicedenti['content']) && count($multicedenti['content']) > 0) {
             $first = $multicedenti['content'][0];
             if (isset($first['countryCode']) && isset($first['vatCode'])) {
+                $country = !empty($manual_country) ? $manual_country : $first['countryCode'];
+                $vatcode = !empty($manual_vatcode) ? $manual_vatcode : $first['vatCode'];
+                
                 return [
-                    'countrySender' => $first['countryCode'],
-                    'vatcodeSender' => $first['vatCode'],
+                    'countrySender' => strtoupper($country),
+                    'vatcodeSender' => $vatcode,
                 ];
             }
         }
         
-        // Se non disponibile, restituisci errore
-        return new \WP_Error('premium_params_missing', 'Impossibile recuperare countrySender e vatcodeSender. Verifica le impostazioni Aruba.');
+        // Se non disponibile, restituisci errore con suggerimento
+        return new \WP_Error(
+            'premium_params_missing', 
+            'Impossibile recuperare countrySender e vatcodeSender automaticamente. ' .
+            'Per utenti Premium, inserisci manualmente questi valori nelle Impostazioni Aruba (Parametri Premium).'
+        );
     }
     
     /**

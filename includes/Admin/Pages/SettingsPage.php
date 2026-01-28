@@ -28,6 +28,8 @@ class SettingsPage {
         $aruba_username = get_option('fp_finance_hub_aruba_username', '');
         $aruba_password = get_option('fp_finance_hub_aruba_password', '');
         $aruba_environment = get_option('fp_finance_hub_aruba_environment', 'production');
+        $aruba_country_sender = get_option('fp_finance_hub_aruba_country_sender', '');
+        $aruba_vatcode_sender = get_option('fp_finance_hub_aruba_vatcode_sender', '');
         $aruba_configured = $setup_service->is_aruba_configured();
         
         ?>
@@ -384,6 +386,17 @@ class SettingsPage {
         }
         if (isset($_POST['aruba_environment'])) {
             update_option('fp_finance_hub_aruba_environment', sanitize_text_field($_POST['aruba_environment']));
+        }
+        
+        // Parametri Premium (opzionali)
+        if (isset($_POST['aruba_country_sender'])) {
+            $country = strtoupper(sanitize_text_field($_POST['aruba_country_sender']));
+            update_option('fp_finance_hub_aruba_country_sender', $country);
+        }
+        
+        if (isset($_POST['aruba_vatcode_sender'])) {
+            $vatcode = sanitize_text_field($_POST['aruba_vatcode_sender']);
+            update_option('fp_finance_hub_aruba_vatcode_sender', $vatcode);
         }
         
         // Impostazioni Intelligence
