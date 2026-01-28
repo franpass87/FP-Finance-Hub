@@ -652,6 +652,13 @@ class AnalyticsPage {
                     </div>
                     
                     <div class="fp-fh-form-group">
+                        <label class="fp-fh-form-label">
+                            <input type="checkbox" name="all_data" value="1" <?php checked(isset($_GET['all_data']) && $_GET['all_data'] === '1'); ?>>
+                            Mostra tutti i dati (ignora filtri data)
+                        </label>
+                    </div>
+                    
+                    <div class="fp-fh-form-group">
                         <label for="type" class="fp-fh-form-label">Tipo</label>
                         <select name="type" id="type" class="fp-fh-select">
                             <option value="">Tutti</option>
