@@ -72,9 +72,9 @@ class BankAccountsPage {
                             <div class="fp-account-card-balance">
                                 <?php echo esc_html(number_format($account->current_balance, 2, ',', '.') . ' €'); ?>
                             </div>
-                            <div class="fp-account-card-footer">
-                                <span>Aggiornato: <?php echo esc_html($account->last_balance_date ?: 'Mai'); ?></span>
-                                <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts&action=edit&id=' . $account->id); ?>" class="fp-fh-btn fp-fh-btn-secondary fp-fh-btn-sm" style="margin-left: auto;">
+                            <div class="fp-account-card-footer" style="display: flex !important; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #dee2e6;">
+                                <span style="font-size: 13px; color: #666;">Aggiornato: <?php echo esc_html($account->last_balance_date ?: 'Mai'); ?></span>
+                                <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-bank-accounts&action=edit&id=' . $account->id); ?>" class="fp-fh-btn fp-fh-btn-secondary fp-fh-btn-sm" style="display: inline-flex !important; align-items: center; justify-content: center; padding: 6px 12px; background-color: #555; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: 500; flex-shrink: 0;">
                                     ✏️ Modifica
                                 </a>
                             </div>
@@ -146,7 +146,7 @@ class BankAccountsPage {
                 
                 if (!$account) {
                     echo '<div class="fp-fh-notice fp-fh-notice-error"><p>Conto non trovato.</p></div>';
-                } else :
+                } else {
                 ?>
                 <div class="fp-fh-card fp-fh-mb-6">
                     <div class="fp-fh-card-header">
@@ -193,7 +193,7 @@ class BankAccountsPage {
                     </form>
                 </div>
                 <?php
-                endif; // if (!$account)
+                } // if (!$account)
                 ?>
             <?php endif; // if ($action === 'edit' && isset($_GET['id'])) ?>
             

@@ -65,15 +65,28 @@ class Importer {
         }
         
         // Parse file
-        $parser = $this->get_parser($format);
-        if (!$parser) {
-            return new \WP_Error('invalid_format', 'Formato file non supportato');
-        }
-        
-        $parsed = $parser->parse($content);
-        
-        if (empty($parsed['transactions'])) {
-            return new \WP_Error('no_transactions', 'Nessun movimento trovato nel file');
+        try {
+            $parser = $this->get_parser($format);
+            if (!$parser) {
+                return new \WP_Error('invalid_format', 'Formato file non supportato: ' . $format);
+            }
+            
+            $parsed = $parser->parse($content);
+            
+            if (is_wp_error($parsed)) {
+                return $parsed;
+            }
+            
+            if (empty($parsed) || !is_array($parsed)) {
+                return new \WP_Error('parse_error', 'Errore durante il parsing del file');
+            }
+            
+            if (empty($parsed['transactions'])) {
+                return new \WP_Error('no_transactions', 'Nessun movimento trovato nel file');
+            }
+        } catch (\Exception $e) {
+            error_log('[FP Finance Hub] Errore parsing file: ' . $e->getMessage());
+            return new \WP_Error('parse_exception', 'Errore durante il parsing: ' . $e->getMessage());
         }
         
         // Importa movimenti
@@ -81,19 +94,33 @@ class Importer {
         $skipped = 0;
         $bank_service = BankService::get_instance();
         
-        foreach ($parsed['transactions'] as $transaction_data) {
-            // Verifica se già esistente (per evitare duplicati)
-            if ($this->transaction_exists($account_id, $transaction_data)) {
-                $skipped++;
-                continue;
+        try {
+            foreach ($parsed['transactions'] as $transaction_data) {
+                // Verifica struttura dati movimento
+                if (!is_array($transaction_data) || empty($transaction_data['transaction_date'])) {
+                    $skipped++;
+                    continue;
+                }
+                
+                // Verifica se già esistente (per evitare duplicati)
+                if ($this->transaction_exists($account_id, $transaction_data)) {
+                    $skipped++;
+                    continue;
+                }
+                
+                // Importa movimento
+                $result = $bank_service->import_transaction($account_id, $transaction_data);
+                
+                if (!is_wp_error($result)) {
+                    $imported++;
+                } else {
+                    error_log('[FP Finance Hub] Errore import movimento: ' . $result->get_error_message());
+                    $skipped++;
+                }
             }
-            
-            // Importa movimento
-            $result = $bank_service->import_transaction($account_id, $transaction_data);
-            
-            if (!is_wp_error($result)) {
-                $imported++;
-            }
+        } catch (\Exception $e) {
+            error_log('[FP Finance Hub] Errore durante import movimenti: ' . $e->getMessage());
+            return new \WP_Error('import_exception', 'Errore durante l\'import: ' . $e->getMessage());
         }
         
         // Aggiorna saldo conto se presente
