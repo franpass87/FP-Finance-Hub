@@ -25,8 +25,9 @@ class SettingsPage {
         }
         
         $setup_service = SetupService::get_instance();
-        $aruba_api_key = get_option('fp_finance_hub_aruba_api_key', '');
         $aruba_username = get_option('fp_finance_hub_aruba_username', '');
+        $aruba_password = get_option('fp_finance_hub_aruba_password', '');
+        $aruba_environment = get_option('fp_finance_hub_aruba_environment', 'production');
         $aruba_configured = $setup_service->is_aruba_configured();
         
         ?>
@@ -73,33 +74,52 @@ class SettingsPage {
                         </div>
                     <?php endif; ?>
                     
-                    <div class="fp-fh-form-group">
-                        <label for="aruba_api_key" class="fp-fh-form-label">
-                            API Key
-                            <span class="fp-fh-tooltip">
-                                <span class="fp-fh-help-icon" title="L'API Key si trova nel pannello Aruba Fatturazione Elettronica nella sezione API. Se non ce l'hai, devi generarne una nuova.">?</span>
-                                <span class="fp-fh-tooltip-content">L'API Key permette al plugin di accedere alle tue fatture e clienti da Aruba. La trovi nel pannello Aruba nella sezione "API" o "Integrazioni".</span>
-                            </span>
-                        </label>
-                        <input type="text" name="aruba_api_key" id="aruba_api_key" 
-                               value="<?php echo esc_attr($aruba_api_key); ?>" class="fp-fh-input">
-                        <p class="fp-fh-form-description">Inserisci la tua API Key di Aruba Fatturazione Elettronica</p>
-                        <?php if (!$aruba_configured) : ?>
-                            <a href="<?php echo admin_url('admin.php?page=fp-finance-hub-setup-guide&step=aruba'); ?>" class="fp-fh-help-link">Come ottenerla? →</a>
+                        <div class="fp-fh-form-group">
+                            <label for="aruba_username" class="fp-fh-form-label">
+                                Username
+                                <span class="fp-fh-tooltip">
+                                    <span class="fp-fh-help-icon" title="Lo Username è l'indirizzo email con cui ti registri ad Aruba o il codice utente nel profilo.">?</span>
+                                    <span class="fp-fh-tooltip-content">Lo Username è l'indirizzo email che usi per accedere ad Aruba Fatturazione Elettronica, oppure il codice utente visibile nel tuo profilo.</span>
+                                </span>
+                            </label>
+                            <input type="text" name="aruba_username" id="aruba_username" 
+                                   value="<?php echo esc_attr($aruba_username); ?>" class="fp-fh-input" required>
+                            <p class="fp-fh-form-description">Inserisci il tuo username Aruba (email o codice utente)</p>
+                        </div>
+                        <div class="fp-fh-form-group">
+                            <label for="aruba_password" class="fp-fh-form-label">
+                                Password
+                                <span class="fp-fh-tooltip">
+                                    <span class="fp-fh-help-icon" title="La password è quella che usi per accedere al pannello web di Aruba Fatturazione Elettronica.">?</span>
+                                    <span class="fp-fh-tooltip-content">La password è quella che usi per accedere al pannello web di Aruba Fatturazione Elettronica (https://fatturazioneelettronica.aruba.it).</span>
+                                </span>
+                            </label>
+                            <input type="password" name="aruba_password" id="aruba_password" 
+                                   value="<?php echo esc_attr($aruba_password); ?>" class="fp-fh-input" required>
+                            <p class="fp-fh-form-description">Inserisci la tua password Aruba (stessa del pannello web)</p>
+                        </div>
+                        <div class="fp-fh-form-group">
+                            <label for="aruba_environment" class="fp-fh-form-label">
+                                Ambiente
+                                <span class="fp-fh-tooltip">
+                                    <span class="fp-fh-help-icon" title="Scegli 'Produzione' per usare le API reali, 'Demo' per testare in ambiente di prova.">?</span>
+                                    <span class="fp-fh-tooltip-content">Ambiente Produzione: usa le API reali con i tuoi dati. Ambiente Demo: ambiente di test temporaneo per sviluppatori.</span>
+                                </span>
+                            </label>
+                            <select name="aruba_environment" id="aruba_environment" class="fp-fh-select">
+                                <option value="production" <?php selected($aruba_environment, 'production'); ?>>Produzione</option>
+                                <option value="demo" <?php selected($aruba_environment, 'demo'); ?>>Demo (Test)</option>
+                            </select>
+                            <p class="fp-fh-form-description">Scegli l'ambiente Aruba da utilizzare</p>
+                        </div>
+                        <?php if ($aruba_username && $aruba_password) : ?>
+                            <div class="fp-fh-form-group">
+                                <button type="button" id="test-aruba-connection" class="fp-fh-btn fp-fh-btn-secondary">
+                                    🔍 Test Connessione
+                                </button>
+                                <p class="fp-fh-form-description">Verifica che le credenziali siano corrette</p>
+                            </div>
                         <?php endif; ?>
-                    </div>
-                    <div class="fp-fh-form-group">
-                        <label for="aruba_username" class="fp-fh-form-label">
-                            Username
-                            <span class="fp-fh-tooltip">
-                                <span class="fp-fh-help-icon" title="Lo Username è l'indirizzo email con cui ti registri ad Aruba o il codice utente nel profilo.">?</span>
-                                <span class="fp-fh-tooltip-content">Lo Username è l'indirizzo email che usi per accedere ad Aruba Fatturazione Elettronica, oppure il codice utente visibile nel tuo profilo.</span>
-                            </span>
-                        </label>
-                        <input type="text" name="aruba_username" id="aruba_username" 
-                               value="<?php echo esc_attr($aruba_username); ?>" class="fp-fh-input">
-                        <p class="fp-fh-form-description">Inserisci il tuo username Aruba</p>
-                    </div>
                 </div>
                 
                 <div class="fp-fh-card-header fp-fh-mt-6">
@@ -206,6 +226,7 @@ class SettingsPage {
         </div>
         
         <?php self::render_toast_script(); ?>
+        <?php self::render_aruba_test_script(); ?>
         <?php
     }
     
@@ -354,11 +375,15 @@ class SettingsPage {
     private static function save_settings() {
         check_admin_referer('fp_finance_hub_settings');
         
-        if (isset($_POST['aruba_api_key'])) {
-            update_option('fp_finance_hub_aruba_api_key', sanitize_text_field($_POST['aruba_api_key']));
-        }
         if (isset($_POST['aruba_username'])) {
             update_option('fp_finance_hub_aruba_username', sanitize_text_field($_POST['aruba_username']));
+        }
+        if (isset($_POST['aruba_password'])) {
+            // Salva password (non sanitizzare per preservare caratteri speciali)
+            update_option('fp_finance_hub_aruba_password', $_POST['aruba_password']);
+        }
+        if (isset($_POST['aruba_environment'])) {
+            update_option('fp_finance_hub_aruba_environment', sanitize_text_field($_POST['aruba_environment']));
         }
         
         // Impostazioni Intelligence
@@ -379,6 +404,67 @@ class SettingsPage {
         // Redirect con parametro success per mostrare toast
         wp_redirect(add_query_arg('settings_saved', '1', admin_url('admin.php?page=fp-finance-hub-settings')));
         exit;
+    }
+    
+    /**
+     * Render script per test connessione Aruba
+     */
+    private static function render_aruba_test_script() {
+        ?>
+        <script>
+        (function($) {
+            $('#test-aruba-connection').on('click', function(e) {
+                e.preventDefault();
+                var $button = $(this);
+                var originalText = $button.text();
+                
+                $button.prop('disabled', true).text('⏳ Test in corso...');
+                
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'fp_finance_hub_test_aruba_connection',
+                        nonce: '<?php echo wp_create_nonce('fp_finance_hub_settings'); ?>'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var data = response.data;
+                            var message = '✅ Connessione riuscita!\n\n';
+                            message += 'Username: ' + (data.username || 'N/A') + '\n';
+                            message += 'PEC: ' + (data.pec || 'N/A') + '\n';
+                            message += 'Ragione Sociale: ' + (data.userDescription || 'N/A') + '\n';
+                            message += 'Partita IVA: ' + (data.vatCode || 'N/A');
+                            
+                            if (data.accountStatus) {
+                                message += '\n\nStato Account: ' + (data.accountStatus.expired ? 'Scaduto' : 'Attivo');
+                                if (data.accountStatus.expirationDate) {
+                                    message += '\nScadenza: ' + data.accountStatus.expirationDate;
+                                }
+                            }
+                            
+                            alert(message);
+                            $button.text('✅ Connessione OK');
+                            setTimeout(function() {
+                                $button.text(originalText);
+                            }, 3000);
+                        } else {
+                            alert('❌ Errore: ' + (response.data.message || 'Errore sconosciuto'));
+                            $button.text(originalText);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('❌ Errore durante il test: ' + error);
+                        $button.text(originalText);
+                    },
+                    complete: function() {
+                        $button.prop('disabled', false);
+                    }
+                });
+            });
+        })(jQuery);
+        </script>
+        <?php
     }
     
     /**

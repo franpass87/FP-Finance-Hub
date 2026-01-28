@@ -55,6 +55,7 @@ class Plugin {
         
         // AJAX handlers
         add_action('wp_ajax_fp_finance_hub_check_setup_progress', [$this, 'ajax_check_setup_progress']);
+        add_action('wp_ajax_fp_finance_hub_test_aruba_connection', [$this, 'ajax_test_aruba_connection']);
     }
     
     /**
@@ -229,5 +230,41 @@ class Plugin {
             'percentage' => $progress['percentage'],
             'is_complete' => $progress['is_complete'],
         ]);
+    }
+    
+    /**
+     * AJAX: Test connessione Aruba
+     */
+    public function ajax_test_aruba_connection() {
+        // Verifica nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'fp_finance_hub_settings')) {
+            wp_send_json_error(['message' => 'Nonce non valido'], 403);
+            return;
+        }
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permessi insufficienti'], 403);
+            return;
+        }
+        
+        try {
+            $api = new Integration\Aruba\ArubaAPI();
+            $result = $api->test_connection();
+            
+            if (is_wp_error($result)) {
+                wp_send_json_error([
+                    'message' => $result->get_error_message(),
+                ]);
+            } else {
+                wp_send_json_success([
+                    'message' => 'Connessione riuscita!',
+                    'data' => $result,
+                ]);
+            }
+        } catch (\Exception $e) {
+            wp_send_json_error([
+                'message' => 'Errore durante il test: ' . $e->getMessage(),
+            ]);
+        }
     }
 }

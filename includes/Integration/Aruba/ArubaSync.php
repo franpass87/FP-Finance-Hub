@@ -50,7 +50,7 @@ class ArubaSync {
             $end_date = date('Y-m-d');
         }
         
-        // Trova fatture da Aruba
+        // Trova fatture da Aruba (la risposta è già un array di fatture)
         $aruba_invoices = $this->api->find_invoices([
             'startDate' => $start_date,
             'endDate' => $end_date,
@@ -66,20 +66,33 @@ class ArubaSync {
         
         foreach ($aruba_invoices as $aruba_invoice) {
             try {
-                // Download dettagli fattura
-                $invoice_details = $this->api->get_invoice($aruba_invoice['id']);
+                // Usa l'ID dalla risposta findByUsername
+                $invoice_id = $aruba_invoice['id'] ?? null;
+                
+                if (!$invoice_id) {
+                    $errors++;
+                    Logger::log('aruba_sync_error', 'Fattura Aruba senza ID', [
+                        'invoice' => $aruba_invoice,
+                    ]);
+                    continue;
+                }
+                
+                // Download dettagli fattura (con file XML)
+                $invoice_details = $this->api->get_invoice($invoice_id, true);
                 
                 if (is_wp_error($invoice_details)) {
                     $errors++;
-                    Logger::log('aruba_sync_error', 'Errore download fattura ' . $aruba_invoice['id'], [
+                    Logger::log('aruba_sync_error', 'Errore download fattura ' . $invoice_id, [
                         'error' => $invoice_details->get_error_message(),
                     ]);
                     continue;
                 }
                 
-                // Parse XML
+                // Parse XML dal campo 'file' (base64)
                 if (!empty($invoice_details['file'])) {
-                    $xml_data = $this->xml_parser->parse($invoice_details['file']);
+                    // Decodifica base64
+                    $xml_content = base64_decode($invoice_details['file']);
+                    $xml_data = $this->xml_parser->parse($xml_content);
                     
                     if (is_wp_error($xml_data)) {
                         $errors++;
@@ -89,11 +102,21 @@ class ArubaSync {
                         continue;
                     }
                     
-                    // Verifica se fattura già esistente
-                    $existing = InvoiceModel::find_by_aruba_id($aruba_invoice['id']);
+                    // Verifica se fattura già esistente (usa idSdi o filename come identificativo)
+                    $aruba_identifier = $invoice_details['idSdi'] ?? $invoice_details['filename'] ?? $invoice_id;
+                    $existing = InvoiceModel::find_by_aruba_id($aruba_identifier);
                     
-                    // Importa/aggiorna fattura
-                    $invoice_id = $this->invoice_service->import_from_aruba($aruba_invoice, $xml_data);
+                    // Importa/aggiorna fattura (passa sia i dati Aruba che i dati XML parsati)
+                    $wp_invoice_id = $this->invoice_service->import_from_aruba($invoice_details, $xml_data);
+                    
+                    if (is_wp_error($wp_invoice_id)) {
+                        $errors++;
+                        Logger::log('aruba_sync_error', 'Errore import fattura', [
+                            'aruba_id' => $invoice_id,
+                            'error' => $wp_invoice_id->get_error_message(),
+                        ]);
+                        continue;
+                    }
                     
                     if ($existing) {
                         $updated++;
@@ -101,22 +124,32 @@ class ArubaSync {
                         $imported++;
                     }
                     
-                    // Estrai e importa cliente
-                    if (!empty($xml_data['receiver'])) {
-                        $this->client_service->import_from_aruba($xml_data['receiver']);
+                    // Estrai e importa cliente dal receiver
+                    if (!empty($xml_data['receiver']) || !empty($invoice_details['receiver'])) {
+                        $receiver_data = $xml_data['receiver'] ?? $invoice_details['receiver'] ?? null;
+                        if ($receiver_data) {
+                            $this->client_service->import_from_aruba($receiver_data);
+                        }
                     }
                     
                     // Salva log operazione
                     Logger::log('aruba_sync_success', 'Fattura sincronizzata', [
-                        'aruba_id' => $aruba_invoice['id'],
-                        'invoice_id' => $invoice_id,
+                        'aruba_id' => $invoice_id,
+                        'idSdi' => $aruba_identifier,
+                        'invoice_id' => $wp_invoice_id,
+                    ]);
+                } else {
+                    $errors++;
+                    Logger::log('aruba_sync_error', 'Fattura senza file XML', [
+                        'aruba_id' => $invoice_id,
                     ]);
                 }
             } catch (\Exception $e) {
                 $errors++;
                 Logger::log('aruba_sync_exception', 'Eccezione durante sync', [
                     'error' => $e->getMessage(),
-                    'aruba_id' => $aruba_invoice['id'] ?? null,
+                    'trace' => $e->getTraceAsString(),
+                    'aruba_id' => $invoice_id ?? null,
                 ]);
             }
         }
@@ -171,16 +204,6 @@ class ArubaSync {
                 if (!is_wp_error($xml_data) && !empty($xml_data['receiver'])) {
                     $this->client_service->import_from_aruba($xml_data['receiver']);
                     $clients_imported++;
-                }
-            }
-        }
-        
-        return [
-            'clients_imported' => $clients_imported,
-        ];
-    }
-}
-           $clients_imported++;
                 }
             }
         }

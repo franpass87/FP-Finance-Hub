@@ -40,10 +40,10 @@ class SetupService {
      * Verifica se Aruba è configurato
      */
     public function is_aruba_configured() {
-        $api_key = get_option('fp_finance_hub_aruba_api_key', '');
         $username = get_option('fp_finance_hub_aruba_username', '');
+        $password = get_option('fp_finance_hub_aruba_password', '');
         
-        return !empty($api_key) && !empty($username);
+        return !empty($username) && !empty($password);
     }
     
     /**
