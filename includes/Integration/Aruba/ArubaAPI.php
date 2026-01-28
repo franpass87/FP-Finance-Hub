@@ -232,10 +232,11 @@ class ArubaAPI {
         ], $filters);
         
         // Verifica se l'utente è Premium (solo per utenti Premium servono countrySender/vatcodeSender)
+        // IMPORTANTE: Per account base, NON aggiungere questi parametri
         $is_premium = $this->is_premium_user();
         
-        // Se è Premium e mancano i parametri, prova a recuperarli automaticamente
-        if (is_bool($is_premium) && $is_premium && (empty($params['countrySender']) || empty($params['vatcodeSender']))) {
+        // Solo se è CERTAMENTE Premium (bool true), gestisci i parametri
+        if ($is_premium === true && (empty($params['countrySender']) || empty($params['vatcodeSender']))) {
             $premium_params = $this->get_premium_params();
             if (!is_wp_error($premium_params)) {
                 if (empty($params['countrySender']) && !empty($premium_params['countrySender'])) {
@@ -260,8 +261,8 @@ class ArubaAPI {
             }
         }
         
-        // Verifica finale: se è Premium, i parametri DEVONO essere presenti
-        if (is_bool($is_premium) && $is_premium) {
+        // Verifica finale: se è CERTAMENTE Premium, i parametri DEVONO essere presenti
+        if ($is_premium === true) {
             if (empty($params['countrySender']) || empty($params['vatcodeSender'])) {
                 return new \WP_Error(
                     'premium_params_required',
@@ -272,6 +273,9 @@ class ArubaAPI {
                 );
             }
         }
+        
+        // Per account base (is_premium === false), NON aggiungere parametri Premium
+        // Se l'API restituisce comunque errore "deleghe", potrebbe essere un problema di permessi/configurazione account
         
         // Converti date in formato ISO 8601 se presenti
         if (isset($params['startDate']) && !empty($params['startDate'])) {
@@ -316,18 +320,29 @@ class ArubaAPI {
         // Gestione errori specifici
         $error_msg = $body['errorDescription'] ?? $body['errorCode'] ?? $body['message'] ?? 'Errore sconosciuto';
         
-        // Se errore 400 o "Errore deleghe utente", potrebbe essere per parametri mancanti (utenze Premium)
+        // Se errore 400 o "Errore deleghe utente", gestisci in base al tipo di account
         if ($code === 400 || (is_string($error_msg) && stripos($error_msg, 'deleghe') !== false)) {
             // Verifica se è Premium per dare un messaggio più preciso
             $is_premium = $this->is_premium_user();
-            if (is_bool($is_premium) && $is_premium) {
+            
+            if ($is_premium === true) {
+                // Account Premium: richiede parametri
                 $error_msg = 'Errore deleghe utente: Account Premium rilevato ma parametri countrySender/vatcodeSender mancanti o non validi. ' . 
                             'SOLUZIONE: Vai in Impostazioni → FP Finance Hub → Impostazioni → Sezione "Integrazione Aruba" → ' .
                             '"Parametri Premium (Opzionali)" e inserisci manualmente Codice Paese (es: IT) e Partita IVA completa. ' .
                             'Dettaglio API: ' . $error_msg;
+            } elseif ($is_premium === false) {
+                // Account base: errore inaspettato, potrebbe essere problema di permessi/configurazione
+                $error_msg = 'Errore deleghe utente: Account base rilevato ma API restituisce errore. ' .
+                            'Questo potrebbe indicare: 1) Problema di permessi dell\'account Aruba, 2) Account non configurato correttamente per API, ' .
+                            '3) Necessità di contattare Aruba per abilitare l\'accesso API. ' .
+                            'Dettaglio API: ' . $error_msg . ' ' .
+                            'SUGGERIMENTO: Contatta il supporto Aruba (assistenza@aruba.it) per verificare che il tuo account base abbia i permessi per accedere alle API.';
             } else {
+                // Impossibile determinare (errore nel controllo)
                 $error_msg = 'Errore deleghe utente: ' . $error_msg . 
-                            ' Se hai un account Premium, inserisci manualmente Codice Paese e Partita IVA nelle Impostazioni Aruba (Parametri Premium).';
+                            ' Se hai un account Premium, inserisci manualmente Codice Paese e Partita IVA nelle Impostazioni Aruba (Parametri Premium). ' .
+                            'Se hai un account base, contatta il supporto Aruba per verificare i permessi API.';
             }
         }
         
@@ -645,19 +660,26 @@ class ArubaAPI {
      * @return bool|WP_Error true se Premium, false se base, WP_Error in caso di errore
      */
     public function is_premium_user() {
+        // Prova a recuperare multicedenti (solo disponibile per Premium)
         $multicedenti = $this->get_multicedenti(['size' => 1]);
         
         if (is_wp_error($multicedenti)) {
-            // Se errore 403/404, probabilmente non è Premium
+            // Se errore 403/404, sicuramente NON è Premium (endpoint non disponibile)
             $error_data = $multicedenti->get_error_data();
             if (isset($error_data['http_code']) && in_array($error_data['http_code'], [403, 404])) {
-                return false;
+                return false; // Account base
             }
+            // Altri errori (es: 401, 500) potrebbero essere temporanei, restituisci errore
             return $multicedenti;
         }
         
         // Se ha multicedenti, è Premium
-        return isset($multicedenti['content']) && count($multicedenti['content']) > 0;
+        // Se l'array è vuoto o non ha content, è account base
+        if (isset($multicedenti['content']) && is_array($multicedenti['content']) && count($multicedenti['content']) > 0) {
+            return true; // Account Premium
+        }
+        
+        return false; // Account base (nessun multicedente)
     }
     
     /**
